@@ -1,0 +1,12 @@
+:root {
+	--cf-view-hover-opacity: 10%;
+}
+
+.cf-view {
+	transition: opacity 0.3s;
+}
+
+img.cf-view-hover, /* override img.lazyloaded rule */
+.cf-view-hover {
+	opacity: var( --cf-view-hover-opacity );
+}

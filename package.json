@@ -1,0 +1,7 @@
+{
+	"name": "content-filter",
+	"scripts": {},
+	"devDependencies": {
+		"types-mediawiki": "^1.9.0"
+	}
+}

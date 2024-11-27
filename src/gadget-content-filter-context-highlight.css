@@ -1,0 +1,30 @@
+:root {
+	--cf-context-base-color      : #f000;
+	--cf-context-background-color: #f004;
+	--cf-context-border-color    : #f008;
+}
+
+li.cf-context {
+	position: relative;
+	max-width: max-content;
+}
+
+li.cf-context::before {
+	content            : "";
+	position           : absolute;
+	transition-duration: 0.2s;
+	transition-property: background-color, border-color;
+	background         : var( --cf-context-base-color );
+	border             : 1px solid var( --cf-context-base-color );
+	border-radius      : 5px;
+	left               : -5px;
+	top                : -2px;
+	width              : calc( 100% + 10px );
+	height             : calc( 100% + 4px );
+	pointer-events     : none;
+}
+
+li.cf-context-hover::before {
+	border-color: var( --cf-context-border-color );
+	background  : var( --cf-context-background-color );
+}
