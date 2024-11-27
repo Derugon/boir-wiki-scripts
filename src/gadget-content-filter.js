@@ -390,7 +390,8 @@ const buttons = [
 	createFilterButton( 0, 'Rebirth' ),
 	createFilterButton( 1, 'Afterbirth' ),
 	createFilterButton( 2, 'Afterbirth+' ),
-	createFilterButton( 3, 'Repentance' )
+	createFilterButton( 3, 'Repentance' ),
+	createFilterButton( 4, 'Repentance+' )
 ];
 
 /**

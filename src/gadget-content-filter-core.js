@@ -60,7 +60,7 @@ if ( config.wgAction !== 'view' && config.wgAction !== 'edit' ) {
  * The number of filtering layers (bits) used on pages.
  * @type {number}
  */
-const filterCount = 4; // filterM = 15 (0b1111)
+const filterCount = 5; // filterM = 31 (0b11111)
 
 /**
  * The class used on the page content.

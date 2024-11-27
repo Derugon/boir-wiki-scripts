@@ -11,7 +11,8 @@
 	--cf-button-title-color--rgb      : 102, 18, 0;
 }
 
-#cf-button-3 {
+#cf-button-3,
+#cf-button-4 {
 	--cf-button-title-color           : #490505;
 	--cf-button-title-color--secondary: #ff1c1c;
 	--cf-button-title-color--rgb      : 73, 5, 5;
@@ -29,15 +30,16 @@
 
 .cf-toggle {
 	line-height: 1;
-	padding    : 5px 10px;
+	padding    : 7px 10px;
 	white-space: nowrap;
 	border     : 1px solid rgba( var( --wiki-accent-color--rgb ), 0.3 );
 	display    : inline-block;
+	background : rgba( var( --wiki-accent-color--rgb ), 0.2 );
 	cursor     : pointer;
 }
 
 .cf-menu:hover > .cf-toggle {
-	background: rgba( var( --wiki-accent-color--rgb ), 0.25 );
+	background: rgba( var( --wiki-accent-color--rgb ), 0.4 );
 }
 
 .cf-menu-content {
@@ -63,9 +65,10 @@
 	text-align: center;
 }
 
-.cf-button > a {
+.cf-button > a,
+.cf-button > a:visited {
 	display        : block;
-	padding        : 5px 10px;
+	padding        : 7px 10px;
 	text-decoration: none;
 	color          : var( --wiki-content-text-color );
 }
@@ -76,14 +79,14 @@
 }
 
 .cf-button-title {
-	font-family: var( --tb-title-font );
-	color      : var( --cf-button-title-color--secondary );
-	text-shadow: var( --cf-button-title-color ) 0 0 5px;
-	font-size  : 120%;
+	font-family     : var( --tb-title-font );
+	color           : var( --cf-button-title-color--secondary );
+	text-shadow     : var( --cf-button-title-color ) 0 0 5px;
+	font-size-adjust: 0.6;
 }
 
-.cf-button > a:not( :hover ) > .cf-button-title {
-	filter: saturate( 0.8 );
+.cf-button > a:hover > .cf-button-title {
+	color: color-mix( in hsl, var( --cf-button-title-color--secondary ), var( --cf-button-title-color ) 20% );
 }
 
 .cf-button-active,
