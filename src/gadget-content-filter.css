@@ -17,30 +17,62 @@
 	--cf-button-title-color--rgb      : 73, 5, 5;
 }
 
-.page-header__cf {
-	margin-left: 3px;
+.cf-menu {
+	position      : relative;
+	display       : inline-block;
+	margin-left   : 20px;
+	line-height   : 1;
+	font-size     : 14px;
+	font-weight   : 500;
+	vertical-align: middle
 }
 
-.page-header__cf .wds-dropdown__toggle .wds-icon {
-	margin-left: 6px;
+.cf-toggle {
+	line-height: 1;
+	padding    : 5px 10px;
+	white-space: nowrap;
+	border     : 1px solid rgba( var( --wiki-accent-color--rgb ), 0.3 );
+	display    : inline-block;
+	cursor     : pointer;
 }
 
-.page-header__cf .wds-dropdown:hover .wds-dropdown__toggle {
-	background-color: rgba( var( --theme-link-color--rgb ), 15% );
+.cf-menu:hover > .cf-toggle {
+	background: rgba( var( --wiki-accent-color--rgb ), 0.25 );
 }
 
-.page-header__cf .wds-dropdown__toggle {
-	border-radius: 12px;
-	font-size    : 14px;
-	font-weight  : 500;
-	line-height  : 1;
-	margin-bottom: 9px;
-	padding      : 5px 10px;
-	white-space  : nowrap;
+.cf-menu-content {
+	display   : none;
+	position  : absolute;
+	top       : 100%;
+	left      : 0;
+	width     : max-content;
+	background: var( --wiki-content-background-color--secondary );
+}
+
+.cf-menu:hover > .cf-menu-content {
+	display: block;
+}
+
+.cf-menu-list {
+	list-style: none;
+	margin    : 0;
+	padding   : 3px;
 }
 
 #cf-info {
 	text-align: center;
+}
+
+.cf-button > a {
+	display        : block;
+	padding        : 5px 10px;
+	text-decoration: none;
+	color          : var( --wiki-content-text-color );
+}
+
+.cf-button > a:hover {
+	background: rgba( var( --wiki-accent-color--rgb ), 0.2 );
+	color     : var( --wiki-content-link-color );
 }
 
 .cf-button-title {
@@ -48,6 +80,10 @@
 	color      : var( --cf-button-title-color--secondary );
 	text-shadow: var( --cf-button-title-color ) 0 0 5px;
 	font-size  : 120%;
+}
+
+.cf-button > a:not( :hover ) > .cf-button-title {
+	filter: saturate( 0.8 );
 }
 
 .cf-button-active,

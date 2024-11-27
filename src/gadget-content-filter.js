@@ -41,18 +41,6 @@ const filtersInfoId = 'cf-info';
 
 /**
  * MediaWiki configuration values.
- * @typedef MWConfig
- * 
- * @property {string} wgAction
- * The action being realised on the page (view, edit, history, etc.).
- * 
- * @property {string} wgArticlePath
- * The URL path to any article, by replacing $1 with the target page name.
- */
-
-/**
- * MediaWiki configuration values.
- * @type {MWConfig}
  */
 const config = mw.config.get( [ 'wgAction', 'wgArticlePath' ] );
 
@@ -138,8 +126,8 @@ function insertMenu( _, pageFilter ) {
 	buttons.forEach( checkPageContext, pageFilter );
 
 	const parent = menu.parentElement;
-	if ( parent && parent.classList.contains( 'page-header__cf' ) ) {
-		parent.remove();
+	if ( parent && parent.id !== filtersInfoId ) {
+		menu.remove();
 	}
 
 	if ( buttons.filter( isButtonActivated ).length < 2 ) {
@@ -151,20 +139,16 @@ function insertMenu( _, pageFilter ) {
 		info.appendChild( menu );
 		info.style.removeProperty( 'display' );
 	} else {
-		const headerMeta = document.getElementsByClassName( 'page-header__meta' )[ 0 ];
-		if ( !headerMeta ) {
+		const pageTitle = document.getElementsByClassName( 'mw-page-title-main' )[ 0 ];
+		if ( !pageTitle ) {
 			// Note [MenuHeaderPanic]:
 			//   Panicking here simply means that we couldn't place the buttons on
 			//   the page. If this happens, we should either add a fallback location,
-			//   or place the buttons somewhere other than in the page header.
-			domPanic( 'Page header not found.' );
+			//   or place the buttons somewhere other than in the page title.
+			domPanic( 'Page title not found.' );
 		}
 
-		const headerWrapper = document.createElement( 'div' );
-		headerWrapper.classList.add( 'page-header__cf' );
-		headerWrapper.appendChild( menu );
-
-		headerMeta.insertAdjacentElement( 'afterend', headerWrapper );
+		pageTitle.insertAdjacentElement( 'afterend', menu );
 	}
 }
 
@@ -200,15 +184,15 @@ function isButtonActivated( button ) {
  */
 function createMenu() {
 	const ul = document.createElement( 'ul' );
-	ul.classList.add( 'wds-list', 'wds-is-linked' );
+	ul.classList.add( 'cf-menu-list' );
 	buttons.forEach( ul.appendChild, ul );
 
 	const content = document.createElement( 'div' );
-	content.classList.add( 'wds-dropdown__content' );
+	content.classList.add( 'cf-menu-content' );
 	content.appendChild( ul );
 
 	const dropdown = document.createElement( 'div' );
-	dropdown.classList.add( 'wds-dropdown', 'cf-menu' );
+	dropdown.classList.add( 'cf-menu' );
 	dropdown.append( toggle, content );
 	return dropdown;
 }
@@ -218,7 +202,7 @@ function createMenu() {
  */
 function createToggle() {
 	const toggle = document.createElement( 'div' );
-	toggle.classList.add( 'wds-dropdown__toggle' );
+	toggle.classList.add( 'cf-toggle' );
 	return toggle;
 }
 
@@ -311,10 +295,7 @@ function unsetActiveButton( button ) {
 function setActiveButton( button ) {
 	button.classList.add( 'cf-button-active' );
 	const a = button.firstElementChild || domPanic();
-	toggle.innerHTML = a.innerHTML +
-		'<svg class="wds-icon wds-icon-tiny wds-dropdown__toggle-chevron">' +
-			'<use xlink:href="#wds-icons-dropdown-tiny"></use>' +
-		'</svg>';
+	toggle.innerHTML = a.innerHTML;
 }
 
 /**
