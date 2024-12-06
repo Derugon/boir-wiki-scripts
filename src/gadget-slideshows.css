@@ -25,7 +25,6 @@ div.boir-slide-title {
 	margin-right: 2px;
 }
 
-.boir-slide-active,
 .boir-slideshow-enabled > .boir-slideshow-titlebar > .boir-slide-title:not( .boir-slide-title-active ) {
 	cursor: pointer;
 }
