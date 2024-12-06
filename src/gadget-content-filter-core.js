@@ -428,29 +428,30 @@ function parseViewStackContainer( container ) {
 		return;
 	}
 
-	/** @type {HTMLElement[]} */
-	const stack = [];
-
+	const elementSet = new Set();
 	array.forEach.call(
 		container.getElementsByClassName( filterClass ),
-		parseViewStackTag,
-		{ stack: stack, filter: Math.pow( 2, this ) }
+		getViewElementsFromTag,
+		{ set: elementSet, filter: Math.pow( 2, this ) }
 	);
 
-	stack.forEach( addElementToView, this );
+	/** @type {HTMLElement[]} */
+	const stack = [];
+	Array.from( elementSet ).sort( nodePostOrder ).forEach( parseViewStackContext, stack );
 
+	stack.forEach( addElementToView, this );
 	container.classList.add( 'cf-container-view-' + this );
 }
 
 /**
  * TODO
- * @this {{ stack: HTMLElement[], filter: number }}
+ * @this {{ set: Set<HTMLElement>, filter: number }}
  * @param {HTMLElement} tag
  */
-function parseViewStackTag( tag ) {
+function getViewElementsFromTag( tag ) {
 	if ( getFilter( tag ) & this.filter ) {
 		// Full match: select the tag.
-		parseViewStackContext.call( this.stack, tag );
+		this.set.add( tag );
 		return;
 	}
 
@@ -460,8 +461,30 @@ function parseViewStackTag( tag ) {
 		return;
 	}
 
-	parseViewStackContext.call( this.stack, tag );
-	array.forEach.call( context, parseViewStackContext, this.stack );
+	this.set.add( tag );
+	array.forEach.call( context, this.set.add.bind( this.set ) );
+}
+
+/**
+ * TODO
+ * @param {Node} n1
+ * @param {Node} n2
+ */
+function nodePostOrder( n1, n2 ) {
+	if ( n1 === n2 ) {
+		return 0;
+	}
+
+	const cmp = n1.compareDocumentPosition( n2 );
+	if ( cmp & Node.DOCUMENT_POSITION_CONTAINED_BY ) {
+		return 1;
+	} else if ( cmp & Node.DOCUMENT_POSITION_CONTAINS ) {
+		return -1;
+	} else if ( cmp & Node.DOCUMENT_POSITION_PRECEDING ) {
+		return 1;
+	} else {
+		return -1;
+	}
 }
 
 /**
