@@ -42,7 +42,7 @@ div.boir-slide-title {
 	margin   : auto;
 }
 
-.boir-slideshow-enabled > .boir-slide:not( .boir-slide-active ) {
+.boir-slideshow-enabled > .boir-slideshow-titlebar:not( .cf-view-active ) ~ .boir-slide:not( .boir-slide-active ) {
 	display: none;
 }
 
@@ -60,7 +60,7 @@ div.boir-slide-title {
 	background : linear-gradient( 0, transparent, rgba( 0, 0, 0, 0.1 ) );
 }
 
-.dlc-slideshow.boir-slideshow-auto > .boir-slideshow-titlebar > :not( .boir-slide-title-active ) {
+.dlc-slideshow.boir-slideshow-auto > .boir-slideshow-titlebar > .boir-slide-title:not( .boir-slide-title-active ) {
 	display: none;
 }
 
