@@ -448,18 +448,20 @@ function parseViewStackContainer( container ) {
  * @param {HTMLElement} tag
  */
 function parseViewStackTag( tag ) {
-	const tagFilter = getFilter( tag );
-
-	if ( tagFilter & this.filter ) {
-		this.stack.push( tag );
+	if ( getFilter( tag ) & this.filter ) {
+		// Full match: select the tag.
+		parseViewStackContext.call( this.stack, tag );
 		return;
 	}
 
-	array.forEach.call(
-		document.getElementsByClassName( 'cf-context-' + tag.dataset.cfContext ),
-		parseViewStackContext,
-		this.stack
-	);
+	// No match: select the tag and its context.
+	const context = document.getElementsByClassName( 'cf-context-' + tag.dataset.cfContext );
+	if ( !context[ 0 ] ) {
+		return;
+	}
+
+	parseViewStackContext.call( this.stack, tag );
+	array.forEach.call( context, parseViewStackContext, this.stack );
 }
 
 /**
