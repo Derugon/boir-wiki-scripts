@@ -396,7 +396,7 @@ function parseTag( tag ) {
 
 	const context = getTagContext( tag );
 	if ( !context ) {
-		// TODO: warn();
+		warn( 'No context found for the following tag:', tag );
 		return;
 	}
 
