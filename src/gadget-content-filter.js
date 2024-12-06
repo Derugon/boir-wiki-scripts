@@ -426,7 +426,6 @@ mw.hook( 'contentFilter.content' )
 			.add( updateActiveButton );
 	} );
 
-
 // Note [UsingCore]:
 //   All code parts requiring the use of the core module are moved behinds
 //   hooks. These hooks should be fired from the core module itself,
@@ -436,6 +435,8 @@ mw.loader.using( 'ext.gadget.content-filter-core', function () {
 		paramValue: paramValue,
 		buttons: buttons
 	} );
+
+	mw.hook( 'contentFilter.loadEnd' ).fire();
 } );
 
 } )( mediaWiki, document, console, Array.prototype );
