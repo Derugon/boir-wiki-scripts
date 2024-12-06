@@ -121,7 +121,7 @@ function enable( slideshow ) {
 		!slideshow.classList.contains( 'boir-slideshow-hidden' ) &&
 		!slideshow.getElementsByClassName( 'boir-slideshow' )[ 0 ]
 	) {
-		newClickEvents.slide = function () { cycle( slideshow ); };
+		newClickEvents.slide = function () { /* cycle( slideshow ); */ };
 		slides.forEach( setSlideClickEvent, newClickEvents.slide );
 	}
 
