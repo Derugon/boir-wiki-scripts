@@ -12,6 +12,13 @@ if ( window.cf ) {
 	return;
 }
 
+window.cf =
+window.contentFilter = {
+	filterMax: 0,
+	isFilteringAvailable: function () { return false; },
+	parseView: function () {}
+};
+
 /** @this {( ...msg: string[] ) => void} */
 function logger() {
 	const args = array.slice.call( arguments );
@@ -772,12 +779,11 @@ function isGhostNode( node ) {
  */
 const filteringAvailable = isFilteringAvailable( currentTitle );
 
-window.cf =
-window.contentFilter = {
+$.extend( cf, {
 	filterMax: filterMax,
 	isFilteringAvailable: isFilteringAvailable,
 	parseView: parseView
-};
+} );
 
 safeAddContentHook( onContentLoaded );
 
