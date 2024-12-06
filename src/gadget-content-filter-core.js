@@ -554,6 +554,10 @@ function getTagContext( tag ) {
  * @returns {HTMLElement?}
  */
 function getTagContext_firstChild( tag ) {
+	if ( !tag.parentElement || [ 'SPAN' ].includes( tag.parentElement.tagName ) ) {
+		return null;
+	}
+
 	if ( getPreviousSibling( tag ) ) {
 		return null;
 	}
