@@ -33,23 +33,8 @@ log( 'Loading.' );
 
 /**
  * MediaWiki configuration values.
- * @typedef MWConfig
- * 
- * @property {string} skin
- * The wiki skin.
- * 
- * @property {string} wgAction
- * The action being realised on the page (view, edit, history, etc.).
- * 
- * @property {string} wgPageName
- * The current page name.
  */
-
-/**
- * MediaWiki configuration values.
- * @type {MWConfig}
- */
-const config = mw.config.get( [ 'skin', 'wgAction', 'wgPageName' ] );
+const config = mw.config.get( [ 'skin', 'wgAction', 'wgIsRedirect', 'wgPageName' ] );
 
 if ( config.skin !== 'vector' ) {
 	error(
@@ -59,7 +44,7 @@ if ( config.skin !== 'vector' ) {
 	return;
 }
 
-if ( config.wgAction !== 'view' && config.wgAction !== 'edit' ) {
+if ( config.wgIsRedirect || ![ 'view', 'edit' ].includes( config.wgAction ) ) {
 	return;
 }
 
