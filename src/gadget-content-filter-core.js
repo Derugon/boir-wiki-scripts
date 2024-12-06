@@ -72,8 +72,7 @@ const filterEnableClass = 'cf-enable';
  * TODO
  * @type {string}
  */
-const filterClass = 'dlc';
-// const filterClass = 'cf-val';
+const tagClass = 'cf-tag';
 
 /**
  * To indicate with which filters some content should be visible or hidden,
@@ -107,8 +106,7 @@ const filterClass = 'dlc';
  * 
  * @type {string}
  */
-const filterClassIntro = 'dlc-';
-// const filterClassIntro = 'cf-val-';
+const filterClassIntro = 'cf-val-';
 
 /**
  * If an element with a filter bitmask class is inside an element with this
@@ -314,7 +312,7 @@ function getPageFilter() {
 		return getFilter( pageContextBox );
 	}
 
-	const tagChild = pageContextBox.getElementsByClassName( filterClass )[ 0 ];
+	const tagChild = pageContextBox.getElementsByClassName( tagClass )[ 0 ];
 	if ( !tagChild ) {
 		error(
 			"Neither the page context and any of its children have a " +
@@ -332,7 +330,7 @@ function getPageFilter() {
  * @returns {boolean}
  */
 function isTag( element ) {
-	return element.classList.contains( filterClass );
+	return element.classList.contains( tagClass );
 }
 
 /**
@@ -363,7 +361,7 @@ function parseFilter( container ) {
 	}
 
 	array.forEach.call(
-		container.getElementsByClassName( filterClass ),
+		container.getElementsByClassName( tagClass ),
 		parseTag
 	);
 }
@@ -430,7 +428,7 @@ function parseViewStackContainer( container ) {
 
 	const elementSet = new Set();
 	array.forEach.call(
-		container.getElementsByClassName( filterClass ),
+		container.getElementsByClassName( tagClass ),
 		getViewElementsFromTag,
 		{ set: elementSet, filter: Math.pow( 2, this ) }
 	);
@@ -529,7 +527,7 @@ function getFilter( element ) {
 		return +element.dataset.cfVal;
 	}
 
-	if ( !element.classList.contains( filterClass ) ) {
+	if ( !element.classList.contains( tagClass ) ) {
 		return filterMax;
 	}
 

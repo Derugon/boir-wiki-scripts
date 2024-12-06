@@ -28,8 +28,7 @@ log( 'Loading.' );
  * The name of the URL parameter used to store the selected filter.
  * @type {string}
  */
-const urlParam = 'dlcfilter';
-// const urlParam = 'cfval';
+const urlParam = 'cfval';
 
 /**
  * If an element with this ID is on a page (directly on the page or

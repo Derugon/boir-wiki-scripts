@@ -13,7 +13,7 @@
  */
 function setContainerEvents( container ) {
 	array.forEach.call(
-		container.getElementsByClassName( 'dlc' ),
+		container.getElementsByClassName( 'cf-tag' ),
 		setTagEvents
 	);
 }
