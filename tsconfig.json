@@ -4,5 +4,8 @@
 		"checkJs": true,
 		"outDir": "./dist",
 	},
-	"include": ["src/**/*"]
+	"include": [
+		"./src",
+		"./node_modules/types-mediawiki"
+	]
 }
