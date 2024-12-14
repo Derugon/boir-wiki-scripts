@@ -3,6 +3,7 @@
 		"lib": ["ESNext", "DOM"],
 		"checkJs": true,
 		"outDir": "./dist",
+		"strict": true
 	},
 	"include": [
 		"./src",

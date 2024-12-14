@@ -575,15 +575,12 @@ function getTagContext( tag ) {
  * @returns {HTMLElement?}
  */
 function getTagContext_firstChild( tag ) {
-	if ( !tag.parentElement || [ 'SPAN' ].includes( tag.parentElement.tagName ) ) {
+	const result = getPreviousSibling( tag );
+	if ( result.sibling ) {
 		return null;
 	}
 
-	if ( getPreviousSibling( tag ) ) {
-		return null;
-	}
-
-	return tag.parentElement;
+	return result.parent;
 }
 
 /**
@@ -651,17 +648,17 @@ function applyViewRule_parentInView( element, stack ) {
  * @returns {HTMLElement?}
  */
 function applyViewRule_allChildren( element, stack ) {
-	if ( getNextSibling( element ) ) {
+	if ( getNextSibling( element ).sibling ) {
 		return null;
 	}
 
 	/** @type {HTMLElement[]} */
 	const previousElements = [];
-	var previousSibling = getPreviousSibling( element );
-	while ( previousSibling ) {
+	var result = getPreviousSibling( element );
+	while ( result.sibling ) {
 		const previousElement = stack.pop();
 		if ( !previousElement ) {
-			// no previous element in view.
+			// No previous element in view.
 			restoreStack( stack, previousElements );
 			return null;
 		}
@@ -669,19 +666,19 @@ function applyViewRule_allChildren( element, stack ) {
 		previousElements.push( previousElement );
 
 		if (
-			!previousSibling.isSameNode( previousElement ) &&
-			!isChildOf( previousSibling, previousElement )
+			!result.sibling.isSameNode( previousElement ) &&
+			!isChildOf( result.sibling, previousElement )
 		) {
-			// previous element not in view.
+			// Previous element not in view.
 			restoreStack( stack, previousElements );
 			return null;
 		}
 
-		element         = previousElement;
-		previousSibling = getPreviousSibling( element );
+		element = previousElement;
+		result  = getPreviousSibling( element );
 	}
 
-	return element.parentElement;
+	return result.parent;
 }
 
 /**
@@ -690,15 +687,8 @@ function applyViewRule_allChildren( element, stack ) {
  * @param {HTMLElement[]} toRestore
  */
 function restoreStack( stack, toRestore ) {
-	stack.push.apply( stack, toRestore.reverse() );
+	array.push.apply( stack, toRestore.reverse() );
 }
-
-
-
-
-
-
-
 
 /**
  * TODO
@@ -711,59 +701,61 @@ function isChildOf( child, parent ) {
 	return ( cmp & Node.DOCUMENT_POSITION_CONTAINS ) > 0;
 }
 
-
-
-
-
 /**
  * TODO
- * Indicates whether a node has a previous sibling.
- * Ignores comments and "invisible" strings.
  * @param {Node} node The node.
- * @returns {ChildNode?} True if the element has a previous sibling other than
- *                       a comment or an "invisible" string, null otherwise.
+ * @returns {{ sibling: Node } | { sibling: null, parent: HTMLElement | null }}
  */
 function getPreviousSibling( node ) {
-	var sibling = node.previousSibling;
-	if ( !sibling ) {
-		return null;
-	}
-
-	while ( isGhostNode( sibling ) ) {
-		sibling = sibling.previousSibling;
-		if ( !sibling ) {
-			return null;
+	while ( true ) {
+		var sibling = node.previousSibling;
+		while ( isGhostNode( sibling ) ) {
+			sibling = sibling.previousSibling;
 		}
-	}
 
-	return sibling;
+		if ( sibling ) {
+			return { sibling: sibling };
+		}
+
+		const parent = node.parentElement;
+		if ( !isGhostContainer( parent ) ) {
+			return { sibling: null, parent: parent };
+		}
+
+		node = parent;
+	}
 }
 
 /**
  * TODO
  * @param {Node} node The node.
- * @returns {ChildNode?}
+ * @returns {{ sibling: Node } | { sibling: null, parent: HTMLElement? }}
  */
 function getNextSibling( node ) {
-	var sibling = node.nextSibling;
-	if ( !sibling ) {
-		return null;
-	}
-
-	while ( isGhostNode( sibling ) ) {
-		sibling = sibling.nextSibling;
-		if ( !sibling ) {
-			return null;
+	while ( true ) {
+		var sibling = node.nextSibling;
+		while ( isGhostNode( sibling ) ) {
+			sibling = sibling.nextSibling;
 		}
-	}
 
-	return sibling;
+		if ( sibling ) {
+			return { sibling: sibling };
+		}
+
+		const parent = node.parentElement;
+		if ( !isGhostContainer( parent ) ) {
+			return { sibling: null, parent: parent };
+		}
+
+		node = parent;
+	}
 }
 
 /**
  * Indicates whether a node should be considered as an additional non-essential node.
- * @param {Node} node The node.
- * @returns {boolean} True if the node is non-essential, false otherwise.
+ * @template {Node} T
+ * @param {T?} node The node.
+ * @returns {node is T} True if the node is non-essential, false otherwise.
  */
 function isGhostNode( node ) {
 	if ( !node ) {
@@ -773,13 +765,43 @@ function isGhostNode( node ) {
 	switch ( node.nodeType ) {
 	case Node.COMMENT_NODE:
 		return true;
+
 	case Node.TEXT_NODE:
 		return !node.textContent || !node.textContent.trim();
+
 	case Node.ELEMENT_NODE:
 		/** @type {HTMLElement} */ // @ts-ignore
 		const element = node;
-		return element.classList.contains( 'mw-collapsible-toggle' ) ||
-			element.classList.contains( skipClass );
+
+		if (
+			element.classList.contains( 'mw-collapsible-toggle' ) ||
+			element.classList.contains( skipClass )
+		) {
+			return true;
+		}
+
+		// TODO: if isGhostContainer( element ), we need to find some non-ghost thing in it.
+
+		return false;
+
+	default:
+		return false;
+	}
+}
+
+/**
+ * Indicates whether an element should not be considered as a container,
+ * and its children should then be considered being part of its parent.
+ * @param {HTMLElement?} element The container element.
+ * @returns {element is HTMLElement} True if the element is not an actual container, false otherwise.
+ */
+function isGhostContainer( element ) {
+	if ( !element ) {
+		return false;
+	}
+
+	if ( element.tagName === 'SPAN' ) {
+		return true;
 	}
 
 	return false;
