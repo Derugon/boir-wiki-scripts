@@ -25,37 +25,43 @@
 	line-height   : 1;
 	font-size     : 14px;
 	font-weight   : 500;
-	vertical-align: middle
+	vertical-align: text-bottom;
 }
 
 .cf-toggle {
-	line-height: 1;
-	padding    : 7px 10px;
-	white-space: nowrap;
-	border     : 1px solid rgba( var( --wiki-accent-color--rgb ), 0.3 );
-	display    : inline-block;
-	background : rgba( var( --wiki-accent-color--rgb ), 0.2 );
-	cursor     : pointer;
+	line-height  : 1;
+	padding      : 7px 10px;
+	white-space  : nowrap;
+	border       : 1px solid rgba( var( --wiki-accent-color--rgb ), 0.3 );
+	border-radius: 10px;
+	display      : inline-block;
+	background   : rgba( var( --wiki-accent-color--rgb ), 0.2 );
+	cursor       : pointer;
 }
 
 .cf-menu:hover > .cf-toggle {
-	background: rgba( var( --wiki-accent-color--rgb ), 0.4 );
+	background   : rgba( var( --wiki-accent-color--rgb ), 0.4 );
+	border-radius: 10px 10px 0 0;
 }
 
 .cf-menu-content {
 	display   : none;
+	z-index   : 1;
 	position  : absolute;
 	top       : 100%;
-	left      : 0;
+	left      : 50%;
+	transform : translateX( -50% );
 	width     : max-content;
 	background: var( --wiki-content-background-color--secondary );
+	text-align: center;
 }
 
 .cf-menu:hover > .cf-menu-content {
 	display: block;
 }
 
-.cf-menu-list {
+.cf-menu-list,
+ul.cf-menu-list {
 	list-style: none;
 	margin    : 0;
 	padding   : 3px;
