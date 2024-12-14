@@ -210,6 +210,8 @@ function disable( slideshow ) {
 		domPanic();
 	}
 
+	clickEvents.delete( slideshow );
+	slideshow.style.minHeight = '';
 	slideshow.classList.remove( 'boir-slideshow-enabled' );
 
 	slides.forEach( function ( slide ) {
@@ -227,24 +229,22 @@ function disable( slideshow ) {
 			domPanic();
 		}
 
+		const titleEvent = localClickEvents.titles.get( title );
+		if ( titleEvent ) {
+			title.removeEventListener( 'click', titleEvent );
+		}
+
 		title.classList.remove( 'boir-slide-title-active' );
 
 		const titlePlaceholder = slide.getElementsByClassName( 'boir-slide-title-placeholder' )[ 0 ];
 		if ( titlePlaceholder ) {
 			titlePlaceholder.replaceWith( title );
 		}
-
-		const titleEvent = localClickEvents.titles.get( title );
-		if ( titleEvent ) {
-			title.removeEventListener( 'click', titleEvent );
-		}
 	} );
 
 	if ( titleBar ) {
 		titleBar.remove();
 	}
-
-	clickEvents.delete( slideshow );
 }
 
 /**
@@ -501,6 +501,15 @@ function setMinHeight( slideshow ) {
 }
 
 /**
+ * Updates the minimum height of a slideshow after a slide change.
+ * @param {HTMLElement} slideshow The slideshow.
+ */
+function updateMinHeight( slideshow ) {
+	slideshow.style.minHeight = '';
+	setMinHeight( slideshow );
+}
+
+/**
  * Gets the first element following an element which has a given class.
  * @param {HTMLElement} element   The element.
  * @param {string}      className The class name.
@@ -558,6 +567,13 @@ function unwrap( element ) {
 	element.remove();
 }
 
+/**
+ * @type {ResizeObserver | null}
+ */
+const minHeightObserver = ResizeObserver ? new ResizeObserver( function ( entries ) {
+	entries.forEach( function ( entry ) { setMinHeight( entry.target.parentElement ) } );
+} ) : null;
+
 module.exports = {
 	init: init,
 	enable: enable,
@@ -575,5 +591,10 @@ module.exports = {
 };
 
 mw.hook( 'wikipage.content' ).add( onContentLoaded );
+mw.hook( 'contentFilter.loadEnd' ).add( function () {
+	mw.hook( 'contentFilter.filter' ).add( function () {
+		array.forEach.call( document.getElementsByClassName( 'boir-slideshow-enabled' ), updateMinHeight );
+	} );
+} );
 
 } )( mediaWiki, Array.prototype );
