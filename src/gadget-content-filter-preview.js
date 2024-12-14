@@ -62,11 +62,9 @@ function removeViewFragmentHighlighting( viewFragment ) {
 	viewFragment.classList.remove( 'cf-view-hover' );
 }
 
-mw.hook( 'contentFilter.content' ).add( function onContentSet() {
-	mw.hook( 'contentFilter.content' ).remove( onContentSet );
-	mw.loader.using( 'ext.gadget.content-filter', function () {
-		cf.buttons.forEach( setButtonEvents );
-	} );
+mw.hook( 'contentFilter.loadEnd' ).add( function onContentSet() {
+	mw.hook( 'contentFilter.loadEnd' ).remove( onContentSet );
+	cf.buttons.forEach( setButtonEvents );
 } );
 
 } )( mediaWiki, document, Array.prototype );
