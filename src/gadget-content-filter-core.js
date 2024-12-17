@@ -54,144 +54,147 @@ if ( config.wgIsRedirect || ![ 'view', 'edit' ].includes( config.wgAction ) ) {
  */
 const filterCount = 5; // filterM = 31 (0b11111)
 
-/**
- * The class used on the page content.
- * @type {string}
- */
-const bodyContentClass = 'mw-body-content';
+const css = {
+	/**
+	 * The class used on the page content.
+	 */
+	bodyContentClass: 'mw-body-content',
 
-/**
- * If an element on a page has this class (directly on the page or
- * transcluded), the filtering becomes available, even if the page is not
- * from a namespace in filteredNamespaces or in filteredSpecialTitles.
- * @type {string}
- */
-const filterEnableClass = 'cf-enable';
+	/**
+	 * If an element on a page has this class (directly on the page or
+	 * transcluded), the filtering becomes available, even if the page is not
+	 * from a namespace in filteredNamespaces or in filteredSpecialTitles.
+	 */
+	filterEnableClass: 'cf-enable',
+
+	/**
+	 * TODO
+	 */
+	tagClass: 'cf-tag',
+
+	/**
+	 * To indicate with which filters some content should be visible or hidden,
+	 * the corresponding elements have to use a specific filtering class:
+	 * 
+	 *     <filterClassIntro><mask>
+	 * 
+	 * (<filterClassIntro> being the value of this parameter and <mask>
+	 *  the bitmask of the filters the associated content should be available
+	 *  with)
+	 * 
+	 * Each element also has to use a filtering type class (either
+	 * blockFilterClass, wrapperFilterClass, or inlineFilterClass).
+	 * 
+	 * For instance, if the available filters were previously defined as:
+	 * 
+	 *     filters: [
+	 *         { filter: 1, ... }, // 01
+	 *         { filter: 2, ... }, // 10
+	 *     ],
+	 * 
+	 * using "0" (00) as <mask> will hide the content while any of the filters
+	 * are enabled, using "1" (01) as <mask> will hide the content while the
+	 * second filter is enabled, using "2" (10) as <mask> will hide the content
+	 * while the first filter is enabled, using "3" (11) as <mask> will have no
+	 * effect (the content will be shown with any filter enabled). If the value
+	 * of this parameter is 'cf-value-', then the following tags are valid uses:
+	 * 
+	 *     <span class="cf-val-2 ..."> ... </span>
+	 *     <img class="cf-val-1 ..." />
+	 */
+	filterClassIntro: 'cf-val-',
+
+	containerClass: 'cf-container',
+
+	/**
+	 * If an element with a filter bitmask class is inside an element with this
+	 * class, the corresponding bitmask is applied to the surrounding section.
+	 */
+	contextFilterClass: 'cf-scope-section',
+
+	/**
+	 * If an element with a filter bitmask class is inside an element with the
+	 * `contextFilterClass` class and this id, the corresponding bitmask is applied
+	 * to the entire page: the filter buttons not matching the bitmask are disabled.
+	 */
+	pageContextFilterId: 'cf-scope-page',
+
+	/**
+	 * This class can be used on elements to make them invisible to filtering:
+	 * the script will go through them when trying to remove elements. For
+	 * instance, the button used to collapse tables (.mw-collapsible-toggle) is
+	 * skipped by default.
+	 */
+	skipClass: 'cf-skip',
+
+	/**
+	 * If a page has navigation bars or elements considered out of the page
+	 * content at the bottom of the page, using this class on at least the first
+	 * one will prevent these elements from being removed with a previous
+	 * section (see contextFilterClass).
+	 */
+	contentEndClass: 'cf-end',
+
+	/**
+	 * By default, a row is removed from a table if its first cell is removed.
+	 * If the title cell of a table is not the first one, then a class with the
+	 * following format can be used to indicate which cell should be considered
+	 * the main one:
+	 * 
+	 *     <mainColumnClassIntro><index>
+	 * 
+	 * (<mainColumnClassIntro> being the value of this parameter and <index>
+	 *  the index of the main cell, the first one being 1)
+	 * 
+	 * For instance, if the value of this parameter is 'main-column-', then the
+	 * following classes can be used to respectively make the second and third
+	 * columns the main ones:
+	 * 
+	 *     {| class="main-column-2"
+	 *      ! Column 1
+	 *      ! Main column 2
+	 *      ! Column 3
+	 *      ...
+	 *      |}
+	 *     {| class="main-column-3"
+	 *      ! Column 1
+	 *      ! Column 2
+	 *      ! Main column 3
+	 *      ...
+	 *      |}
+	 */
+	mainColumnClassIntro: 'cf-table-col-',
+
+	/**
+	 * If a table has this class, its cells can be removed (instead of being
+	 * only cleared), the following cells on the column will then be shifted.
+	 */
+	listTableClass: 'cf-list',
+
+	/**
+	 * This class works the same way as skipClass, except that the element will
+	 * be put back on the page somewhere else if it has to be removed.
+	 */
+	inContentAdClass: 'gpt-ad',
+
+	contextClass: 'cf-context',
+
+	contextClassPrefix: 'cf-context-',
+
+	viewClass: 'cf-view',
+
+	viewClassPrefix: 'cf-view-',
+
+	containerViewClassPrefix: 'cf-container-view-',
+};
 
 /**
  * TODO
- * @type {string}
  */
-const tagClass = 'cf-tag';
-
-/**
- * To indicate with which filters some content should be visible or hidden,
- * the corresponding elements have to use a specific filtering class:
- * 
- *     <filterClassIntro><mask>
- * 
- * (<filterClassIntro> being the value of this parameter and <mask>
- *  the bitmask of the filters the associated content should be available
- *  with)
- * 
- * Each element also has to use a filtering type class (either
- * blockFilterClass, wrapperFilterClass, or inlineFilterClass).
- * 
- * For instance, if the available filters were previously defined as:
- * 
- *     filters: [
- *         { filter: 1, ... }, // 01
- *         { filter: 2, ... }, // 10
- *     ],
- * 
- * using "0" (00) as <mask> will hide the content while any of the filters
- * are enabled, using "1" (01) as <mask> will hide the content while the
- * second filter is enabled, using "2" (10) as <mask> will hide the content
- * while the first filter is enabled, using "3" (11) as <mask> will have no
- * effect (the content will be shown with any filter enabled). If the value
- * of this parameter is 'cf-value-', then the following tags are valid uses:
- * 
- *     <span class="cf-val-2 ..."> ... </span>
- *     <img class="cf-val-1 ..." />
- * 
- * @type {string}
- */
-const filterClassIntro = 'cf-val-';
-
-/**
- * If an element with a filter bitmask class is inside an element with this
- * class, the corresponding bitmask is applied to the surrounding section.
- * @type {string}
- */
-const contextFilterClass = 'context-box';
-// const contextFilterClass = 'cf-scope-section';
-
-/**
- * If an element with a filter bitmask class is inside an element with the
- * `contextFilterClass` class and this id, the corresponding bitmask is applied
- * to the entire page: the filter buttons not matching the bitmask are disabled.
- * @type {string}
- */
-const pageContextFilterId = 'context-page';
-// const pageContextFilterId = 'cf-scope-page';
-
-/**
- * This class can be used on elements to make them invisible to filtering:
- * the script will go through them when trying to remove elements. For
- * instance, the button used to collapse tables (.mw-collapsible-toggle) is
- * skipped by default.
- * @type {string}
- */
-const skipClass = 'content-filter-skip';
-// const skipClass = 'cf-skip';
-
-/**
- * If a page has navigation bars or elements considered out of the page
- * content at the bottom of the page, using this class on at least the first
- * one will prevent these elements from being removed with a previous
- * section (see contextFilterClass).
- * @type {string}
- */
-const contentEndClass = 'content-filter-end';
-// const contentEndClass = 'cf-end';
-
-/**
- * By default, a row is removed from a table if its first cell is removed.
- * If the title cell of a table is not the first one, then a class with the
- * following format can be used to indicate which cell should be considered
- * the main one:
- * 
- *     <mainColumnClassIntro><index>
- * 
- * (<mainColumnClassIntro> being the value of this parameter and <index>
- *  the index of the main cell, the first one being 1)
- * 
- * For instance, if the value of this parameter is 'main-column-', then the
- * following classes can be used to respectively make the second and third
- * columns the main ones:
- * 
- *     {| class="main-column-2"
- *      ! Column 1
- *      ! Main column 2
- *      ! Column 3
- *      ...
- *      |}
- *     {| class="main-column-3"
- *      ! Column 1
- *      ! Column 2
- *      ! Main column 3
- *      ...
- *      |}
- * 
- * @type {string}
- */
-const mainColumnClassIntro = 'content-filter-main-column-';
-// const mainColumnClassIntro = 'cf-table-col-';
-
-/**
- * If a table has this class, its cells can be removed (instead of being
- * only cleared), the following cells on the column will then be shifted.
- * @type {string}
- */
-const listTableClass = 'content-filter-list';
-// const listTableClass = 'cf-list';
-
-/**
- * This class works the same way as skipClass, except that the element will
- * be put back on the page somewhere else if it has to be removed.
- * @type {string}
- */
-const inContentAdClass = 'gpt-ad';
+const hook = {
+	pageFilter: mw.hook( 'contentFilter.pageFilter' ),
+	content: mw.hook( 'contentFilter.content' ),
+};
 
 /**
  * The current page title.
@@ -259,19 +262,7 @@ function onContentLoaded( $content ) {
 		return;
 	}
 
-	if ( isMainContent( content ) ) {
-		filteringForced = isFilteringForced( document );
-		containers.length = 0;
-	}
-
-	if ( !filteringAvailable && !filteringForced ) {
-		return;
-	}
-
-	containers.push( content );
 	parseFilter( content );
-
-	mw.hook( 'contentFilter.content' ).fire( containers, pageFilter );
 }
 
 /**
@@ -280,7 +271,7 @@ function onContentLoaded( $content ) {
  * @returns {boolean}
  */
 function isMainContent( content ) {
-	return content.classList.contains( bodyContentClass );
+	return content.classList.contains( css.bodyContentClass );
 }
 
 /**
@@ -290,7 +281,7 @@ function isMainContent( content ) {
  * @returns {boolean} True if the filters should be used, false otherwise.
  */
 function isFilteringForced( content ) {
-	if ( content.getElementsByClassName( filterEnableClass ).length ) {
+	if ( content.getElementsByClassName( css.filterEnableClass ).length ) {
 		return true;
 	}
 
@@ -303,7 +294,7 @@ function isFilteringForced( content ) {
  * @returns {number}
  */
 function getPageFilter() {
-	const pageContextBox = document.getElementById( pageContextFilterId );
+	const pageContextBox = document.getElementById( css.pageContextFilterId );
 	if ( !pageContextBox ) {
 		return filterMax;
 	}
@@ -312,7 +303,7 @@ function getPageFilter() {
 		return getFilter( pageContextBox );
 	}
 
-	const tagChild = pageContextBox.getElementsByClassName( tagClass )[ 0 ];
+	const tagChild = pageContextBox.getElementsByClassName( css.tagClass )[ 0 ];
 	if ( !tagChild ) {
 		error(
 			"Neither the page context and any of its children have a " +
@@ -330,7 +321,7 @@ function getPageFilter() {
  * @returns {boolean}
  */
 function isTag( element ) {
-	return element.classList.contains( tagClass );
+	return element.classList.contains( css.tagClass );
 }
 
 /**
@@ -338,11 +329,11 @@ function isTag( element ) {
  * @param {HTMLElement} container
  */
 function parseFilter( container ) {
-	if ( hasContainerBeenParsed( container ) ) {
+	if ( container.classList.contains( css.containerClass ) ) {
 		return;
 	}
 
-	if ( container.getElementsByClassName( 'cf-container' )[ 0 ] ) {
+	if ( container.getElementsByClassName( css.containerClass )[ 0 ] ) {
 		error(
 			'The newly added content contains elements which are already ' +
 			'managed by this script. The filtering has been disabled ' +
@@ -353,34 +344,41 @@ function parseFilter( container ) {
 		return;
 	}
 
-	container.classList.add( 'cf-container' );
+	var parentContainer = container.parentElement;
+	while ( parentContainer ) {
+		if ( parentContainer.classList.contains( css.containerClass ) ) {
+			break;
+		}
+
+		parentContainer = parentContainer.parentElement;
+	}
+
+	// TODO: remove view-related html stuff
+
+	if ( isMainContent( container ) ) {
+		filteringForced   = isFilteringForced( document );
+		containers.length = 0;
+	}
+
+	if ( !filteringAvailable && !filteringForced ) {
+		return;
+	}
+
+	container.classList.add( css.containerClass );
 
 	if ( isMainContent( container ) ) {
 		log( 'Initializing state.' );
 		pageFilter = getPageFilter();
+
+		hook.pageFilter.fire( pageFilter );
 	}
 
-	array.forEach.call(
-		container.getElementsByClassName( tagClass ),
-		parseTag
-	);
-}
+	containers.push( container );
+	array.forEach.call( container.getElementsByClassName( css.tagClass ), parseTag );
 
-/**
- * TODO
- * @param {HTMLElement?} container
- * @returns {boolean}
- */
-function hasContainerBeenParsed( container ) {
-	while ( container ) {
-		if ( container.classList.contains( 'cf-container' ) ) {
-			return true;
-		}
+	hook.content.fire( containers, pageFilter );
 
-		container = container.parentElement;
-	}
-
-	return false;
+	// TODO: compute views that parent already have loaded
 }
 
 /**
@@ -399,8 +397,8 @@ function parseTag( tag ) {
 	}
 
 	tag.dataset.cfContext = '' + nextTagIndex;
-	context.classList.add( 'cf-context' );
-	context.classList.add( 'cf-context-' + nextTagIndex );
+	context.classList.add( css.contextClass );
+	context.classList.add( css.contextClassPrefix + nextTagIndex );
 	nextTagIndex++;
 }
 
@@ -410,7 +408,7 @@ function parseTag( tag ) {
  */
 function parseView( index ) {
 	array.forEach.call(
-		document.getElementsByClassName( 'cf-container' ),
+		document.getElementsByClassName( css.containerClass ),
 		parseViewStackContainer,
 		index
 	);
@@ -422,13 +420,13 @@ function parseView( index ) {
  * @param {HTMLElement} container
  */
 function parseViewStackContainer( container ) {
-	if ( container.classList.contains( 'cf-container-view-' + this ) ) {
+	if ( container.classList.contains( css.containerViewClassPrefix + this ) ) {
 		return;
 	}
 
 	const elementSet = new Set();
 	array.forEach.call(
-		container.getElementsByClassName( tagClass ),
+		container.getElementsByClassName( css.tagClass ),
 		getViewElementsFromTag,
 		{ set: elementSet, filter: Math.pow( 2, this ) }
 	);
@@ -438,7 +436,7 @@ function parseViewStackContainer( container ) {
 	Array.from( elementSet ).sort( nodePostOrder ).forEach( parseViewStackContext, stack );
 
 	stack.forEach( addElementToView, this );
-	container.classList.add( 'cf-container-view-' + this );
+	container.classList.add( css.containerViewClassPrefix + this );
 }
 
 /**
@@ -454,7 +452,7 @@ function getViewElementsFromTag( tag ) {
 	}
 
 	// No match: select the tag and its context.
-	const context = document.getElementsByClassName( 'cf-context-' + tag.dataset.cfContext );
+	const context = document.getElementsByClassName( css.contextClassPrefix + tag.dataset.cfContext );
 	if ( !context[ 0 ] ) {
 		return;
 	}
@@ -527,18 +525,18 @@ function getFilter( element ) {
 		return +element.dataset.cfVal;
 	}
 
-	if ( !element.classList.contains( tagClass ) ) {
+	if ( !element.classList.contains( css.tagClass ) ) {
 		return filterMax;
 	}
 
 	const classList = element.classList;
 	for ( var i = 0; i < classList.length; ++i ) {
 		const className = classList[ i ];
-		if ( !className || !className.startsWith( filterClassIntro ) ) {
+		if ( !className || !className.startsWith( css.filterClassIntro ) ) {
 			continue;
 		}
 
-		const filterClass = className.substring( filterClassIntro.length );
+		const filterClass = className.substring( css.filterClassIntro.length );
 		const filter      = +filterClass;
 		if ( filter < 0 ) {
 			continue;
@@ -589,8 +587,8 @@ function getTagContext_firstChild( tag ) {
  * @param {HTMLElement} element
  */
 function addElementToView( element ) {
-	element.classList.add( 'cf-view' );
-	element.classList.add( 'cf-view-' + this );
+	element.classList.add( css.viewClass );
+	element.classList.add( css.viewClassPrefix + this );
 }
 
 /**
@@ -775,7 +773,7 @@ function isGhostNode( node ) {
 
 		if (
 			element.classList.contains( 'mw-collapsible-toggle' ) ||
-			element.classList.contains( skipClass )
+			element.classList.contains( css.skipClass )
 		) {
 			return true;
 		}

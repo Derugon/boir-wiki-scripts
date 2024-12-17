@@ -135,6 +135,7 @@ function enable( slideshow ) {
 
 	if ( newClickEvents.titles.size > 0 ) {
 		slideshow.insertBefore( titlebar, slideshow.firstChild );
+		mw.hook( 'wikipage.content' ).fire( $( titlebar ) );
 	}
 
 	setMinHeight( slideshow );
@@ -145,18 +146,18 @@ function enable( slideshow ) {
 /**
  * Adds a title to a title bar of a slideshow.
  * @this {HTMLElement} The title bar.
- * @param {HTMLElement?} title The title to add.
+ * @param {HTMLElement?} titlePlaceholder The title to add.
  */
-function appendTitle( title ) {
-	if ( !title ) {
+function appendTitle( titlePlaceholder ) {
+	if ( !titlePlaceholder ) {
 		this.appendChild( document.createElement( 'span' ) );
 		return;
 	}
 
-	const titlePlaceholder = document.createElement( 'span' );
+	this.appendChild( titlePlaceholder.cloneNode( true ) );
+
+	titlePlaceholder.classList.remove( 'boir-slide-title' );
 	titlePlaceholder.classList.add( 'boir-slide-title-placeholder' );
-	title.replaceWith( titlePlaceholder );
-	this.appendChild( title );
 }
 
 /**
@@ -238,7 +239,8 @@ function disable( slideshow ) {
 
 		const titlePlaceholder = slide.getElementsByClassName( 'boir-slide-title-placeholder' )[ 0 ];
 		if ( titlePlaceholder ) {
-			titlePlaceholder.replaceWith( title );
+			titlePlaceholder.classList.remove( 'boir-slide-title-placeholder' );
+			titlePlaceholder.classList.add( 'boir-slide-title' );
 		}
 	} );
 
