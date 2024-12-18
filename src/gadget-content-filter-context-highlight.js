@@ -5,17 +5,14 @@
 
 // <nowiki>
 
-( function ( mw, document, array ) {
+( function ( mw, document ) {
 
 /**
  * TODO
  * @param {HTMLElement} container
  */
 function setContainerEvents( container ) {
-	array.forEach.call(
-		container.getElementsByClassName( 'cf-tag' ),
-		setTagEvents
-	);
+	Array.from( container.getElementsByClassName( 'cf-tag' ), setTagEvents );
 }
 
 /**
@@ -34,7 +31,7 @@ function setTagEvents( tag ) {
  * @this {HTMLElement}
  */
 function onTagHover() {
-	array.forEach.call(
+	Array.from(
 		document.getElementsByClassName( 'cf-context-' + this.dataset.cfContext ),
 		toggleContextFragmentHighlighting
 	);
@@ -58,5 +55,5 @@ mw.hook( 'contentFilter.content' ).add( function ( containers ) {
 	containers.forEach( setContainerEvents );
 } );
 
-} )( mediaWiki, document, Array.prototype );
+} )( mediaWiki, document );
 // </nowiki>

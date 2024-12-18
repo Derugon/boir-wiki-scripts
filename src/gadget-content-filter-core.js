@@ -5,7 +5,7 @@
 
 // <nowiki>
 
-( function ( mw, document, console, array ) {
+( function ( mw, document, console ) {
 
 if ( window.cf ) {
 	// already loaded
@@ -21,7 +21,7 @@ window.contentFilter = {
 
 /** @this {( ...msg: string[] ) => void} */
 function logger() {
-	const args = array.slice.call( arguments );
+	const args = Array.from( arguments );
 	args.unshift( '[content-filter-core]' );
 	this.apply( null, args );
 }
@@ -374,7 +374,7 @@ function parseFilter( container ) {
 	}
 
 	containers.push( container );
-	array.forEach.call( container.getElementsByClassName( css.tagClass ), parseTag );
+	Array.from( container.getElementsByClassName( css.tagClass ), parseTag );
 
 	hook.content.fire( containers, pageFilter );
 
@@ -407,7 +407,7 @@ function parseTag( tag ) {
  * @param {number} index
  */
 function parseView( index ) {
-	array.forEach.call(
+	Array.from(
 		document.getElementsByClassName( css.containerClass ),
 		parseViewStackContainer,
 		index
@@ -425,7 +425,7 @@ function parseViewStackContainer( container ) {
 	}
 
 	const elementSet = new Set();
-	array.forEach.call(
+	Array.from(
 		container.getElementsByClassName( css.tagClass ),
 		getViewElementsFromTag,
 		{ set: elementSet, filter: Math.pow( 2, this ) }
@@ -458,7 +458,7 @@ function getViewElementsFromTag( tag ) {
 	}
 
 	this.set.add( tag );
-	array.forEach.call( context, this.set.add.bind( this.set ) );
+	Array.from( context, this.set.add.bind( this.set ) );
 }
 
 /**
@@ -685,7 +685,7 @@ function applyViewRule_allChildren( element, stack ) {
  * @param {HTMLElement[]} toRestore
  */
 function restoreStack( stack, toRestore ) {
-	array.push.apply( stack, toRestore.reverse() );
+	stack.push.apply( stack, toRestore.reverse() );
 }
 
 /**
@@ -819,5 +819,5 @@ $.extend( cf, {
 
 safeAddContentHook( onContentLoaded );
 
-} )( mediaWiki, document, console, Array.prototype );
+} )( mediaWiki, document, console );
 // </nowiki>

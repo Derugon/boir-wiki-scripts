@@ -3,10 +3,17 @@
 		"lib": ["ESNext", "DOM"],
 		"checkJs": true,
 		"outDir": "./dist",
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"exactOptionalPropertyTypes": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
 		"strict": true
 	},
 	"include": [
-		"./src",
 		"./node_modules/types-mediawiki"
 	]
 }

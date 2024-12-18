@@ -5,7 +5,7 @@
 
 // <nowiki>
 
-( function ( mw, document, console, array ) {
+( function ( mw, document, console ) {
 
 if ( window.cf && window.cf.buttons ) {
 	// already loaded
@@ -14,7 +14,7 @@ if ( window.cf && window.cf.buttons ) {
 
 /** @this {( ...msg: string[] ) => void} */
 function logger() {
-	const args = array.slice.call( arguments );
+	const args = Array.from( arguments );
 	args.unshift( '[content-filter]' );
 	this.apply( null, args );
 }
@@ -307,10 +307,7 @@ function updateView( index ) {
 		removeViewFragmentVisibility( activeViewFragments[ 0 ] );
 	}
 
-	array.forEach.call(
-		document.getElementsByTagName( 'a' ),
-		updateAnchorFilter
-	);
+	Array.from( document.getElementsByTagName( 'a' ), updateAnchorFilter );
 
 	if ( index === null ) {
 		return;
@@ -318,7 +315,7 @@ function updateView( index ) {
 
 	cf.parseView( index );
 
-	array.forEach.call(
+	Array.from(
 		document.getElementsByClassName( 'cf-view-' + index ),
 		addViewFragmentVisibility
 	);
@@ -438,5 +435,5 @@ mw.loader.using( 'ext.gadget.content-filter-core', function () {
 	mw.hook( 'contentFilter.loadEnd' ).fire();
 } );
 
-} )( mediaWiki, document, console, Array.prototype );
+} )( mediaWiki, document, console );
 // </nowiki>

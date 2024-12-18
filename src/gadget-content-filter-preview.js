@@ -5,7 +5,7 @@
 
 // <nowiki>
 
-( function ( mw, document, array ) {
+( function ( mw, document ) {
 
 /**
  * TODO
@@ -31,7 +31,7 @@ function onButtonEnter() {
 	cf.parseView( +filterIndex );
 
 	const viewFragments = document.getElementsByClassName( 'cf-view-' + filterIndex );
-	array.forEach.call( viewFragments, addViewFragmentHighlighting );
+	Array.from( viewFragments, addViewFragmentHighlighting );
 }
 
 /**
@@ -42,7 +42,7 @@ function onButtonLeave() {
 	const filterIndex = this.dataset.cfFilter;
 	if ( filterIndex ) {
 		const viewFragments = document.getElementsByClassName( 'cf-view-' + filterIndex );
-		array.forEach.call( viewFragments, removeViewFragmentHighlighting );
+		Array.from( viewFragments, removeViewFragmentHighlighting );
 	}
 }
 
@@ -67,5 +67,5 @@ mw.hook( 'contentFilter.loadEnd' ).add( function onContentSet() {
 	cf.buttons.forEach( setButtonEvents );
 } );
 
-} )( mediaWiki, document, Array.prototype );
+} )( mediaWiki, document );
 // </nowiki>

@@ -1,4 +1,4 @@
-( function ( mw, array ) {
+( function ( mw ) {
 
 /**
  * Delay between two automatic cycling frames.
@@ -61,10 +61,8 @@ function onContentLoaded( $content ) {
  * @returns {HTMLElement[]} The enabled slideshows in the container.
  */
 function init( container ) {
-	return array.filter.call(
-		container.getElementsByClassName( 'boir-slideshow' ),
-		enable
-	);
+	return Array.from( container.getElementsByClassName( 'boir-slideshow' ) )
+		.filter( enable );
 }
 
 /**
@@ -333,7 +331,7 @@ function isEnabled( slideshow ) {
  * @returns {HTMLElement[]} An array of all slides of the slideshow.
  */
 function getSlides( slideshow ) {
-	return array.filter.call( slideshow.children, isSlide );
+	return Array.prototype.filter.call( slideshow.children, isSlide );
 }
 
 /**
@@ -343,7 +341,7 @@ function getSlides( slideshow ) {
  *                         null if there is not any.
  */
 function getActiveSlide( slideshow ) {
-	return array.find.call( slideshow.children, isActiveSlide ) || null;
+	return Array.prototype.find.call( slideshow.children, isActiveSlide ) || null;
 }
 
 /**
@@ -353,7 +351,7 @@ function getActiveSlide( slideshow ) {
  *                         null if it does not have any.
  */
 function getTitleBar( slideshow ) {
-	return array.find.call( slideshow.children, isTitleBar ) || null;
+	return Array.prototype.find.call( slideshow.children, isTitleBar ) || null;
 }
 
 /**
@@ -417,7 +415,7 @@ function getTitleSlide( title ) {
 				domPanic();
 			}
 	
-			const index = array.slice.call( parent.children ).indexOf( title );
+			const index = Array.from( parent.children ).indexOf( title );
 			return getSlides( slideshow )[ index ] || null;
 		}
 	
@@ -536,7 +534,7 @@ function getNextSiblingByClassName( element, className ) {
  *                         null if there is not any.
  */
 function getChildByClassName( container, className ) {
-	return array.find.call( container.getElementsByClassName( className ), isChild, container );
+	return Array.prototype.find.call( container.getElementsByClassName( className ), isChild, container );
 }
 
 /**
@@ -595,8 +593,8 @@ module.exports = {
 mw.hook( 'wikipage.content' ).add( onContentLoaded );
 mw.hook( 'contentFilter.loadEnd' ).add( function () {
 	mw.hook( 'contentFilter.filter' ).add( function () {
-		array.forEach.call( document.getElementsByClassName( 'boir-slideshow-enabled' ), updateMinHeight );
+		Array.from( document.getElementsByClassName( 'boir-slideshow-enabled' ), updateMinHeight );
 	} );
 } );
 
-} )( mediaWiki, Array.prototype );
+} )( mediaWiki );
