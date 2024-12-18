@@ -11,9 +11,14 @@
 		"noUncheckedIndexedAccess": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"strict": true
+		"strict": true,
+		"typeRoots": [
+			"./node_modules/@types",
+			"./node_modules/types-mediawiki"
+		]
 	},
 	"include": [
-		"./node_modules/types-mediawiki"
+		"./types",
+		"./src"
 	]
 }

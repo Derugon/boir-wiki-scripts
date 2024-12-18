@@ -1,0 +1,56 @@
+
+/* Feuille de style intégrée #9 | https://bindingofisaacrebirth.wiki.gg/wiki/The_Ludovico_Technique */
+
+#mw-panel .vector-menu-portal {
+  border: 12px solid;
+  border-image: url(/images/2/2b/CSS_Border_Tooltip.png) 12 fill round stretch;
+  background: none;
+}
+
+x {
+}
+
+/* #mw-panel .vector-menu-portal { */
+#mw-panel .vector-menu-portal, #mw-panel .vector-menu-portal + .vector-menu-portal {
+}
+
+#mw-panel .vector-menu-portal + .vector-menu-portal {
+  margin-top: .5em;
+}
+
+#mw-panel .vector-menu-portal, #mw-panel .vector-menu-portal + .vector-menu-portal {
+  /* border-image: url(/images/2/2b/CSS_Border_Tooltip.png) 12 fill round stretch; */
+  border-image: url(/images/2/2b/CSS_Border_Tooltip.png) 12 fill round round;
+  filter: saturate(400%) brightness(20%) hue-rotate(-20deg);
+}
+
+#mw-panel .vector-menu-portal * {
+}
+
+#mw-panel .vector-menu-portal, #mw-panel .vector-menu-portal + .vector-menu-portal {
+  /* filter: saturate(400%) brightness(20%) hue-rotate(-20deg); */
+  filter: saturate(400%) brightness(30%) hue-rotate(-20deg);
+}
+
+#p-logo {
+  height: auto;
+}
+
+#p-logo a {
+  height: 4em;
+}
+
+/* load.php | https://bindingofisaacrebirth.wiki.gg/load.php?lang=en&modules=ext.PortableInfobox.styles%7Cext.echo.styles.badge%7Cext.embedVideo.styles%7Cext.subscription.styles%7Cmediawiki.page.gallery.styles%7Coojs-ui.styles.icons-alerts%7Cskins.vector.styles.legacy&only=styles&skin=vector */
+
+@media screen {
+  #mw-panel {
+    /* width: 10em; */
+    width: 11em;
+  }
+}
+
+/* Élément | https://bindingofisaacrebirth.wiki.gg/wiki/The_Ludovico_Technique */
+
+body {
+  background: #111;
+}

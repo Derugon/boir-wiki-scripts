@@ -294,7 +294,8 @@ function cycle( slideshow ) {
 
 	setActiveSlide(
 		getNextSiblingByClassName( activeSlide, 'boir-slide' ) ||
-		getChildByClassName( slideshow, 'boir-slide' )
+		getChildByClassName( slideshow, 'boir-slide' ) ||
+		domPanic()
 	);
 }
 
@@ -331,7 +332,7 @@ function isEnabled( slideshow ) {
  * @returns {HTMLElement[]} An array of all slides of the slideshow.
  */
 function getSlides( slideshow ) {
-	return Array.prototype.filter.call( slideshow.children, isSlide );
+	return Array.from( slideshow.children ).filter( isSlide );
 }
 
 /**
@@ -341,7 +342,7 @@ function getSlides( slideshow ) {
  *                         null if there is not any.
  */
 function getActiveSlide( slideshow ) {
-	return Array.prototype.find.call( slideshow.children, isActiveSlide ) || null;
+	return Array.from( slideshow.children ).find( isActiveSlide ) || null;
 }
 
 /**
@@ -351,7 +352,7 @@ function getActiveSlide( slideshow ) {
  *                         null if it does not have any.
  */
 function getTitleBar( slideshow ) {
-	return Array.prototype.find.call( slideshow.children, isTitleBar ) || null;
+	return Array.from( slideshow.children ).find( isTitleBar ) || null;
 }
 
 /**
@@ -534,7 +535,7 @@ function getNextSiblingByClassName( element, className ) {
  *                         null if there is not any.
  */
 function getChildByClassName( container, className ) {
-	return Array.prototype.find.call( container.getElementsByClassName( className ), isChild, container );
+	return Array.from( container.getElementsByClassName( className ) ).find( isChild, container ) || null;
 }
 
 /**
@@ -566,13 +567,6 @@ function unwrap( element ) {
 
 	element.remove();
 }
-
-/**
- * @type {ResizeObserver | null}
- */
-const minHeightObserver = ResizeObserver ? new ResizeObserver( function ( entries ) {
-	entries.forEach( function ( entry ) { setMinHeight( entry.target.parentElement ) } );
-} ) : null;
 
 module.exports = {
 	init: init,
