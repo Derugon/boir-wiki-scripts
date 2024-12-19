@@ -344,16 +344,12 @@ function parseFilter( container ) {
 		return;
 	}
 
-	var parentContainer = container.parentElement;
-	while ( parentContainer ) {
-		if ( parentContainer.classList.contains( css.containerClass ) ) {
-			break;
-		}
+	const parentContainer = getParentContainer( container );
 
-		parentContainer = parentContainer.parentElement;
+	if ( parentContainer !== null ) {
+		cleanupViewContainer( container );
+		// TODO: disable active view
 	}
-
-	// TODO: remove view-related html stuff
 
 	if ( isMainContent( container ) ) {
 		filteringForced   = isFilteringForced( document );
@@ -373,12 +369,44 @@ function parseFilter( container ) {
 		hook.pageFilter.fire( pageFilter );
 	}
 
-	containers.push( container );
 	Array.from( container.getElementsByClassName( css.tagClass ), parseTag );
+
+	if ( parentContainer !== null ) {
+		containers.push( container );
+	}
 
 	hook.content.fire( containers, pageFilter );
 
-	// TODO: compute views that parent already have loaded
+	if ( parentContainer !== null ) {
+		getContainerViews( parentContainer ).forEach( parseFilter.parseView, container );
+		// TODO: re-enable active view
+	}
+}
+
+/**
+ * @this {HTMLElement}
+ * @param {number} view
+ */
+parseFilter.parseView = function ( view ) {
+	parseViewStackContainer( view, this );
+}
+
+/**
+ * Finds whether the given node is inside a managed container.
+ * @param {Node} node Node to search from.
+ * @returns The parent container if there is one, null otherwise.
+ */
+function getParentContainer( node ) {
+	var parent = node.parentElement;
+	while ( parent ) {
+		if ( parent.classList.contains( css.containerClass ) ) {
+			return parent;
+		}
+
+		parent = parent.parentElement;
+	}
+
+	return null;
 }
 
 /**
@@ -409,34 +437,87 @@ function parseTag( tag ) {
 function parseView( index ) {
 	Array.from(
 		document.getElementsByClassName( css.containerClass ),
-		parseViewStackContainer,
+		parseView.eachContainer,
 		index
 	);
 }
 
 /**
- * TODO
  * @this {number}
  * @param {HTMLElement} container
  */
-function parseViewStackContainer( container ) {
-	if ( container.classList.contains( css.containerViewClassPrefix + this ) ) {
+parseView.eachContainer = function ( container ) {
+	addContainerToView( this, container );
+}
+
+/**
+ * TODO
+ * @param {number} view
+ * @param {HTMLElement} container
+ */
+function addContainerToView( view, container ) {
+	if ( container.classList.contains( css.containerViewClassPrefix + view ) ) {
 		return;
 	}
 
+	parseViewStackContainer( view, container );
+	container.classList.add( css.containerViewClassPrefix + view );
+}
+
+/**
+ * TODO
+ * @param {number} view
+ * @param {HTMLElement} container
+ */
+function parseViewStackContainer( view, container ) {
 	const elementSet = new Set();
 	Array.from(
 		container.getElementsByClassName( css.tagClass ),
 		getViewElementsFromTag,
-		{ set: elementSet, filter: Math.pow( 2, this ) }
+		{ set: elementSet, filter: Math.pow( 2, view ) }
 	);
 
 	/** @type {HTMLElement[]} */
 	const stack = [];
 	Array.from( elementSet ).sort( nodePostOrder ).forEach( parseViewStackContext, stack );
 
-	stack.forEach( addElementToView, this );
-	container.classList.add( css.containerViewClassPrefix + this );
+	stack.forEach( addElementToView, view );
+}
+
+/**
+ * TODO
+ * @param {HTMLElement} container
+ */
+function getContainerViews( container ) {
+	/** @type {number[]} */
+	const views = [];
+	container.classList.forEach( getContainerViews.insert, views );
+	return views;
+}
+
+/**
+ * @this {number[]}
+ * @param {string} className
+ */
+getContainerViews.insert = function ( className ) {
+	if ( className.startsWith( css.containerViewClassPrefix ) ) {
+		this.push( +className.substring( css.containerViewClassPrefix.length ) );
+	}
+}
+
+/**
+ * TODO
+ * @param {HTMLElement} container
+ */
+function cleanupViewContainer( container ) {
+	const views = getContainerViews( container );
+
+	Array.from( container.getElementsByClassName( css.viewClass ), cleanupViewElement, views );
+
+	views.forEach(
+		removePrefixedClass,
+		{ classList: container.classList, prefix: css.containerViewClassPrefix }
+	);
 }
 
 /**
@@ -593,6 +674,16 @@ function addElementToView( element ) {
 
 /**
  * TODO
+ * @this {number[]}
+ * @param {HTMLElement} element
+ */
+function cleanupViewElement( element ) {
+	element.classList.remove( css.viewClass );
+	this.forEach( removePrefixedClass, { classList: element.classList, prefix: css.viewClassPrefix } );
+}
+
+/**
+ * TODO
  * @param {HTMLElement} element
  * @param {HTMLElement[]} stack
  * @returns {HTMLElement?}
@@ -686,6 +777,14 @@ function applyViewRule_allChildren( element, stack ) {
  */
 function restoreStack( stack, toRestore ) {
 	stack.push.apply( stack, toRestore.reverse() );
+}
+
+/**
+ * @this {{ classList: DOMTokenList, prefix: string }}
+ * @param {number} view
+ */
+function removePrefixedClass( view ) {
+	this.classList.remove( this.prefix + '' + view );
 }
 
 /**
