@@ -1,15 +1,17 @@
 /**
  * Name:        TODO
  * Description: TODO
+ *
+ * Module:      ext.gadget.content-filter-preview
  */
 
 // <nowiki>
 
-( function ( mw, document ) {
+( function ( document ) {
 
 /**
  * TODO
- * @param {HTMLLIElement} button
+ * @param {HTMLElement} button
  */
 function setButtonEvents( button ) {
 	button.addEventListener( 'mouseenter', onButtonEnter );
@@ -26,7 +28,7 @@ function onButtonEnter() {
 		return;
 	}
 
-	// we do not know whether the view is computed when the page is loaded
+	// We do not know whether the view is computed when the page is loaded
 	// or lazily when the associated filter is activated.
 	cf.parseView( +filterIndex );
 
@@ -62,10 +64,9 @@ function removeViewFragmentHighlighting( viewFragment ) {
 	viewFragment.classList.remove( 'cf-view-hover' );
 }
 
-mw.hook( 'contentFilter.loadEnd' ).add( function onContentSet() {
-	mw.hook( 'contentFilter.loadEnd' ).remove( onContentSet );
+hookFiredOnce( 'contentFilter.filter.menuPlaced' ).then( function () {
 	cf.buttons.forEach( setButtonEvents );
 } );
 
-} )( mediaWiki, document );
+} )( document );
 // </nowiki>

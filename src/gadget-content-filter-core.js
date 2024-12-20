@@ -1,6 +1,8 @@
 /**
  * Name:        TODO
  * Description: TODO
+ *
+ * Module:      ext.gadget.content-filter-core
  */
 
 // <nowiki>
@@ -8,16 +10,9 @@
 ( function ( mw, document, console ) {
 
 if ( window.cf ) {
-	// already loaded
+	// Already loaded, or something went wrong.
 	return;
 }
-
-window.cf =
-window.contentFilter = {
-	filterMax: 0,
-	isFilteringAvailable: function () { return false; },
-	parseView: function () {}
-};
 
 /** @this {( ...msg: string[] ) => void} */
 function logger() {
@@ -35,18 +30,6 @@ log( 'Loading.' );
  * MediaWiki configuration values.
  */
 const config = mw.config.get( [ 'skin', 'wgAction', 'wgIsRedirect', 'wgPageName' ] );
-
-if ( config.skin !== 'vector' ) {
-	error(
-		'This script only works with the vector skin. ' +
-		'To prevent compatibility issues with other skins, it will be disabled.'
-	);
-	return;
-}
-
-if ( config.wgIsRedirect || ![ 'view', 'edit' ].includes( config.wgAction ) ) {
-	return;
-}
 
 /**
  * The number of filtering layers (bits) used on pages.
@@ -178,22 +161,7 @@ const css = {
 	inContentAdClass: 'gpt-ad',
 
 	contextClass: 'cf-context',
-
 	contextClassPrefix: 'cf-context-',
-
-	viewClass: 'cf-view',
-
-	viewClassPrefix: 'cf-view-',
-
-	containerViewClassPrefix: 'cf-container-view-',
-};
-
-/**
- * TODO
- */
-const hook = {
-	pageFilter: mw.hook( 'contentFilter.pageFilter' ),
-	content: mw.hook( 'contentFilter.content' ),
 };
 
 /**
@@ -232,25 +200,6 @@ var pageFilter = filterMax;
  * @type {number}
  */
 var nextTagIndex = 0;
-
-/**
- * Handles an "impossible" case, supposedly caused by other scripts breaking the
- * expected DOM elements.
- * @param {string} [note] Some information about the missing or invalid elements.
- * @returns {never}
- */
-function domPanic( note ) {
-	var message = (
-		"Something went wrong, either DOM elements have been modified in an" +
-		"unexpected way, or they have been disconnected from the document."
-	);
-
-	if ( note ) {
-		message += "\nAdditional note: " + note;
-	}
-
-	throw message;
-}
 
 /**
  * Called when some text should be processed by the content filter.
@@ -303,7 +252,7 @@ function getPageFilter() {
 		return getFilter( pageContextBox );
 	}
 
-	const tagChild = pageContextBox.getElementsByClassName( css.tagClass )[ 0 ];
+	const tagChild = getTags( pageContextBox )[ 0 ];
 	if ( !tagChild ) {
 		error(
 			"Neither the page context and any of its children have a " +
@@ -313,6 +262,17 @@ function getPageFilter() {
 	}
 
 	return getFilter( tagChild );
+}
+/**
+ * TODO
+ * @param {Document | HTMLElement} [root]
+ */
+function getTags( root ) {
+	if ( root instanceof HTMLElement ) {
+		return root.getElementsByClassName( css.tagClass );
+	} else {
+		return ( root || document ).getElementsByClassName( css.tagClass );
+	}
 }
 
 /**
@@ -333,7 +293,7 @@ function parseFilter( container ) {
 		return;
 	}
 
-	if ( container.getElementsByClassName( css.containerClass )[ 0 ] ) {
+	if ( getContainers( container )[ 0 ] ) {
 		error(
 			'The newly added content contains elements which are already ' +
 			'managed by this script. The filtering has been disabled ' +
@@ -346,11 +306,6 @@ function parseFilter( container ) {
 
 	const parentContainer = getParentContainer( container );
 
-	if ( parentContainer !== null ) {
-		cleanupViewContainer( container );
-		// TODO: disable active view
-	}
-
 	if ( isMainContent( container ) ) {
 		filteringForced   = isFilteringForced( document );
 		containers.length = 0;
@@ -360,35 +315,35 @@ function parseFilter( container ) {
 		return;
 	}
 
+	mw.hook( 'contentFilter.content.beforeRegistered' ).fire( container, parentContainer );
+
 	container.classList.add( css.containerClass );
 
 	if ( isMainContent( container ) ) {
 		log( 'Initializing state.' );
 		pageFilter = getPageFilter();
-
-		hook.pageFilter.fire( pageFilter );
+		mw.hook( 'contentFilter.content.pageFilter' ).fire( pageFilter );
 	}
 
-	Array.from( container.getElementsByClassName( css.tagClass ), parseTag );
+	Array.from( getTags( container ), parseTag );
 
-	if ( parentContainer !== null ) {
+	if ( parentContainer === null ) {
 		containers.push( container );
 	}
 
-	hook.content.fire( containers, pageFilter );
-
-	if ( parentContainer !== null ) {
-		getContainerViews( parentContainer ).forEach( parseFilter.parseView, container );
-		// TODO: re-enable active view
-	}
+	mw.hook( 'contentFilter.content.registered' ).fire( container, parentContainer );
 }
 
 /**
- * @this {HTMLElement}
- * @param {number} view
+ * TODO
+ * @param {Document | HTMLElement} [root]
  */
-parseFilter.parseView = function ( view ) {
-	parseViewStackContainer( view, this );
+function getContainers( root ) {
+	if ( root instanceof HTMLElement ) {
+		return root.getElementsByClassName( css.containerClass );
+	} else {
+		return ( root || document ).getElementsByClassName( css.containerClass );
+	}
 }
 
 /**
@@ -414,167 +369,27 @@ function getParentContainer( node ) {
  * @param {HTMLElement} tag
  */
 function parseTag( tag ) {
-	if ( tag.dataset.cfContext ) {
+	if ( tag.dataset.cfContext !== undefined ) {
 		return;
 	}
 
-	const context = getTagContext( tag );
-	if ( !context ) {
+	const context = getContext( tag );
+	if ( context === null ) {
 		warn( 'No context found for the following tag:', tag );
 		return;
 	}
 
 	tag.dataset.cfContext = '' + nextTagIndex;
-	context.classList.add( css.contextClass );
-	context.classList.add( css.contextClassPrefix + nextTagIndex );
+	context.forEach( parseTag.addToContext );
 	nextTagIndex++;
 }
 
 /**
- * TODO
- * @param {number} index
+ * @param {HTMLElement} element
  */
-function parseView( index ) {
-	Array.from(
-		document.getElementsByClassName( css.containerClass ),
-		parseView.eachContainer,
-		index
-	);
-}
-
-/**
- * @this {number}
- * @param {HTMLElement} container
- */
-parseView.eachContainer = function ( container ) {
-	addContainerToView( this, container );
-}
-
-/**
- * TODO
- * @param {number} view
- * @param {HTMLElement} container
- */
-function addContainerToView( view, container ) {
-	if ( container.classList.contains( css.containerViewClassPrefix + view ) ) {
-		return;
-	}
-
-	parseViewStackContainer( view, container );
-	container.classList.add( css.containerViewClassPrefix + view );
-}
-
-/**
- * TODO
- * @param {number} view
- * @param {HTMLElement} container
- */
-function parseViewStackContainer( view, container ) {
-	const elementSet = new Set();
-	Array.from(
-		container.getElementsByClassName( css.tagClass ),
-		getViewElementsFromTag,
-		{ set: elementSet, filter: Math.pow( 2, view ) }
-	);
-
-	/** @type {HTMLElement[]} */
-	const stack = [];
-	Array.from( elementSet ).sort( nodePostOrder ).forEach( parseViewStackContext, stack );
-
-	stack.forEach( addElementToView, view );
-}
-
-/**
- * TODO
- * @param {HTMLElement} container
- */
-function getContainerViews( container ) {
-	/** @type {number[]} */
-	const views = [];
-	container.classList.forEach( getContainerViews.insert, views );
-	return views;
-}
-
-/**
- * @this {number[]}
- * @param {string} className
- */
-getContainerViews.insert = function ( className ) {
-	if ( className.startsWith( css.containerViewClassPrefix ) ) {
-		this.push( +className.substring( css.containerViewClassPrefix.length ) );
-	}
-}
-
-/**
- * TODO
- * @param {HTMLElement} container
- */
-function cleanupViewContainer( container ) {
-	const views = getContainerViews( container );
-
-	Array.from( container.getElementsByClassName( css.viewClass ), cleanupViewElement, views );
-
-	views.forEach(
-		removePrefixedClass,
-		{ classList: container.classList, prefix: css.containerViewClassPrefix }
-	);
-}
-
-/**
- * TODO
- * @this {{ set: Set<HTMLElement>, filter: number }}
- * @param {HTMLElement} tag
- */
-function getViewElementsFromTag( tag ) {
-	if ( getFilter( tag ) & this.filter ) {
-		// Full match: select the tag.
-		this.set.add( tag );
-		return;
-	}
-
-	// No match: select the tag and its context.
-	const context = document.getElementsByClassName( css.contextClassPrefix + tag.dataset.cfContext );
-	if ( !context[ 0 ] ) {
-		return;
-	}
-
-	this.set.add( tag );
-	Array.from( context, this.set.add.bind( this.set ) );
-}
-
-/**
- * TODO
- * @param {Node} n1
- * @param {Node} n2
- */
-function nodePostOrder( n1, n2 ) {
-	if ( n1 === n2 ) {
-		return 0;
-	}
-
-	const cmp = n1.compareDocumentPosition( n2 );
-	if ( cmp & Node.DOCUMENT_POSITION_CONTAINED_BY ) {
-		return 1;
-	} else if ( cmp & Node.DOCUMENT_POSITION_CONTAINS ) {
-		return -1;
-	} else if ( cmp & Node.DOCUMENT_POSITION_PRECEDING ) {
-		return 1;
-	} else {
-		return -1;
-	}
-}
-
-/**
- * TODO
- * @this {HTMLElement[]}
- * @param {HTMLElement} context
- */
-function parseViewStackContext( context ) {
-	/** @type {HTMLElement?} */
-	var element = context;
-	do {
-		element = applyViewRule( element, this );
-	} while ( element );
+parseTag.addToContext = function ( element ) {
+	element.classList.add( css.contextClass );
+	element.classList.add( css.contextClassPrefix + nextTagIndex );
 }
 
 /**
@@ -583,8 +398,12 @@ function parseViewStackContext( context ) {
  * @returns {boolean} True if the filters can be used, false otherwise.
  */
 function isFilteringAvailable( pageTitle ) {
+	if ( config.wgIsRedirect || ![ 'view', 'edit' ].includes( config.wgAction ) ) {
+		return false;
+	}
+
 	const namespace = pageTitle.getNamespaceId();
-	if ( namespace == 0 || namespace == 2 ) {
+	if ( [ 0, 2 ].includes( namespace ) ) {
 		return true;
 	}
 
@@ -598,19 +417,19 @@ function isFilteringAvailable( pageTitle ) {
 
 /**
  * Gets the numeric filter of an element.
- * @param {HTMLElement} element The element.
+ * @param {HTMLElement} tag The element.
  * @returns {number} The numeric filter of the given element.
  */
-function getFilter( element ) {
-	if ( element.dataset.cfVal ) {
-		return +element.dataset.cfVal;
+function getFilter( tag ) {
+	if ( tag.dataset.cfVal ) {
+		return +tag.dataset.cfVal;
 	}
 
-	if ( !element.classList.contains( css.tagClass ) ) {
+	if ( !isTag( tag ) ) {
 		return filterMax;
 	}
 
-	const classList = element.classList;
+	const classList = tag.classList;
 	for ( var i = 0; i < classList.length; ++i ) {
 		const className = classList[ i ];
 		if ( !className || !className.startsWith( css.filterClassIntro ) ) {
@@ -623,7 +442,7 @@ function getFilter( element ) {
 			continue;
 		}
 
-		element.dataset.cfVal = filterClass;
+		tag.dataset.cfVal = filterClass;
 		return filter;
 	}
 
@@ -633,9 +452,12 @@ function getFilter( element ) {
 /**
  * TODO
  * @param {HTMLElement} tag
- * @returns {HTMLElement?}
  */
-function getTagContext( tag ) {
+function getContext( tag ) {
+	if ( tag.dataset.cfContext !== undefined ) {
+		return Array.from( document.getElementsByClassName( css.contextClassPrefix + tag.dataset.cfContext ) );
+	}
+
 	const result = (
 		getTagContext_firstChild( tag ) ||
 		null
@@ -651,151 +473,18 @@ function getTagContext( tag ) {
  * <A> (tag) ... </A>
  *     ==>   [ <A> (tag) ... </A> ]
  * @param {HTMLElement} tag
- * @returns {HTMLElement?}
  */
 function getTagContext_firstChild( tag ) {
 	const result = getPreviousSibling( tag );
-	if ( result.sibling ) {
+	if ( result.sibling !== null ) {
 		return null;
 	}
 
-	return result.parent;
-}
-
-/**
- * TODO
- * @this {number}
- * @param {HTMLElement} element
- */
-function addElementToView( element ) {
-	element.classList.add( css.viewClass );
-	element.classList.add( css.viewClassPrefix + this );
-}
-
-/**
- * TODO
- * @this {number[]}
- * @param {HTMLElement} element
- */
-function cleanupViewElement( element ) {
-	element.classList.remove( css.viewClass );
-	this.forEach( removePrefixedClass, { classList: element.classList, prefix: css.viewClassPrefix } );
-}
-
-/**
- * TODO
- * @param {HTMLElement} element
- * @param {HTMLElement[]} stack
- * @returns {HTMLElement?}
- */
-function applyViewRule( element, stack ) {
-	const result = (
-		applyViewRule_parentInView( element, stack ) ||
-		applyViewRule_allChildren( element, stack ) ||
-		null
-	);
-
-	// TODO: other rules
-
-	if ( !result ) {
-		stack.push( element );
-	}
-
-	return result;
-}
-
-/**
- * TODO
- * Remove child fragment.
- * [ <A> ... [ <X/> ] ... </A> ]
- *     ==>   [ <A> ... <X/> ... </A> ]
- * @param {HTMLElement} element
- * @param {HTMLElement[]} stack
- * @returns {HTMLElement?}
- */
-function applyViewRule_parentInView( element, stack ) {
-	const previousElement = stack.pop();
-	if ( !previousElement ) {
+	if ( result.parent === null ) {
 		return null;
 	}
 
-	if ( !isChildOf( element, previousElement ) ) {
-		stack.push( previousElement );
-		return null;
-	}
-
-	return previousElement;
-}
-
-/**
- * TODO
- * Merge adjacent fragments.
- * <A> [ <B1/> ] ... [ <Bn/> ] [ <X/> ] </A>
- *     ==>   [ <A> <B1/> ... <Bn/> <X/> </A> ]
- * @param {HTMLElement} element
- * @param {HTMLElement[]} stack
- * @returns {HTMLElement?}
- */
-function applyViewRule_allChildren( element, stack ) {
-	if ( getNextSibling( element ).sibling ) {
-		return null;
-	}
-
-	/** @type {HTMLElement[]} */
-	const previousElements = [];
-	var result = getPreviousSibling( element );
-	while ( result.sibling ) {
-		const previousElement = stack.pop();
-		if ( !previousElement ) {
-			// No previous element in view.
-			restoreStack( stack, previousElements );
-			return null;
-		}
-
-		previousElements.push( previousElement );
-
-		if (
-			!result.sibling.isSameNode( previousElement ) &&
-			!isChildOf( result.sibling, previousElement )
-		) {
-			// Previous element not in view.
-			restoreStack( stack, previousElements );
-			return null;
-		}
-
-		element = previousElement;
-		result  = getPreviousSibling( element );
-	}
-
-	return result.parent;
-}
-
-/**
- * TODO
- * @param {HTMLElement[]} stack
- * @param {HTMLElement[]} toRestore
- */
-function restoreStack( stack, toRestore ) {
-	stack.push.apply( stack, toRestore.reverse() );
-}
-
-/**
- * @this {{ classList: DOMTokenList, prefix: string }}
- * @param {number} view
- */
-function removePrefixedClass( view ) {
-	this.classList.remove( this.prefix + '' + view );
-}
-
-/**
- * TODO
- * @param {Node} child
- * @param {Node} parent
- * @returns {boolean}
- */
-function isChildOf( child, parent ) {
-	const cmp = child.compareDocumentPosition( parent );
-	return ( cmp & Node.DOCUMENT_POSITION_CONTAINS ) > 0;
+	return [ result.parent ];
 }
 
 /**
@@ -910,11 +599,18 @@ function isGhostContainer( element ) {
  */
 const filteringAvailable = isFilteringAvailable( currentTitle );
 
-$.extend( cf, {
+window.contentFilter =
+window.cf = {
 	filterMax: filterMax,
+	containers: containers,
 	isFilteringAvailable: isFilteringAvailable,
-	parseView: parseView
-} );
+	getTags: getTags,
+	getContainers: getContainers,
+	getFilter: getFilter,
+	getContext: getContext,
+	getPreviousSibling: getPreviousSibling,
+	getNextSibling: getNextSibling
+};
 
 safeAddContentHook( onContentLoaded );
 

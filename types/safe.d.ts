@@ -17,6 +17,10 @@ declare interface Array<T> {
 	filter<This>(predicate: (this: This, value: T, index: number, array: T[]) => unknown, thisArg: This): T[];
 }
 
+declare interface Node {
+    cloneNode(deep?: boolean): this;
+}
+
 declare interface HTMLElement {
     readonly children: HTMLCollectionOf<HTMLElement>;
 	readonly nextElementSibling: HTMLElement | null;
@@ -33,4 +37,12 @@ declare interface HTMLElement {
 	querySelector<E extends HTMLElement = HTMLElement>(selectors: string): E | null;
 	querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): NodeListOf<HTMLElementTagNameMap[K]>;
 	querySelectorAll<E extends HTMLElement = HTMLElement>(selectors: string): NodeListOf<E>;
+}
+
+declare interface HTMLTemplateElement {
+	readonly content: HTMLDocumentFragment;
+}
+
+declare interface HTMLDocumentFragment extends DocumentFragment {
+    getElementById(elementId: string): HTMLElement | null;
 }

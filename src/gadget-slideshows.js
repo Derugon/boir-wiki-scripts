@@ -6,6 +6,23 @@
  */
 const autoInterval = 1500;
 
+const css = {
+	slideshowClass: 'boir-slideshow',
+	slideClass: 'boir-slide',
+	titleClass: 'boir-slide-title',
+	titlePlaceholderClass: 'boir-slide-title-placeholder',
+	titlebarClass: 'boir-slideshow-titlebar',
+
+	enabledSlideshowClass: 'boir-slideshow-enabled',
+	disabledSlideshowClass: 'boir-slideshow-disabled',
+	hiddenSlideshowClass: 'boir-slideshow-hidden',
+	autoSlideshowClass: 'boir-slideshow-auto',
+	dlcSlideshowClass: 'dlc-slideshow',
+
+	activeSlideClass: 'boir-slide-active',
+	activeTitleClass: 'boir-slide-title-active'
+};
+
 /**
  * Whether automatic cycling has been enabled, i.e. at least one automatic
  * slideshow is enabled or was enabled before the last slide update.
@@ -43,25 +60,12 @@ function domPanic() {
 }
 
 /**
- * Called when some text should be processed.
- * @param {JQuery} $content The content element to process.
- */
-function onContentLoaded( $content ) {
-	const content = $content[ 0 ];
-	if ( !content ) {
-		return;
-	}
-
-	init( content );
-}
-
-/**
  * Enables all slideshows in a container.
  * @param {HTMLElement} container The container.
  * @returns {HTMLElement[]} The enabled slideshows in the container.
  */
 function init( container ) {
-	return Array.from( container.getElementsByClassName( 'boir-slideshow' ) )
+	return Array.from( container.getElementsByClassName( css.slideshowClass ) )
 		.filter( enable );
 }
 
@@ -72,7 +76,7 @@ function init( container ) {
  *                    false if it is now disabled.
  */
 function enable( slideshow ) {
-	if ( slideshow.classList.contains( 'boir-slideshow-disabled' ) ) {
+	if ( slideshow.classList.contains( css.disabledSlideshowClass ) ) {
 		return false;
 	}
 
@@ -89,10 +93,10 @@ function enable( slideshow ) {
 	/** @type {ClickEvents} */
 	const newClickEvents = { titles: new Map() };
 
-	slideshow.classList.add( 'boir-slideshow-enabled' );
+	slideshow.classList.add( css.enabledSlideshowClass );
 
 	const titlebar = document.createElement( 'div' );
-	titlebar.classList.add( 'boir-slideshow-titlebar' );
+	titlebar.classList.add( css.titlebarClass );
 
 	const titles = slides.map( enableTitle, newClickEvents );
 
@@ -103,21 +107,21 @@ function enable( slideshow ) {
 		}
 	}
 
-	const activeIndex = slideshow.classList.contains( 'dlc-slideshow' ) ? slides.length - 1 : 0;
+	const activeIndex = slideshow.classList.contains( css.dlcSlideshowClass ) ? slides.length - 1 : 0;
 	const activeSlide = slides[ activeIndex ];
 	const activeTitle = titles[ activeIndex ];
 	if ( !activeSlide || !activeTitle ) {
 		domPanic();
 	}
 
-	activeSlide.classList.add( 'boir-slide-active' );
-	if ( activeTitle.classList.contains( 'boir-slide-title' ) ) {
-		activeTitle.classList.add( 'boir-slide-title-active' );
+	activeSlide.classList.add( css.activeSlideClass );
+	if ( activeTitle.classList.contains( css.titleClass ) ) {
+		activeTitle.classList.add( css.activeTitleClass );
 	}
 
 	if (
-		!slideshow.classList.contains( 'boir-slideshow-hidden' ) &&
-		!slideshow.getElementsByClassName( 'boir-slideshow' )[ 0 ]
+		!slideshow.classList.contains( css.hiddenSlideshowClass ) &&
+		!slideshow.getElementsByClassName( css.slideshowClass )[ 0 ]
 	) {
 		newClickEvents.slide = function () { /* cycle( slideshow ); */ };
 		slides.forEach( setSlideClickEvent, newClickEvents.slide );
@@ -125,7 +129,7 @@ function enable( slideshow ) {
 
 	titles.forEach( appendTitle, titlebar );
 
-	if ( slideshow.classList.contains( 'boir-slideshow-auto' ) ) {
+	if ( slideshow.classList.contains( css.autoSlideshowClass ) ) {
 		makeAuto( slideshow );
 	}
 
@@ -144,18 +148,23 @@ function enable( slideshow ) {
 /**
  * Adds a title to a title bar of a slideshow.
  * @this {HTMLElement} The title bar.
- * @param {HTMLElement?} titlePlaceholder The title to add.
+ * @param {HTMLElement?} title The title to add.
  */
-function appendTitle( titlePlaceholder ) {
-	if ( !titlePlaceholder ) {
+function appendTitle( title ) {
+	if ( !title ) {
 		this.appendChild( document.createElement( 'span' ) );
 		return;
 	}
 
-	this.appendChild( titlePlaceholder.cloneNode( true ) );
+	const titlePlaceholder = title.cloneNode( true );
+	const parent = title.parentElement || domPanic();
 
-	titlePlaceholder.classList.remove( 'boir-slide-title' );
-	titlePlaceholder.classList.add( 'boir-slide-title-placeholder' );
+	parent.replaceChild( titlePlaceholder, title );
+	this.appendChild( title );
+
+	titlePlaceholder.classList.remove( css.activeTitleClass );
+	titlePlaceholder.classList.remove( css.titleClass );
+	titlePlaceholder.classList.add( css.titlePlaceholderClass );
 }
 
 /**
@@ -172,7 +181,7 @@ function setSlideClickEvent( slide ) {
  * @param {HTMLElement} slideshow The slideshow.
  */
 function makeAuto( slideshow ) {
-	slideshow.classList.add( 'boir-slideshow-auto' );
+	slideshow.classList.add( css.autoSlideshowClass );
 	if ( !isEnabled( slideshow ) || auto.indexOf( slideshow ) !== -1 ) {
 		return;
 	}
@@ -191,13 +200,13 @@ function makeAuto( slideshow ) {
  * @param {HTMLElement} slideshow The slideshow to disable.
  */
 function disable( slideshow ) {
-	if ( slideshow.classList.contains( 'boir-slideshow-disabled' ) ) {
+	if ( slideshow.classList.contains( css.disabledSlideshowClass ) ) {
 		return;
 	}
 
 	const slides = getSlides( slideshow );
 
-	slideshow.classList.add( 'boir-slideshow-disabled' );
+	slideshow.classList.add( css.disabledSlideshowClass );
 
 	if ( !isEnabled( slideshow ) ) {
 		return;
@@ -211,10 +220,10 @@ function disable( slideshow ) {
 
 	clickEvents.delete( slideshow );
 	slideshow.style.minHeight = '';
-	slideshow.classList.remove( 'boir-slideshow-enabled' );
+	slideshow.classList.remove( css.enabledSlideshowClass );
 
 	slides.forEach( function ( slide ) {
-		slide.classList.remove( 'boir-slide-active' );
+		slide.classList.remove( css.activeSlideClass );
 		if ( localClickEvents.slide ) {
 			slide.removeEventListener( 'click', localClickEvents.slide );
 		}
@@ -233,12 +242,12 @@ function disable( slideshow ) {
 			title.removeEventListener( 'click', titleEvent );
 		}
 
-		title.classList.remove( 'boir-slide-title-active' );
+		title.classList.remove( css.activeTitleClass );
 
-		const titlePlaceholder = slide.getElementsByClassName( 'boir-slide-title-placeholder' )[ 0 ];
+		const titlePlaceholder = slide.getElementsByClassName( css.titlePlaceholderClass )[ 0 ];
 		if ( titlePlaceholder ) {
-			titlePlaceholder.classList.remove( 'boir-slide-title-placeholder' );
-			titlePlaceholder.classList.add( 'boir-slide-title' );
+			titlePlaceholder.classList.remove( css.titlePlaceholderClass );
+			titlePlaceholder.classList.add( css.titleClass );
 		}
 	} );
 
@@ -263,8 +272,8 @@ function setActiveSlide( slide, title ) {
 		domPanic();
 	}
 
-	activeSlide.classList.remove( 'boir-slide-active' );
-	slide.classList.add( 'boir-slide-active' );
+	activeSlide.classList.remove( css.activeSlideClass );
+	slide.classList.add( css.activeSlideClass );
 
 	const titlebar = getTitleBar( slideshow );
 	if ( !titlebar ) {
@@ -273,12 +282,12 @@ function setActiveSlide( slide, title ) {
 
 	var activeTitle = getSlideTitle( activeSlide );
 	if ( activeTitle ) {
-		activeTitle.classList.remove( 'boir-slide-title-active' );
+		activeTitle.classList.remove( css.activeTitleClass );
 	}
 
 	const slideTitle = title || getSlideTitle( slide );
-	if ( slideTitle && slideTitle.classList.contains( 'boir-slide-title' ) ) {
-		slideTitle.classList.add( 'boir-slide-title-active' );
+	if ( slideTitle && slideTitle.classList.contains( css.titleClass ) ) {
+		slideTitle.classList.add( css.activeTitleClass );
 	}
 }
 
@@ -293,8 +302,8 @@ function cycle( slideshow ) {
 	}
 
 	setActiveSlide(
-		getNextSiblingByClassName( activeSlide, 'boir-slide' ) ||
-		getChildByClassName( slideshow, 'boir-slide' ) ||
+		getNextSiblingByClassName( activeSlide, css.slideClass ) ||
+		getChildByClassName( slideshow, css.slideClass ) ||
 		domPanic()
 	);
 }
@@ -323,7 +332,7 @@ function removeSlide( slide ) {
  * @returns {boolean} True if the slideshow is enabled, false otherwise.
  */
 function isEnabled( slideshow ) {
-	return slideshow.classList.contains( 'boir-slideshow-enabled' );
+	return slideshow.classList.contains( css.enabledSlideshowClass );
 }
 
 /**
@@ -361,7 +370,7 @@ function getTitleBar( slideshow ) {
  * @returns {boolean} True if the element is a slide, false otherwise.
  */
 function isSlide( element ) {
-	return element.classList.contains( 'boir-slide' );
+	return element.classList.contains( css.slideClass );
 }
 
 /**
@@ -371,7 +380,7 @@ function isSlide( element ) {
  *                    slideshow, false otherwise.
  */
 function isActiveSlide( element ) {
-	return element.classList.contains( 'boir-slide-active' );
+	return element.classList.contains( css.activeSlideClass );
 }
 
 /**
@@ -381,7 +390,7 @@ function isActiveSlide( element ) {
  *                    false otherwise.
  */
 function isTitleBar( element ) {
-	return element.classList.contains( 'boir-slideshow-titlebar' );
+	return element.classList.contains( css.titlebarClass );
 }
 
 /**
@@ -400,7 +409,7 @@ function getSlideTitle( slide ) {
 		return titlebar.children[ getSlides( slideshow ).indexOf( slide ) ] || domPanic();
 	}
 
-	return slide.getElementsByClassName( 'boir-slide-title' )[ 0 ] || null;
+	return slide.getElementsByClassName( css.titleClass )[ 0 ] || null;
 }
 
 /**
@@ -410,7 +419,7 @@ function getSlideTitle( slide ) {
  */
 function getTitleSlide( title ) {
 	for ( var parent = title.parentElement; parent; parent = parent.parentElement ) {
-		if ( parent.classList.contains( 'boir-slideshow-titlebar' ) ) {
+		if ( isTitleBar( parent ) ) {
 			const slideshow = parent.parentElement;
 			if ( !slideshow ) {
 				domPanic();
@@ -420,7 +429,7 @@ function getTitleSlide( title ) {
 			return getSlides( slideshow )[ index ] || null;
 		}
 	
-		if ( parent.classList.contains( 'boir-slide' ) ) {
+		if ( isSlide( parent ) ) {
 			return parent;
 		}
 	}
@@ -441,7 +450,7 @@ function enableTitle( slide ) {
 	}
 
 	const click = function () {
-		if ( title.classList.contains( 'boir-slide-title-active' ) ) {
+		if ( title.classList.contains( css.activeTitleClass ) ) {
 			return;
 		}
 
@@ -484,19 +493,19 @@ function setMinHeight( slideshow ) {
 		domPanic();
 	}
 
-	activeSlide.classList.remove( 'boir-slide-active' );
+	activeSlide.classList.remove( css.activeSlideClass );
 
 	const minHeight = getSlides( slideshow ).reduce( function ( maxHeight, slide ) {
-		slide.classList.add( 'boir-slide-active' );
+		slide.classList.add( css.activeSlideClass );
 		maxHeight = Math.max(
 			maxHeight,
 			slideshow.getBoundingClientRect().height
 		);
-		slide.classList.remove( 'boir-slide-active' );
+		slide.classList.remove( css.activeSlideClass );
 		return maxHeight;
 	}, 0 );
 
-	activeSlide.classList.add( 'boir-slide-active' );
+	activeSlide.classList.add( css.activeSlideClass );
 
 	slideshow.style.minHeight = minHeight + 'px';
 }
@@ -584,11 +593,18 @@ module.exports = {
 	getTitleSlide: getTitleSlide
 };
 
-mw.hook( 'wikipage.content' ).add( onContentLoaded );
-mw.hook( 'contentFilter.loadEnd' ).add( function () {
-	mw.hook( 'contentFilter.filter' ).add( function () {
-		Array.from( document.getElementsByClassName( 'boir-slideshow-enabled' ), updateMinHeight );
-	} );
+mw.hook( 'wikipage.content' ).add( function ( $content ) {
+	const content = $content[ 0 ];
+	if ( content ) {
+		init( content );
+	}
+} );
+
+mw.hook( 'contentFilter.filter.viewUpdated' ).add( function () {
+	Array.from(
+		document.getElementsByClassName( css.enabledSlideshowClass ),
+		updateMinHeight
+	);
 } );
 
 } )( mediaWiki );

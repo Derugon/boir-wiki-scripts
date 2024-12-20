@@ -1,16 +1,20 @@
 /**
- * Name:        TODO
- * Description: TODO
+ * Name:         TODO
+ * Description:  TODO
+ *
+ * Module:       ext.gadget.content-filter
+ * Dependencies: ext.gadget.content-filter-view
  */
 
 // <nowiki>
 
 ( function ( mw, document, console ) {
 
-if ( window.cf && window.cf.buttons ) {
-	// already loaded
+if ( !window.cf || !( 'parseView' in window.cf ) || 'buttons' in window.cf ) {
+	// Already loaded, or something went wrong.
 	return;
 }
+const cf = window.cf;
 
 /** @this {( ...msg: string[] ) => void} */
 function logger() {
@@ -30,21 +34,40 @@ log( 'Loading.' );
  */
 const urlParam = 'cfval';
 
-/**
- * If an element with this ID is on a page (directly on the page or
- * transcluded), the filter buttons will be inserted in it. These will
- * then not appear on the page header.
- * @type {string}
- */
-const filtersInfoId = 'cf-info';
+const css = {
+	/**
+	 * If an element with this ID is on a page (directly on the page or
+	 * transcluded), the filter buttons will be inserted in it. These will
+	 * then not appear on the page header.
+	 */
+	infoId: 'cf-info',
+
+	menuClass: 'cf-menu',
+	menuToggleClass: 'cf-toggle',
+	menuContentClass: 'cf-menu-content',
+	menuListClass: 'cf-menu-list',
+
+	buttonClass: 'cf-button',
+	buttonClassPrefix: 'cf-button-',
+	buttonWildcardId: 'cf-button-all',
+	buttonTitleClass: 'cf-button-title',
+	deactivatedButtonClass: 'cf-button-deactivated',
+	activeButtonClass: 'cf-button-active'
+};
 
 /**
  * MediaWiki configuration values.
  */
-const config = mw.config.get( [ 'wgAction', 'wgArticlePath' ] );
+const config = mw.config.get( [ 'skin', 'wgAction', 'wgArticlePath' ] );
 
-// Note [EditModeFilter]:
-//   No filtering in edit mode, it would require reloading the page.
+if ( config.skin !== 'vector' ) {
+	warn(
+		'This gadget has been written to be used with the vector skin only.' +
+		'Some things may not be displayed properly with the current skin.'
+	);
+}
+
+// No filtering in edit mode, it would require reloading the page.
 if ( config.wgAction !== 'view' ) {
 	return;
 }
@@ -117,38 +140,48 @@ function setSelectedIndex( index ) {
 }
 
 /**
- * Generates the filter menu and puts it on the page.
- * @param {HTMLElement[]} _
- * @param {number}        pageFilter
+ * Inserts the filter menu on the page, if it isn't already there.
  */
-function insertMenu( _, pageFilter ) {
-	buttons.forEach( checkPageContext, pageFilter );
-
-	const parent = menu.parentElement;
-	if ( parent && parent.id !== filtersInfoId ) {
-		menu.remove();
-	}
-
+function insertMenu() {
 	if ( buttons.filter( isButtonActivated ).length < 2 ) {
+		menu.remove();
 		return;
 	}
 
-	const info = document.getElementById( filtersInfoId );
-	if ( info ) {
-		info.appendChild( menu );
-		info.style.removeProperty( 'display' );
-	} else {
-		const pageTitle = document.getElementsByClassName( 'mw-page-title-main' )[ 0 ];
-		if ( !pageTitle ) {
-			// Note [MenuHeaderPanic]:
-			//   Panicking here simply means that we couldn't place the buttons on
-			//   the page. If this happens, we should either add a fallback location,
-			//   or place the buttons somewhere other than in the page title.
-			domPanic( 'Page title not found.' );
-		}
-
-		pageTitle.insertAdjacentElement( 'afterend', menu );
+	const info = document.getElementById( css.infoId );
+	if ( info === null ) {
+		insertMenuInInterface();
+		mw.hook( 'contentFilter.filter.menuPlaced' ).fire( menu );
+	} else if ( !info.isSameNode( menu.parentElement ) ) {
+		insertMenuInContent( info );
+		mw.hook( 'contentFilter.filter.menuPlaced' ).fire( menu );
 	}
+}
+
+/**
+ * Inserts the filter menu at the end of an element.
+ *
+ * @param {HTMLElement} parent
+ */
+function insertMenuInContent( parent ) {
+	parent.appendChild( menu );
+	parent.style.removeProperty( 'display' );
+}
+
+/**
+ * Inserts the filter menu in the page interface.
+ * Currently puts it next to the page title.
+ */
+function insertMenuInInterface() {
+	const pageTitle = document.getElementsByClassName( 'mw-page-title-main' )[ 0 ];
+	if ( !pageTitle ) {
+		// Panicking here simply means that we couldn't place the buttons on the page.
+		// If this happens, we should either add a fallback location,
+		// or place the buttons somewhere other than in the page title.
+		domPanic( 'Page title not found.' );
+	}
+
+	pageTitle.insertAdjacentElement( 'afterend', menu );
 }
 
 /**
@@ -163,9 +196,9 @@ function checkPageContext( button ) {
 	}
 
 	if ( this & Math.pow( 2, +filterIndex ) ) {
-		button.classList.remove( 'cf-button-deactivated' );
+		button.classList.remove( css.deactivatedButtonClass );
 	} else {
-		button.classList.add( 'cf-button-deactivated' );
+		button.classList.add( css.deactivatedButtonClass );
 	}
 }
 
@@ -175,7 +208,7 @@ function checkPageContext( button ) {
  * @returns {boolean}
  */
 function isButtonActivated( button ) {
-	return !button.classList.contains( 'cf-button-deactivated' );
+	return !button.classList.contains( css.deactivatedButtonClass );
 }
 
 /**
@@ -183,15 +216,15 @@ function isButtonActivated( button ) {
  */
 function createMenu() {
 	const ul = document.createElement( 'ul' );
-	ul.classList.add( 'cf-menu-list' );
+	ul.classList.add( css.menuListClass );
 	buttons.forEach( ul.appendChild, ul );
 
 	const content = document.createElement( 'div' );
-	content.classList.add( 'cf-menu-content' );
+	content.classList.add( css.menuContentClass );
 	content.appendChild( ul );
 
 	const dropdown = document.createElement( 'div' );
-	dropdown.classList.add( 'cf-menu' );
+	dropdown.classList.add( css.menuClass );
 	dropdown.append( toggle, content );
 	return dropdown;
 }
@@ -201,7 +234,7 @@ function createMenu() {
  */
 function createToggle() {
 	const toggle = document.createElement( 'div' );
-	toggle.classList.add( 'cf-toggle' );
+	toggle.classList.add( css.menuToggleClass );
 	return toggle;
 }
 
@@ -216,8 +249,8 @@ function createBaseButton() {
 	a.addEventListener( 'click', onButtonClick );
 
 	const li = document.createElement( 'li' );
-	li.id = 'cf-button-all';
-	li.classList.add( 'cf-button' );
+	li.id = css.buttonWildcardId;
+	li.classList.add( css.buttonClass );
 	li.appendChild( a );
 
 	return li;
@@ -231,7 +264,7 @@ function createBaseButton() {
  */
 function createFilterButton( index, title ) {
 	const titleSpan = document.createElement( 'span' );
-	titleSpan.classList.add( 'cf-button-title' );
+	titleSpan.classList.add( css.buttonTitleClass );
 	titleSpan.textContent = title;
 
 	const a = document.createElement( 'a' );
@@ -240,8 +273,8 @@ function createFilterButton( index, title ) {
 	a.addEventListener( 'click', onButtonClick );
 
 	const li = document.createElement( 'li' );
-	li.id = 'cf-button-' + index;
-	li.classList.add( 'cf-button' );
+	li.id = css.buttonClassPrefix + index;
+	li.classList.add( css.buttonClass );
 	li.dataset.cfFilter = '' + index;
 	li.appendChild( a );
 
@@ -284,7 +317,7 @@ function updateActiveButton( index ) {
  * @param {HTMLLIElement} button
  */
 function unsetActiveButton( button ) {
-	button.classList.remove( 'cf-button-active' );
+	button.classList.remove( css.activeButtonClass );
 }
 
 /**
@@ -292,7 +325,7 @@ function unsetActiveButton( button ) {
  * @param {HTMLLIElement} button
  */
 function setActiveButton( button ) {
-	button.classList.add( 'cf-button-active' );
+	button.classList.add( css.activeButtonClass );
 	const a = button.firstElementChild || domPanic();
 	toggle.innerHTML = a.innerHTML;
 }
@@ -309,16 +342,16 @@ function updateView( index ) {
 
 	Array.from( document.getElementsByTagName( 'a' ), updateAnchorFilter );
 
-	if ( index === null ) {
-		return;
+	if ( index !== null ) {
+		cf.parseView( index );
+	
+		Array.from(
+			document.getElementsByClassName( 'cf-view-' + index ),
+			addViewFragmentVisibility
+		);
 	}
 
-	cf.parseView( index );
-
-	Array.from(
-		document.getElementsByClassName( 'cf-view-' + index ),
-		addViewFragmentVisibility
-	);
+	mw.hook( 'contentFilter.filter.viewUpdated' ).fire();
 }
 
 /**
@@ -346,7 +379,7 @@ function updateAnchorFilter( a ) {
 		domPanic();
 	}
 
-	if ( !a.href || a.parentElement.classList.contains( 'cf-button' ) ) {
+	if ( !a.href || a.parentElement.classList.contains( css.buttonClass ) ) {
 		return;
 	}
 
@@ -408,31 +441,21 @@ const menu = createMenu();
  */
 const paramValue = getFilterParamValue();
 
-mw.hook( 'contentFilter.filter' )
-	.add( setSelectedIndex )
-	.fire( paramValue );
+mw.hook( 'contentFilter.filter' ).add( setSelectedIndex ).fire( paramValue );
 
-mw.hook( 'contentFilter.content' )
-	.add( insertMenu )
-	.add( function onFirstContentParsed() {
-		mw.hook( 'contentFilter.content' )
-			.remove( onFirstContentParsed );
-		mw.hook( 'contentFilter.filter' )
-			.add( updateView )
-			.add( updateActiveButton );
-	} );
+mw.hook( 'contentFilter.content.pageFilter' ).add( function ( pageFilter ) {
+	buttons.forEach( checkPageContext, pageFilter );
+} );
 
-// Note [UsingCore]:
-//   All code parts requiring the use of the core module are moved behinds
-//   hooks. These hooks should be fired from the core module itself,
-//   so there is no point in waiting for it to load.
-mw.loader.using( 'ext.gadget.content-filter-core', function () {
-	$.extend( cf, {
-		paramValue: paramValue,
-		buttons: buttons
-	} );
+mw.hook( 'contentFilter.content.registered' ).add( insertMenu );
 
-	mw.hook( 'contentFilter.loadEnd' ).fire();
+hookFiredOnce( 'contentFilter.content.registered' ).then( function () {
+	mw.hook( 'contentFilter.filter' ).add( updateActiveButton, updateView );
+} );
+
+$.extend( window.cf, {
+	paramValue: paramValue,
+	buttons: buttons
 } );
 
 } )( mediaWiki, document, console );

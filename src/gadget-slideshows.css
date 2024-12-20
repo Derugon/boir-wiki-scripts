@@ -41,7 +41,8 @@ div.boir-slide-title {
 	margin   : auto;
 }
 
-.boir-slideshow-enabled > .boir-slideshow-titlebar:not( .cf-view-active ) ~ .boir-slide:not( .boir-slide-active ) {
+.boir-slideshow-enabled > .boir-slideshow-titlebar:not( .cf-view-active ) ~ .boir-slide:not( .boir-slide-active ),
+.boir-slideshow-enabled > .boir-slideshow-titlebar:not( .cf-view-active ) ~ .boir-slide > .boir-slide-title-placeholder {
 	display: none;
 }
 

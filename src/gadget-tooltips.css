@@ -1,0 +1,32 @@
+#tooltip-wrapper {
+	position    : fixed;
+	z-index     : 1;
+	margin      : 20px 0 0 10px;
+	border      : 24px solid;
+	border-image: url( /images/2/2b/CSS_Border_Tooltip.png ) 24 fill round stretch;
+}
+
+.tooltip-content {
+	position: relative;
+	margin  : -12px;
+}
+
+#tooltip-wrapper:not( .tooltip-wrapper-active ),
+.tooltip-content:not( .tooltip-content-active ) {
+	display: none;
+}
+
+.tooltip-content *,
+.tooltip-content a,
+.tooltip-content a:visited {
+	color      : #473a3c;
+	margin     : auto;
+	white-space: normal;
+	line-height: normal;
+	font-weight: bold;
+}
+
+/* Temporary fix for older versions */
+.tooltip-block {
+	display: none;
+}

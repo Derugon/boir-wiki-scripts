@@ -1,10 +1,20 @@
-declare namespace ContentFilter {
-    interface Map {
-        "base": Base;
-    }
+import type { Hook } from "types-mediawiki/mw/hook";
 
-    interface Base extends Core {
-        paramValue: number | null;
-        buttons: HTMLLIElement[]
-    }
+declare global {
+	namespace ContentFilter {
+		interface Map {
+			filter: Filter;
+		}
+
+		interface Filter extends View {
+			readonly paramValue: number | null;
+			readonly buttons: HTMLElement[]
+		}
+	}
+
+	namespace mw {
+		function hook( name: 'contentFilter.filter' ): Hook<[ index: number | null ]>;
+		function hook( name: 'contentFilter.filter.menuPlaced' ): Hook<[ menu: HTMLElement ]>;
+		function hook( name: 'contentFilter.filter.viewUpdated' ): Hook<[]>;
+	}
 }

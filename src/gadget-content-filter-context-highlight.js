@@ -1,18 +1,31 @@
 /**
- * Name:        TODO
- * Description: TODO
+ * Name:         TODO
+ * Description:  TODO
+ *
+ * Module:       ext.gadget.content-filter-highlight
+ * Dependencies: ext.gadget.content-filter-core
  */
 
 // <nowiki>
 
-( function ( mw, document ) {
+( function ( mw ) {
+
+if ( !window.cf ) {
+	// Something went wrong.
+	return;
+}
+const cf = window.cf;
+
+const css = {
+	contextHoverClass: 'cf-context-hover'
+};
 
 /**
  * TODO
- * @param {HTMLElement} container
+ * @param {HTMLElement} content
  */
-function setContainerEvents( container ) {
-	Array.from( container.getElementsByClassName( 'cf-tag' ), setTagEvents );
+function setTagEventsInContent( content ) {
+	Array.from( cf.getTags( content ), setTagEvents );
 }
 
 /**
@@ -20,40 +33,52 @@ function setContainerEvents( container ) {
  * @param {HTMLElement} tag
  */
 function setTagEvents( tag ) {
-	tag.removeEventListener( 'mouseenter', onTagHover );
-	tag.removeEventListener( 'mouseleave', onTagHover );
-	tag.addEventListener( 'mouseenter', onTagHover );
-	tag.addEventListener( 'mouseleave', onTagHover );
+	tag.removeEventListener( 'mouseenter', onTagEnter );
+	tag.removeEventListener( 'mouseleave', onTagLeave );
+	tag.addEventListener( 'mouseenter', onTagEnter );
+	tag.addEventListener( 'mouseleave', onTagLeave );
 }
 
 /**
  * TODO
  * @this {HTMLElement}
  */
-function onTagHover() {
-	Array.from(
-		document.getElementsByClassName( 'cf-context-' + this.dataset.cfContext ),
-		toggleContextFragmentHighlighting
-	);
+function onTagEnter() {
+	const context = cf.getContext( this );
+	if ( context !== null ) {
+		context.forEach( enableContextElementHovering );
+	}
 }
 
 /**
  * TODO
- * @param {HTMLElement} contextFragment
+ * @this {HTMLElement}
  */
-function toggleContextFragmentHighlighting( contextFragment ) {
-	contextFragment.classList.toggle( 'cf-context-hover' );
+function onTagLeave() {
+	const context = cf.getContext( this );
+	if ( context !== null ) {
+		context.forEach( disableContextElementHovering );
+	}
 }
 
-// Note [UsingCore]:
-//   All code parts requiring the use of the core module are moved behinds
-//   hooks. These hooks should be fired from the core module itself,
-//   so there is no point in waiting for it to load.
-mw.loader.using( 'ext.gadget.content-filter-core' );
+/**
+ * TODO
+ * @param {HTMLElement} contextElement
+ */
+function enableContextElementHovering( contextElement ) {
+	contextElement.classList.add( css.contextHoverClass );
+}
 
-mw.hook( 'contentFilter.content' ).add( function ( containers ) {
-	containers.forEach( setContainerEvents );
-} );
+/**
+ * TODO
+ * @param {HTMLElement} contextElement
+ */
+function disableContextElementHovering( contextElement ) {
+	contextElement.classList.remove( css.contextHoverClass );
+}
 
-} )( mediaWiki, document );
+cf.containers.forEach( setTagEventsInContent );
+mw.hook( 'contentFilter.content.registered' ).add( setTagEventsInContent );
+
+} )( mediaWiki );
 // </nowiki>
