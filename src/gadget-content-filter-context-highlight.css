@@ -1,30 +1,85 @@
 :root {
 	--cf-context-base-color      : #f000;
-	--cf-context-background-color: #f004;
-	--cf-context-border-color    : #f008;
+	--cf-context-background-color: #f003;
+	--cf-context-border-color    : #f006;
 }
 
-li.cf-context {
+div.tright,
+div.floatright,
+table.floatright {
+	position: relative;
+	z-index : 1;
+}
+
+/* For block elements, we use ::before to set a slightly bigger highlight. */
+
+table.cf-context,
+th.cf-context,
+td.cf-context,
+dd.cf-context,
+li.cf-context,
+p.cf-context {
 	position: relative;
 	max-width: max-content;
 }
 
-li.cf-context::before {
-	content            : "";
-	position           : absolute;
+table.cf-context::before,
+th.cf-context::before,
+td.cf-context::before,
+dd.cf-context::before,
+li.cf-context::before,
+p.cf-context::before {
+	content       : "";
+	position      : absolute;
+	left          : -5px;
+	width         : calc( 100% + 10px );
+	box-sizing    : border-box;
+	pointer-events: none;
+}
+
+table.cf-context::before,
+th.cf-context::before,
+td.cf-context::before,
+dd.cf-context::before {
+	top   : -5px;
+	height: calc( 100% + 10px );
+}
+
+li.cf-context::before,
+p.cf-context::before {
+	top   : -2px;
+	height: calc( 100% + 4px );
+}
+
+/* For inline elements, we use the element itself. */
+
+span.cf-context {
+	padding: 2px 0;
+}
+
+/* For both block and inline elements, we set the highlighting style. */
+
+table.cf-context::before,
+th.cf-context::before,
+td.cf-context::before,
+dd.cf-context::before,
+li.cf-context::before,
+p.cf-context::before,
+span.cf-context {
 	transition-duration: 0.2s;
 	transition-property: background-color, border-color;
 	background         : var( --cf-context-base-color );
 	border             : 1px solid var( --cf-context-base-color );
 	border-radius      : 5px;
-	left               : -5px;
-	top                : -2px;
-	width              : calc( 100% + 10px );
-	height             : calc( 100% + 4px );
-	pointer-events     : none;
 }
 
-li.cf-context-hover::before {
+table.cf-context-hover::before,
+th.cf-context-hover::before,
+td.cf-context-hover::before,
+dd.cf-context-hover::before,
+li.cf-context-hover::before,
+p.cf-context-hover::before,
+span.cf-context-hover {
 	border-color: var( --cf-context-border-color );
 	background  : var( --cf-context-background-color );
 }

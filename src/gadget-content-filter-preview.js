@@ -23,14 +23,14 @@ function setButtonEvents( button ) {
  * @this {HTMLElement}
  */
 function onButtonEnter() {
-	const filterIndex = this.dataset.cfFilter;
-	if ( !filterIndex ) {
+	const filterIndex = cf.getButtonFilterIndex( this );
+	if ( filterIndex === null ) {
 		return;
 	}
 
 	// We do not know whether the view is computed when the page is loaded
 	// or lazily when the associated filter is activated.
-	cf.parseView( +filterIndex );
+	cf.parseView( filterIndex );
 
 	const viewFragments = document.getElementsByClassName( 'cf-view-' + filterIndex );
 	Array.from( viewFragments, addViewFragmentHighlighting );
@@ -41,11 +41,13 @@ function onButtonEnter() {
  * @this {HTMLElement}
  */
 function onButtonLeave() {
-	const filterIndex = this.dataset.cfFilter;
-	if ( filterIndex ) {
-		const viewFragments = document.getElementsByClassName( 'cf-view-' + filterIndex );
-		Array.from( viewFragments, removeViewFragmentHighlighting );
+	const filterIndex = cf.getButtonFilterIndex( this );
+	if ( filterIndex === null ) {
+		return;
 	}
+
+	const viewFragments = document.getElementsByClassName( 'cf-view-' + filterIndex );
+	Array.from( viewFragments, removeViewFragmentHighlighting );
 }
 
 /**

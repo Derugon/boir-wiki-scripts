@@ -8,7 +8,8 @@ declare global {
 
 		interface Filter extends View {
 			readonly paramValue: number | null;
-			readonly buttons: HTMLElement[]
+			readonly buttons: HTMLElement[];
+			getButtonFilterIndex( button: HTMLElement ): number | null;
 		}
 	}
 

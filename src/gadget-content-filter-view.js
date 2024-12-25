@@ -33,6 +33,25 @@ const css = {
 };
 
 /**
+ * Handles an "impossible" case, supposedly caused by other scripts breaking the
+ * expected DOM elements.
+ * @param {string} [note] Some information about the missing or invalid elements.
+ * @returns {never}
+ */
+function domPanic( note ) {
+	var message = (
+		"Something went wrong, either DOM elements have been modified in an" +
+		"unexpected way, or they have been disconnected from the document."
+	);
+
+	if ( note ) {
+		message += "\nAdditional note: " + note;
+	}
+
+	throw message;
+}
+
+/**
  * TODO
  * @param {number} index
  */
@@ -216,6 +235,7 @@ function applyViewRule( element, stack ) {
 	const result = (
 		applyViewRule_parentInView( element, stack ) ||
 		applyViewRule_allChildren( element, stack ) ||
+		applyViewRule_allHeaderElements( element, stack ) ||
 		null
 	);
 
@@ -229,7 +249,6 @@ function applyViewRule( element, stack ) {
 }
 
 /**
- * TODO
  * Remove child fragment.
  * [ <A> ... [ <X/> ] ... </A> ]
  *     ==>   [ <A> ... <X/> ... </A> ]
@@ -252,7 +271,6 @@ function applyViewRule_parentInView( element, stack ) {
 }
 
 /**
- * TODO
  * Merge adjacent fragments.
  * <A> [ <B1/> ] ... [ <Bn/> ] [ <X/> ] </A>
  *     ==>   [ <A> <B1/> ... <Bn/> <X/> </A> ]
@@ -261,37 +279,63 @@ function applyViewRule_parentInView( element, stack ) {
  * @returns {HTMLElement?}
  */
 function applyViewRule_allChildren( element, stack ) {
+	const parent = element.parentElement;
+	if ( parent === null ) {
+		return null;
+	}
+
+	if ( element instanceof HTMLLIElement ) {
+		if (
+			!( parent instanceof HTMLUListElement ) &&
+			!( parent instanceof HTMLMenuElement )
+		) {
+			return null;
+		}
+	}
+
 	if ( cf.getNextSibling( element ).sibling ) {
 		return null;
 	}
 
-	/** @type {HTMLElement[]} */
-	const previousElements = [];
-	var result = cf.getPreviousSibling( element );
-	while ( result.sibling ) {
-		const previousElement = stack.pop();
-		if ( !previousElement ) {
-			// No previous element in view.
-			restoreStack( stack, previousElements );
-			return null;
-		}
-
-		previousElements.push( previousElement );
+	var i = stack.length - 1;
+	var previousInfo = cf.getPreviousSibling( element );
+	while ( previousInfo.sibling !== null && i >= 0 ) {
+		const previousSibling = previousInfo.sibling;
+		const previousElement = stack[ i ];
 
 		if (
-			!result.sibling.isSameNode( previousElement ) &&
-			!isChildOf( result.sibling, previousElement )
+			!previousSibling.isSameNode( previousElement ) &&
+			!isChildOf( previousSibling, previousElement )
 		) {
 			// Previous element not in view.
-			restoreStack( stack, previousElements );
 			return null;
 		}
 
-		element = previousElement;
-		result  = cf.getPreviousSibling( element );
+		--i;
+		previousInfo = cf.getPreviousSibling( previousElement );
 	}
 
-	return result.parent;
+	if ( previousInfo.sibling !== null ) {
+		// No previous element in view.
+		return null;
+	}
+
+	stack.length = i + 1;
+	return previousInfo.parent;
+}
+
+/**
+ * TODO
+ * Merge adjacent fragments.
+ * <hi/> [ <B1/> ] ... [ <Bn/> ] [ <X/> ] <hi/>
+ *     ==>   [ <hi/> <B1/> ... <Bn/> <X/> ] <hi/>
+ * @param {HTMLElement} element
+ * @param {HTMLElement[]} stack
+ * @returns {HTMLElement?}
+ */
+function applyViewRule_allHeaderElements( element, stack ) {
+	// TODO
+	return null;
 }
 
 /**

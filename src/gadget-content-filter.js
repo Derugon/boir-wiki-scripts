@@ -73,12 +73,6 @@ if ( config.wgAction !== 'view' ) {
 }
 
 /**
- * The index of the currently selected filter form item.
- * @type {number?}
- */
-var selectedIndex = null;
-
-/**
  * Handles an "impossible" case, supposedly caused by other scripts breaking the
  * expected DOM elements.
  * @param {string} [note] Some information about the missing or invalid elements.
@@ -128,15 +122,17 @@ function setFilterParamValue( value, url ) {
 
 /**
  * Updates the index of the currently selected filter.
- * @param {number?} index TODO
+ *
+ * @param {number?} index
  */
 function setSelectedIndex( index ) {
-	selectedIndex = index;
-	if ( selectedIndex === null ) {
+	if ( index === null ) {
 		log( 'No filter used.' );
 	} else {
-		log( 'Using ' + Math.pow( 2, selectedIndex ) + ' as active filter.' );
+		log( 'Using ' + Math.pow( 2, index ) + ' as active filter.' );
+		lastSelectedIndex = index;
 	}
+	selectedIndex = index;
 }
 
 /**
@@ -185,22 +181,30 @@ function insertMenuInInterface() {
 }
 
 /**
- * TODO
- * @this {number}
+ * Updates the button element in case the global page filter has been changed.
+ *
+ * @param {number?} pageFilter The new page filter.
+ */
+function updateButtonsForPageContext( pageFilter ) {
+	buttons.forEach( updateButtonsForPageContext.forEachButton, pageFilter );
+}
+
+/**
+ * @this {number?}
  * @param {HTMLLIElement} button
  */
-function checkPageContext( button ) {
-	const filterIndex = button.dataset.cfFilter;
-	if ( !filterIndex ) {
+updateButtonsForPageContext.forEachButton = function ( button ) {
+	const filterIndex = getButtonFilterIndex( button );
+	if ( filterIndex === null ) {
 		return;
 	}
 
-	if ( this & Math.pow( 2, +filterIndex ) ) {
+	if ( this === null || this & Math.pow( 2, filterIndex ) ) {
 		button.classList.remove( css.deactivatedButtonClass );
 	} else {
 		button.classList.add( css.deactivatedButtonClass );
 	}
-}
+};
 
 /**
  * TODO
@@ -235,70 +239,96 @@ function createMenu() {
 function createToggle() {
 	const toggle = document.createElement( 'div' );
 	toggle.classList.add( css.menuToggleClass );
+	toggle.addEventListener( 'click', createToggle.onClick );
+
 	return toggle;
 }
 
 /**
- * Generates a filter menu button.
- * @returns {HTMLLIElement}
- */
-function createBaseButton() {
-	const a = document.createElement( 'a' );
-	a.href = setFilterParamValue( null );
-	a.textContent = 'All versions';
-	a.addEventListener( 'click', onButtonClick );
-
-	const li = document.createElement( 'li' );
-	li.id = css.buttonWildcardId;
-	li.classList.add( css.buttonClass );
-	li.appendChild( a );
-
-	return li;
-}
-
-/**
- * TODO
- * @param {number} index
- * @param {string} title
- * @returns {HTMLLIElement}
- */
-function createFilterButton( index, title ) {
-	const titleSpan = document.createElement( 'span' );
-	titleSpan.classList.add( css.buttonTitleClass );
-	titleSpan.textContent = title;
-
-	const a = document.createElement( 'a' );
-	a.href = setFilterParamValue( index );
-	a.append( titleSpan, ' only' );
-	a.addEventListener( 'click', onButtonClick );
-
-	const li = document.createElement( 'li' );
-	li.id = css.buttonClassPrefix + index;
-	li.classList.add( css.buttonClass );
-	li.dataset.cfFilter = '' + index;
-	li.appendChild( a );
-
-	return li;
-}
-
-/**
- * TODO
  * @this {HTMLElement}
  * @param {MouseEvent} event
  */
-function onButtonClick( event ) {
-	const li          = this.parentElement || domPanic();
-	const filterIndex = li.dataset.cfFilter || null;
-
-	const filterValue = filterIndex ? +filterIndex : null;
-	mw.hook( 'contentFilter.filter' ).fire( filterValue );
-
-	window.history.replaceState( {}, '', setFilterParamValue( filterValue ) );
+createToggle.onClick = function ( event ) {
+	triggerFilterUpdate( selectedIndex === null ? lastSelectedIndex : null );
 	event.preventDefault();
+};
+
+/**
+ * Generates a filter menu button.
+ *
+ * @param {string} title
+ * @param {number?} index
+ * @returns {HTMLLIElement}
+ */
+function createButton( title, index ) {
+	const a = document.createElement( 'a' );
+	a.href = setFilterParamValue( index );
+	a.addEventListener( 'click', createButton.onClick );
+
+	if ( index === null ) {
+		a.textContent = title;
+	} else {
+		const titleSpan = document.createElement( 'span' );
+		titleSpan.classList.add( css.buttonTitleClass );
+		titleSpan.textContent = title;
+		a.appendChild( titleSpan );
+		a.appendChild( document.createTextNode( ' only' ) );
+	}
+
+	const li = document.createElement( 'li' );
+	li.classList.add( css.buttonClass );
+	li.appendChild( a );
+
+	if ( index === null ) {
+		li.id = css.buttonWildcardId;
+	} else {
+	li.id = css.buttonClassPrefix + index;
+	li.id = css.buttonClassPrefix + index;
+	li.classList.add( css.buttonClass );
+		li.id = css.buttonClassPrefix + index;
+	li.classList.add( css.buttonClass );
+		li.dataset.cfFilter = '' + index;
+	}
+
+	return li;
+}
+
+/**
+ * @this {HTMLElement}
+ * @param {MouseEvent} event
+ */
+createButton.onClick = function ( event ) {
+	const li = this.parentElement || domPanic();
+	triggerFilterUpdate( getButtonFilterIndex( li ) );
+	event.preventDefault();
+};
+
+/**
+ * Triggers the event of changing the filter index.
+ *
+ * @param {number?} index
+ */
+function triggerFilterUpdate( index ) {
+	mw.hook( 'contentFilter.filter' ).fire( index );
+	window.history.replaceState( {}, '', setFilterParamValue( index ) );
+}
+
+/**
+ * Returns the filter a button is controlling.
+ *
+ * @param {HTMLElement} button
+ * @returns {number | null}
+ */
+function getButtonFilterIndex( button ) {
+	if ( !button.dataset.cfFilter ) {
+		return null;
+	}
+	return +button.dataset.cfFilter;
 }
 
 /**
  * Updates the selected filter button.
+ *
  * @param {number?} index The filter index.
  */
 function updateActiveButton( index ) {
@@ -372,6 +402,7 @@ function removeViewFragmentVisibility( viewFragment ) {
 
 /**
  * Adds a corresponding filter URL parameter to an anchor if none is used.
+ *
  * @param {HTMLAnchorElement} a The anchor.
  */
 function updateAnchorFilter( a ) {
@@ -415,12 +446,12 @@ function updateAnchorFilter( a ) {
  * @type {HTMLLIElement[]}
  */
 const buttons = [
-	createBaseButton(),
-	createFilterButton( 0, 'Rebirth' ),
-	createFilterButton( 1, 'Afterbirth' ),
-	createFilterButton( 2, 'Afterbirth+' ),
-	createFilterButton( 3, 'Repentance' ),
-	createFilterButton( 4, 'Repentance+' )
+	createButton( 'All versions', null ),
+	createButton( 'Rebirth', 0 ),
+	createButton( 'Afterbirth', 1 ),
+	createButton( 'Afterbirth+', 2 ),
+	createButton( 'Repentance', 3 ),
+	createButton( 'Repentance+', 4 )
 ];
 
 /**
@@ -441,12 +472,23 @@ const menu = createMenu();
  */
 const paramValue = getFilterParamValue();
 
+/**
+ * The index of the currently selected filter form item.
+ * @type {number?}
+ */
+var selectedIndex = null;
+
+/**
+ * The index of the previously selected filter form item.
+ * If the page has been loaded with any filter active, defaults to the last one.
+ * Used to easily disable or re-enable a filter.
+ *
+ * @type {number}
+ */
+var lastSelectedIndex = 4;
+
 mw.hook( 'contentFilter.filter' ).add( setSelectedIndex ).fire( paramValue );
-
-mw.hook( 'contentFilter.content.pageFilter' ).add( function ( pageFilter ) {
-	buttons.forEach( checkPageContext, pageFilter );
-} );
-
+mw.hook( 'contentFilter.content.pageFilter' ).add( updateButtonsForPageContext );
 mw.hook( 'contentFilter.content.registered' ).add( insertMenu );
 
 hookFiredOnce( 'contentFilter.content.registered' ).then( function () {
@@ -455,7 +497,8 @@ hookFiredOnce( 'contentFilter.content.registered' ).then( function () {
 
 $.extend( window.cf, {
 	paramValue: paramValue,
-	buttons: buttons
+	buttons: buttons,
+	getButtonFilterIndex: getButtonFilterIndex
 } );
 
 } )( mediaWiki, document, console );

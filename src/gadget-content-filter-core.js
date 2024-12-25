@@ -33,6 +33,7 @@ const config = mw.config.get( [ 'skin', 'wgAction', 'wgIsRedirect', 'wgPageName'
 
 /**
  * The number of filtering layers (bits) used on pages.
+ *
  * @type {number}
  */
 const filterCount = 5; // filterM = 31 (0b11111)
@@ -93,14 +94,17 @@ const css = {
 	 * If an element with a filter bitmask class is inside an element with this
 	 * class, the corresponding bitmask is applied to the surrounding section.
 	 */
-	contextFilterClass: 'cf-scope-section',
+	sectionScopeClass: 'cf-scope-section',
 
 	/**
 	 * If an element with a filter bitmask class is inside an element with the
-	 * `contextFilterClass` class and this id, the corresponding bitmask is applied
+	 * `sectionScopeClass` class and this id, the corresponding bitmask is applied
 	 * to the entire page: the filter buttons not matching the bitmask are disabled.
 	 */
-	pageContextFilterId: 'cf-scope-page',
+	pageScopeId: 'cf-scope-page',
+
+	wrappedScopeClass: 'cf-scope-wrapped',
+	contextWrapperClass: 'cf-context-wrapper',
 
 	/**
 	 * This class can be used on elements to make them invisible to filtering:
@@ -114,7 +118,7 @@ const css = {
 	 * If a page has navigation bars or elements considered out of the page
 	 * content at the bottom of the page, using this class on at least the first
 	 * one will prevent these elements from being removed with a previous
-	 * section (see contextFilterClass).
+	 * section (see sectionScopeClass).
 	 */
 	contentEndClass: 'cf-end',
 
@@ -166,6 +170,7 @@ const css = {
 
 /**
  * The current page title.
+ *
  * @type {mw.Title}
  */
 const currentTitle = new mw.Title( config.wgPageName );
@@ -173,6 +178,7 @@ const currentTitle = new mw.Title( config.wgPageName );
 /**
  * The maximum allowed numeric filter, preventing content from being removed
  * with any filter.
+ *
  * @type {number}
  */
 const filterMax = Math.pow( 2, filterCount ) - 1;
@@ -196,27 +202,19 @@ const containers = [];
 var pageFilter = filterMax;
 
 /**
- * TODO
- * @type {number}
+ * Generates a context identifier, supposedly not used by any other element on the page.
+ *
+ * @returns {number}
  */
-var nextTagIndex = 0;
-
-/**
- * Called when some text should be processed by the content filter.
- * @param {JQuery} $content The content element to process.
- */
-function onContentLoaded( $content ) {
-	const content = $content[ 0 ];
-	if ( !content ) {
-		return;
-	}
-
-	parseFilter( content );
+function newUniqueContextId() {
+	return newUniqueContextId.next++;
 }
+newUniqueContextId.next = 0;
 
 /**
- * TODO
- * @param {HTMLElement} content
+ * Indicates whether an element wraps the main page content.
+ *
+ * @param {HTMLElement} content The element to check.
  * @returns {boolean}
  */
 function isMainContent( content ) {
@@ -226,6 +224,7 @@ function isMainContent( content ) {
 /**
  * Indicates whether the filters should be used on a page because of the use of
  * in-content specific markers.
+ *
  * @param {Document} content The page content.
  * @returns {boolean} True if the filters should be used, false otherwise.
  */
@@ -240,10 +239,11 @@ function isFilteringForced( content ) {
 /**
  * Checks if the entire page is limited to some versions then sets the page
  * global filter accordingly.
+ *
  * @returns {number}
  */
 function getPageFilter() {
-	const pageContextBox = document.getElementById( css.pageContextFilterId );
+	const pageContextBox = document.getElementById( css.pageScopeId );
 	if ( !pageContextBox ) {
 		return filterMax;
 	}
@@ -348,6 +348,7 @@ function getContainers( root ) {
 
 /**
  * Finds whether the given node is inside a managed container.
+ *
  * @param {Node} node Node to search from.
  * @returns The parent container if there is one, null otherwise.
  */
@@ -379,21 +380,23 @@ function parseTag( tag ) {
 		return;
 	}
 
-	tag.dataset.cfContext = '' + nextTagIndex;
-	context.forEach( parseTag.addToContext );
-	nextTagIndex++;
+	const id = newUniqueContextId();
+	tag.dataset.cfContext = '' + id;
+	context.forEach( parseTag.addToContext, id );
 }
 
 /**
+ * @this {number}
  * @param {HTMLElement} element
  */
 parseTag.addToContext = function ( element ) {
 	element.classList.add( css.contextClass );
-	element.classList.add( css.contextClassPrefix + nextTagIndex );
-}
+	element.classList.add( css.contextClassPrefix + this );
+};
 
 /**
  * Indicates whether the filters can be used on a page.
+ *
  * @param {mw.Title} pageTitle The page title.
  * @returns {boolean} True if the filters can be used, false otherwise.
  */
@@ -417,6 +420,7 @@ function isFilteringAvailable( pageTitle ) {
 
 /**
  * Gets the numeric filter of an element.
+ *
  * @param {HTMLElement} tag The element.
  * @returns {number} The numeric filter of the given element.
  */
@@ -452,54 +456,149 @@ function getFilter( tag ) {
 /**
  * TODO
  * @param {HTMLElement} tag
+ * @returns {HTMLElement[] | null}
  */
 function getContext( tag ) {
 	if ( tag.dataset.cfContext !== undefined ) {
 		return Array.from( document.getElementsByClassName( css.contextClassPrefix + tag.dataset.cfContext ) );
 	}
 
-	const result = (
-		getTagContext_firstChild( tag ) ||
-		null
+	const explicitContext = getExplicitScopeContext( tag );
+	if ( explicitContext !== null ) {
+		return explicitContext;
+	}
+
+	const previousInfo = getPreviousSibling( tag );
+	if ( previousInfo.sibling instanceof HTMLBRElement ) {
+		// Select the next line.
+		const range = new Range();
+		range.setStartBefore( previousInfo.sibling );
+		var e = tag;
+		while ( e.nextElementSibling !== null && !( e.nextElementSibling instanceof HTMLBRElement ) ) {
+			e = e.nextElementSibling;
+		}
+		range.setEndAfter( e );
+
+		const wrapper = document.createElement( 'span' );
+		range.surroundContents( wrapper );
+		return [ wrapper ];
+	} else if ( previousInfo.sibling !== null ) {
+		// <A> ... (tag) ... </A>
+		return null;
+	}
+
+	const scope = previousInfo.parent;
+	if ( scope === null ) {
+		// (tag) is alone
+		return [ tag ];
+	}
+
+	return (
+		applyContextRule_galleryText( scope ) ||
+		[ scope ]
 	);
+}
 
-	// TODO: other rules
+/**
+ * Find an explicit inference strategy specified on the element or one of its
+ * wrappers. Multiple strategies may be specified, in which case the best one
+ * is chosen, with the following priority ordering:
+ *  - strategies on the element itself, then its wrappers ordered by distance.
+ *  - on a single element/wrapper, strategy order depends on the strategy type,
+ *    the greedier ones come first (e.g. "page" > "section" > "wrapped" ).
+ *
+ * @param {HTMLElement?} element
+ */
+function getExplicitScopeContext( element ) {
+	while ( element !== null ) {
+		if ( element.id === css.pageScopeId ) {
+			// We should have already took the page filter into account,
+			// so there is nothing else to select (than the whole page content).
+			const mainContent = document.getElementsByClassName( css.bodyContentClass )[ 0 ];
+			if ( mainContent !== null ) {
+				return [ mainContent ];
+			}
+		} else if ( element.classList.contains( css.wrappedScopeClass ) ) {
+			for ( var wrapper = element.parentElement; wrapper !== null; wrapper = wrapper.parentElement ) {
+				if ( wrapper.classList.contains( css.contextWrapperClass ) ) {
+					return [ wrapper ];
+				}
+			}
+		}
 
-	return result;
+		element = getWrapper( element );
+	}
+
+	return null;
+}
+
+/**
+ * <A class="gallerybox"> ... <B class="gallerytext"> [ <X/> ] </B> </A>
+ *     ==>   [ <A class="gallerybox"> ... <B class="gallerytext"> <X/> </B> </A> ]
+ *
+ * @param {HTMLElement} scope
+ */
+function applyContextRule_galleryText( scope ) {
+	if ( !( scope instanceof HTMLParagraphElement ) ) {
+		return null;
+	}
+
+	const galleryText = scope.parentElement;
+	if ( galleryText === null || !galleryText.classList.contains( 'gallerytext' ) ) {
+		return null;
+	}
+
+	var galleryBox = galleryText.parentElement;
+	while ( galleryBox !== null && !galleryBox.classList.contains( 'gallerybox' ) ) {
+		galleryBox = galleryBox.parentElement;
+	}
+
+	if ( galleryBox === null ) {
+		return null;
+	}
+
+	return [ galleryBox ];
 }
 
 /**
  * TODO
- * <A> (tag) ... </A>
- *     ==>   [ <A> (tag) ... </A> ]
- * @param {HTMLElement} tag
+ * @param {Node} node
  */
-function getTagContext_firstChild( tag ) {
-	const result = getPreviousSibling( tag );
-	if ( result.sibling !== null ) {
+function getWrapper( node ) {
+	var sibling = node.previousSibling;
+	while ( sibling !== null && isEmptyNode( sibling ) ) {
+		sibling = sibling.previousSibling;
+	}
+
+	if ( sibling !== null ) {
 		return null;
 	}
 
-	if ( result.parent === null ) {
+	sibling = node.previousSibling;
+	while ( sibling !== null && isEmptyNode( sibling ) ) {
+		sibling = sibling.previousSibling;
+	}
+
+	if ( sibling !== null ) {
 		return null;
 	}
 
-	return [ result.parent ];
+	return node.parentElement;
 }
 
 /**
  * TODO
  * @param {Node} node The node.
- * @returns {{ sibling: Node } | { sibling: null, parent: HTMLElement | null }}
+ * @returns {ContentFilter.SiblingSearchResult}
  */
 function getPreviousSibling( node ) {
 	while ( true ) {
 		var sibling = node.previousSibling;
-		while ( isGhostNode( sibling ) ) {
+		while ( sibling !== null && isGhostNode( sibling ) ) {
 			sibling = sibling.previousSibling;
 		}
 
-		if ( sibling ) {
+		if ( sibling !== null ) {
 			return { sibling: sibling };
 		}
 
@@ -515,16 +614,16 @@ function getPreviousSibling( node ) {
 /**
  * TODO
  * @param {Node} node The node.
- * @returns {{ sibling: Node } | { sibling: null, parent: HTMLElement? }}
+ * @returns {ContentFilter.SiblingSearchResult}
  */
 function getNextSibling( node ) {
 	while ( true ) {
 		var sibling = node.nextSibling;
-		while ( isGhostNode( sibling ) ) {
+		while ( sibling !== null && isGhostNode( sibling ) ) {
 			sibling = sibling.nextSibling;
 		}
 
-		if ( sibling ) {
+		if ( sibling !== null ) {
 			return { sibling: sibling };
 		}
 
@@ -539,15 +638,10 @@ function getNextSibling( node ) {
 
 /**
  * Indicates whether a node should be considered as an additional non-essential node.
- * @template {Node} T
- * @param {T?} node The node.
- * @returns {node is T} True if the node is non-essential, false otherwise.
+ *
+ * @param {Node} node The node.
  */
-function isGhostNode( node ) {
-	if ( !node ) {
-		return false;
-	}
-
+function isEmptyNode( node ) {
 	switch ( node.nodeType ) {
 	case Node.COMMENT_NODE:
 		return true;
@@ -555,6 +649,22 @@ function isGhostNode( node ) {
 	case Node.TEXT_NODE:
 		return !node.textContent || !node.textContent.trim();
 
+	default:
+		return false;
+	}
+}
+
+/**
+ * Indicates whether a node should be considered as an additional non-essential node.
+ *
+ * @param {Node} node The node.
+ */
+function isGhostNode( node ) {
+	if ( isEmptyNode( node ) ) {
+		return true;
+	}
+
+	switch ( node.nodeType ) {
 	case Node.ELEMENT_NODE:
 		/** @type {HTMLElement} */ // @ts-ignore
 		const element = node;
@@ -578,6 +688,7 @@ function isGhostNode( node ) {
 /**
  * Indicates whether an element should not be considered as a container,
  * and its children should then be considered being part of its parent.
+ *
  * @param {HTMLElement?} element The container element.
  * @returns {element is HTMLElement} True if the element is not an actual container, false otherwise.
  */
@@ -612,7 +723,12 @@ window.cf = {
 	getNextSibling: getNextSibling
 };
 
-safeAddContentHook( onContentLoaded );
+safeAddContentHook( function ( $content ) {
+	const content = $content[ 0 ];
+	if ( content ) {
+		parseFilter( content );
+	}
+} );
 
 } )( mediaWiki, document, console );
 // </nowiki>
