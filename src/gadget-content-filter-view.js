@@ -8,7 +8,7 @@
 
 // <nowiki>
 
-( function ( mw, console ) {
+( ( mw, console ) => {
 
 if ( !window.cf || 'parseView' in window.cf ) {
 	// Already loaded, or something went wrong.
@@ -16,12 +16,14 @@ if ( !window.cf || 'parseView' in window.cf ) {
 }
 const cf = window.cf;
 
-/** @this {( ...msg: string[] ) => void} */
-function logger() {
-	const args = Array.from( arguments );
-	args.unshift( '[content-filter-core]' );
-	this.apply( null, args );
-}
+/**
+ * @this {( ...msg: string[] ) => void}
+ * @param {...string} msgs
+ */
+const logger = function ( ...msgs ) {
+	msgs.unshift( '[content-filter-view]' );
+	this.apply( null, msgs );
+};
 const log   = logger.bind( console.log );
 const warn  = logger.bind( mw.log.warn );
 const error = logger.bind( mw.log.error );
@@ -38,100 +40,105 @@ const css = {
  * @param {string} [note] Some information about the missing or invalid elements.
  * @returns {never}
  */
-function domPanic( note ) {
-	var message = (
-		"Something went wrong, either DOM elements have been modified in an" +
-		"unexpected way, or they have been disconnected from the document."
+const domPanic = ( note ) => {
+	let message = (
+		'Something went wrong, either DOM elements have been modified in an ' +
+		'unexpected way, or they have been disconnected from the document.'
 	);
 
 	if ( note ) {
-		message += "\nAdditional note: " + note;
+		message += `\nAdditional note: ${note}`;
 	}
 
 	throw message;
-}
+};
 
 /**
  * TODO
  * @param {number} index
  */
-function parseView( index ) {
-	Array.from(
-		cf.getContainers(),
-		parseView.eachContainer,
-		index
-	);
-}
-
-/**
- * @this {number}
- * @param {HTMLElement} container
- */
-parseView.eachContainer = function ( container ) {
-	addContainerToView( container, this );
-}
+const parseView = ( index ) => {
+	Array.from( cf.getContainers(), ( container ) => addContainerToView( container, index ) );
+};
 
 /**
  * TODO
  * @param {HTMLElement} container
  * @param {number} view
  */
-function addContainerToView( container, view ) {
-	if ( container.classList.contains( css.containerViewClassPrefix + view ) ) {
+const addContainerToView = ( container, view ) => {
+	if ( container.classList.contains( `${css.containerViewClassPrefix}${view}` ) ) {
 		return;
 	}
 
 	parseViewStackContainer( container, view );
-	container.classList.add( css.containerViewClassPrefix + view );
-}
+	container.classList.add( `${css.containerViewClassPrefix}${view}` );
+};
 
 /**
  * TODO
  * @param {HTMLElement} container
  */
-function getContainerViews( container ) {
+const getContainerViews = ( container ) => {
 	/** @type {number[]} */
 	const views = [];
-	container.classList.forEach( getContainerViews.insert, views );
-	return views;
-}
-
-/**
- * @this {number[]}
- * @param {string} className
- */
-getContainerViews.insert = function ( className ) {
-	if ( className.startsWith( css.containerViewClassPrefix ) ) {
-		this.push( +className.substring( css.containerViewClassPrefix.length ) );
+	for ( const className of container.classList ) {
+		if ( className.startsWith( css.containerViewClassPrefix ) ) {
+			views.push( +className.substring( css.containerViewClassPrefix.length ) );
+		}
 	}
-}
+	return views;
+};
 
 /**
  * TODO
  * @param {HTMLElement} container
  * @param {number} view
  */
-function parseViewStackContainer( container, view ) {
+const parseViewStackContainer = ( container, view ) => {
+	const filter = Math.pow( 2, view );
+	/** @type {Set<HTMLElement>} */
 	const elementSet = new Set();
-	Array.from(
-		cf.getTags( container ),
-		getViewElementsFromTag,
-		{ set: elementSet, filter: Math.pow( 2, view ) }
-	);
+	for ( const tag of Array.from( cf.getTags( container ) ) ) {
+		if ( cf.getFilter( tag ) & filter ) {
+			// Full match: select the tag.
+			elementSet.add( tag );
+			continue;
+		}
+
+		// No match: select the tag and its context.
+		const context = cf.getContext( tag );
+		if ( context === null || context.length === 0 ) {
+			continue;
+		}
+
+		elementSet.add( tag );
+		for ( const contextElement of context ) {
+			elementSet.add( contextElement );
+		}
+	}
 
 	/** @type {HTMLElement[]} */
 	const stack = [];
-	Array.from( elementSet ).sort( nodePostOrder ).forEach( parseViewStackContext, stack );
+	for ( const context of Array.from( elementSet ).sort( nodePostOrder ) ) {
+		/** @type {HTMLElement?} */
+		let element = context;
+		do {
+			element = applyViewRule( element, stack );
+		} while ( element );
+	}
 
-	stack.forEach( addElementToView, view );
-}
+	for ( const element of stack ) {
+		element.classList.add( css.viewClass, `${css.viewClassPrefix}${view}` );
+	}
+};
 
 /**
  * TODO
  * @param {HTMLElement} content
  * @param {HTMLElement | null} container
  */
-function cleanupViewContainer( content, container ) {
+const cleanupViewContainer = ( content, container ) => {
 	if ( container === null ) {
 		return;
 	}
@@ -140,42 +147,24 @@ function cleanupViewContainer( content, container ) {
 
 	// TODO: disable active view
 
-	Array.from( content.getElementsByClassName( css.viewClass ), cleanupViewElement, views );
+	Array.from( content.getElementsByClassName( css.viewClass ), ( element ) => {
+		element.classList.remove( css.viewClass );
+		for ( const view of views ) {
+			element.classList.remove( `${css.viewClassPrefix}${view}` );
+		}
+	} );
 
-	views.forEach(
-		removePrefixedClass,
-		{ classList: content.classList, prefix: css.containerViewClassPrefix }
-	);
-}
-
-/**
- * TODO
- * @this {{ set: Set<HTMLElement>, filter: number }}
- * @param {HTMLElement} tag
- */
-function getViewElementsFromTag( tag ) {
-	if ( cf.getFilter( tag ) & this.filter ) {
-		// Full match: select the tag.
-		this.set.add( tag );
-		return;
+	for ( const view of views ) {
+		content.classList.remove( `${css.containerViewClassPrefix}${view}` );
 	}
-
-	// No match: select the tag and its context.
-	const context = cf.getContext( tag );
-	if ( context === null || context.length === 0 ) {
-		return;
-	}
-
-	this.set.add( tag );
-	Array.from( context, this.set.add.bind( this.set ) );
-}
+};
 
 /**
  * TODO
  * @param {Node} n1
  * @param {Node} n2
  */
-function nodePostOrder( n1, n2 ) {
+const nodePostOrder = ( n1, n2 ) => {
 	if ( n1 === n2 ) {
 		return 0;
 	}
@@ -190,40 +179,7 @@ function nodePostOrder( n1, n2 ) {
 	} else {
 		return -1;
 	}
-}
-
-/**
- * TODO
- * @this {HTMLElement[]}
- * @param {HTMLElement} context
- */
-function parseViewStackContext( context ) {
-	/** @type {HTMLElement?} */
-	var element = context;
-	do {
-		element = applyViewRule( element, this );
-	} while ( element );
-}
-
-/**
- * TODO
- * @this {number}
- * @param {HTMLElement} element
- */
-function addElementToView( element ) {
-	element.classList.add( css.viewClass );
-	element.classList.add( css.viewClassPrefix + this );
-}
-
-/**
- * TODO
- * @this {number[]}
- * @param {HTMLElement} element
- */
-function cleanupViewElement( element ) {
-	element.classList.remove( css.viewClass );
-	this.forEach( removePrefixedClass, { classList: element.classList, prefix: css.viewClassPrefix } );
-}
+};
 
 /**
  * TODO
@@ -231,7 +187,7 @@ function cleanupViewElement( element ) {
  * @param {HTMLElement[]} stack
  * @returns {HTMLElement?}
  */
-function applyViewRule( element, stack ) {
+const applyViewRule = ( element, stack ) => {
 	const result = (
 		applyViewRule_parentInView( element, stack ) ||
 		applyViewRule_allChildren( element, stack ) ||
@@ -246,7 +202,7 @@ function applyViewRule( element, stack ) {
 	}
 
 	return result;
-}
+};
 
 /**
  * Remove child fragment.
@@ -256,19 +212,21 @@ function applyViewRule( element, stack ) {
  * @param {HTMLElement[]} stack
  * @returns {HTMLElement?}
  */
-function applyViewRule_parentInView( element, stack ) {
+const applyViewRule_parentInView = ( element, stack ) => {
 	const previousElement = stack.pop();
 	if ( !previousElement ) {
 		return null;
 	}
 
-	if ( !isChildOf( element, previousElement ) ) {
-		stack.push( previousElement );
-		return null;
+	if ( isChildOf( previousElement, element ) ) {
+		return element;
+	} else if ( isChildOf( element, previousElement ) ) {
+		return previousElement;
 	}
 
-	return previousElement;
-}
+	stack.push( previousElement );
+	return null;
+};
 
 /**
  * Merge adjacent fragments.
@@ -278,27 +236,39 @@ function applyViewRule_parentInView( element, stack ) {
  * @param {HTMLElement[]} stack
  * @returns {HTMLElement?}
  */
-function applyViewRule_allChildren( element, stack ) {
-	const parent = element.parentElement;
+const applyViewRule_allChildren = ( element, stack ) => {
+	let parent = element.parentElement;
+	while ( parent !== null && parent instanceof HTMLDivElement ) {
+		parent = parent.parentElement;
+	}
+
 	if ( parent === null ) {
 		return null;
 	}
 
-	if ( element instanceof HTMLLIElement ) {
+	if ( element instanceof HTMLDivElement || element instanceof HTMLSpanElement ) {
+		// ok
+	} else if ( element instanceof HTMLLIElement ) {
 		if (
 			!( parent instanceof HTMLUListElement ) &&
 			!( parent instanceof HTMLMenuElement )
 		) {
 			return null;
 		}
+	} else if ( [ 'DT', 'DD' ].includes( element.tagName ) ) {
+		if ( !( parent instanceof HTMLDListElement ) ) {
+			return null;
+		}
+	} else {
+		return null;
 	}
 
 	if ( cf.getNextSibling( element ).sibling ) {
 		return null;
 	}
 
-	var i = stack.length - 1;
-	var previousInfo = cf.getPreviousSibling( element );
+	let i = stack.length - 1;
+	let previousInfo = cf.getPreviousSibling( element );
 	while ( previousInfo.sibling !== null && i >= 0 ) {
 		const previousSibling = previousInfo.sibling;
 		const previousElement = stack[ i ];
@@ -322,7 +292,7 @@ function applyViewRule_allChildren( element, stack ) {
 
 	stack.length = i + 1;
 	return previousInfo.parent;
-}
+};
 
 /**
  * TODO
@@ -333,27 +303,10 @@ function applyViewRule_allChildren( element, stack ) {
  * @param {HTMLElement[]} stack
  * @returns {HTMLElement?}
  */
-function applyViewRule_allHeaderElements( element, stack ) {
+const applyViewRule_allHeaderElements = ( element, stack ) => {
 	// TODO
 	return null;
-}
-
-/**
- * TODO
- * @param {HTMLElement[]} stack
- * @param {HTMLElement[]} toRestore
- */
-function restoreStack( stack, toRestore ) {
-	stack.push.apply( stack, toRestore.reverse() );
-}
-
-/**
- * @this {{ classList: DOMTokenList, prefix: string }}
- * @param {number} view
- */
-function removePrefixedClass( view ) {
-	this.classList.remove( this.prefix + '' + view );
-}
+};
 
 /**
  * TODO
@@ -361,24 +314,26 @@ function removePrefixedClass( view ) {
  * @param {Node} parent
  * @returns {boolean}
  */
-function isChildOf( child, parent ) {
+const isChildOf = ( child, parent ) => {
 	const cmp = child.compareDocumentPosition( parent );
 	return ( cmp & Node.DOCUMENT_POSITION_CONTAINS ) > 0;
-}
+};
 
-mw.hook( 'contentFilter.content.beforeRegistered' ).add( function ( content, container ) {
+mw.hook( 'contentFilter.content.beforeRegistered' ).add( ( content, container ) => {
 	cleanupViewContainer( content, container );
 } );
 
-mw.hook( 'contentFilter.content.registered' ).add( function ( content, container ) {
+mw.hook( 'contentFilter.content.registered' ).add( ( content, container ) => {
 	if ( container === null ) {
 		return;
 	}
-	getContainerViews( container ).forEach( parseViewStackContainer.bind( null, content ) );
+	for ( const view of getContainerViews( container ) ) {
+		parseViewStackContainer( content, view );
+	}
 	// TODO: re-enable active view
 } );
 
-$.extend( window.cf, {
+Object.assign( window.cf, {
 	parseView: parseView
 } );
 

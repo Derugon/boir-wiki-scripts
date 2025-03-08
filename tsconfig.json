@@ -3,6 +3,7 @@
 		"lib": ["ESNext", "DOM"],
 		"checkJs": true,
 		"outDir": "./dist",
+		"downlevelIteration": true,
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
 		"exactOptionalPropertyTypes": true,

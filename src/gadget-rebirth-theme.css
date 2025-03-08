@@ -1,0 +1,48 @@
+.portable-infobox {
+	padding   : 30px 15px 20px;
+	background: transparent;
+}
+
+.portable-infobox::before {
+	content     : "";
+	display     : block;
+	border      : 30px solid;
+	border-image: url( /images/4/4a/CSS_Border_Infobox.png ) 30 fill round; /* [[File:CSS Border Infobox.png]] */
+	bottom      : 0;
+	top         : 0;
+	left        : 0;
+	right       : 0;
+	z-index     : -1;
+	position    : absolute;
+}
+
+.pi-title,
+.pi-group,
+.pi-data,
+.pi-font,
+.pi-secondary-font {
+	color: var( --tb-infobox-color );
+}
+
+.mw-parser-output .pi-secondary-background,
+.mw-parser-output .portable-infobox .pi-data,
+.mw-parser-output .portable-infobox .pi-title,
+.mw-parser-output .portable-infobox .pi-header {
+	background: transparent;
+}
+
+.portable-infobox > .pi-item > .pi-header,
+.portable-infobox > .pi-item > .pi-data-label,
+.pi-item[data-source="quote"] > .pi-data-value.pi-font,
+.pi-custom-font {
+	font-family: var( --tb-title-font );
+	font-size  : 150%;
+	font-weight: normal;
+	line-height: 75%;
+}
+
+.portable-infobox code {
+	background-color: rgba( 0,0,0, 0.2 );
+	border          : 1px solid rgba( 255,255,255, 0.2 );
+	color           : var( --tb-infobox-color );
+}

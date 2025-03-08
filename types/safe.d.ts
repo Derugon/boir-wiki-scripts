@@ -34,7 +34,7 @@ declare interface HTMLElement {
 	getElementsByTagName(qualifiedName: string): HTMLCollectionOf<HTMLElement>;
 	insertAdjacentElement<T extends HTMLElement>(where: InsertPosition, element: T): T | null;
 	querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): HTMLElementTagNameMap[K] | null;
-	querySelector<E extends HTMLElement = HTMLElement>(selectors: string): E | null;
+	querySelector<E extends HTMLElement = HTMLElement>(selectors: string): Array<E> | null;
 	querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): NodeListOf<HTMLElementTagNameMap[K]>;
 	querySelectorAll<E extends HTMLElement = HTMLElement>(selectors: string): NodeListOf<E>;
 }
@@ -45,4 +45,16 @@ declare interface HTMLTemplateElement {
 
 declare interface HTMLDocumentFragment extends DocumentFragment {
     getElementById(elementId: string): HTMLElement | null;
+}
+
+declare interface DOMTokenList {
+    [Symbol.iterator](): Iterator<string>;
+}
+
+declare interface NodeList {
+    [Symbol.iterator](): Iterator<Node>;
+}
+
+declare interface NodeListOf<TNode extends Node> {
+    [Symbol.iterator](): Iterator<TNode>;
 }

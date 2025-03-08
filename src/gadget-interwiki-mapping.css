@@ -1,0 +1,13 @@
+tr .iwm-diff-uptodate {
+	display: none;
+}
+
+/*
+
+|- data-iwm-local-title="HERE" data-iwm-load-title="TITLE" data-iwm-load-revid="REVID"
+| [[HERE]]
+| class="iwm-foreign" |
+| class="iwm-diff"    |
+| class="iwm-actions" |
+
+*/

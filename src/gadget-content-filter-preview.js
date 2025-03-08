@@ -7,22 +7,13 @@
 
 // <nowiki>
 
-( function ( document ) {
-
-/**
- * TODO
- * @param {HTMLElement} button
- */
-function setButtonEvents( button ) {
-	button.addEventListener( 'mouseenter', onButtonEnter );
-	button.addEventListener( 'mouseleave', onButtonLeave );
-}
+( ( document ) => {
 
 /**
  * TODO
  * @this {HTMLElement}
  */
-function onButtonEnter() {
+const onButtonEnter = function () {
 	const filterIndex = cf.getButtonFilterIndex( this );
 	if ( filterIndex === null ) {
 		return;
@@ -32,42 +23,31 @@ function onButtonEnter() {
 	// or lazily when the associated filter is activated.
 	cf.parseView( filterIndex );
 
-	const viewFragments = document.getElementsByClassName( 'cf-view-' + filterIndex );
-	Array.from( viewFragments, addViewFragmentHighlighting );
-}
+	for ( const viewFragment of document.querySelectorAll( `.cf-view-${filterIndex}` ) ) {
+		viewFragment.classList.add( 'cf-view-hover' );
+	}
+};
 
 /**
  * TODO
  * @this {HTMLElement}
  */
-function onButtonLeave() {
+const onButtonLeave = function () {
 	const filterIndex = cf.getButtonFilterIndex( this );
 	if ( filterIndex === null ) {
 		return;
 	}
 
-	const viewFragments = document.getElementsByClassName( 'cf-view-' + filterIndex );
-	Array.from( viewFragments, removeViewFragmentHighlighting );
-}
+	for ( const viewFragment of document.querySelectorAll( `.cf-view-${filterIndex}` ) ) {
+		viewFragment.classList.remove( 'cf-view-hover' );
+	}
+};
 
-/**
- * TODO
- * @param {HTMLElement} viewFragment
- */
-function addViewFragmentHighlighting( viewFragment ) {
-	viewFragment.classList.add( 'cf-view-hover' );
-}
-
-/**
- * TODO
- * @param {HTMLElement} viewFragment
- */
-function removeViewFragmentHighlighting( viewFragment ) {
-	viewFragment.classList.remove( 'cf-view-hover' );
-}
-
-hookFiredOnce( 'contentFilter.filter.menuPlaced' ).then( function () {
-	cf.buttons.forEach( setButtonEvents );
+hookFiredOnce( 'contentFilter.filter.menuPlaced' ).then( () => {
+	for ( const button of cf.buttons ) {
+		button.addEventListener( 'mouseenter', onButtonEnter );
+		button.addEventListener( 'mouseleave', onButtonLeave );
+	}
 } );
 
 } )( document );

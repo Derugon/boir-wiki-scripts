@@ -1,0 +1,26 @@
+/*
+a.image > img {
+	transition: border-color .1s, background-color .1s;
+	border    : 1px solid rgba( var( --wiki-content-link-color--hover--rgb ), 0 );
+}
+
+a.image:hover > img {
+	background-color: rgba( var( --wiki-content-link-color--hover--rgb ), .1 );
+	border-color    : var( --wiki-content-link-color--hover );
+}
+*/
+
+@media screen and ( min-width: 721px ) {
+	body #mw-navigation {
+		width: auto;
+		max-width: none;
+		margin-left: 2.5%;
+		margin-right: 2.5%;
+	}
+
+	body #searchform {
+		background: none;
+		box-shadow: none;
+		border: none;
+	}
+}

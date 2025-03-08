@@ -8,7 +8,7 @@
 
 // <nowiki>
 
-( function ( mw, document, console ) {
+( ( mw, document, console ) => {
 
 if ( !window.cf || !( 'parseView' in window.cf ) || 'buttons' in window.cf ) {
 	// Already loaded, or something went wrong.
@@ -16,12 +16,14 @@ if ( !window.cf || !( 'parseView' in window.cf ) || 'buttons' in window.cf ) {
 }
 const cf = window.cf;
 
-/** @this {( ...msg: string[] ) => void} */
-function logger() {
-	const args = Array.from( arguments );
-	args.unshift( '[content-filter]' );
-	this.apply( null, args );
-}
+/**
+ * @this {( ...msg: string[] ) => void}
+ * @param {...string} msgs
+ */
+const logger = function ( ...msgs ) {
+	msgs.unshift( '[content-filter]' );
+	this.apply( null, msgs );
+};
 const log   = logger.bind( console.log );
 const warn  = logger.bind( mw.log.warn );
 const error = logger.bind( mw.log.error );
@@ -78,67 +80,67 @@ if ( config.wgAction !== 'view' ) {
  * @param {string} [note] Some information about the missing or invalid elements.
  * @returns {never}
  */
-function domPanic( note ) {
-	var message = (
-		"Something went wrong, either DOM elements have been modified in an" +
-		"unexpected way, or they have been disconnected from the document."
+const domPanic = ( note ) => {
+	let message = (
+		'Something went wrong, either DOM elements have been modified in an ' +
+		'unexpected way, or they have been disconnected from the document.'
 	);
 
 	if ( note ) {
-		message += "\nAdditional note: " + note;
+		message += `\nAdditional note: ${note}`;
 	}
 
 	throw message;
-}
+};
 
 /**
  * Gets the value of the URL parameter used to store the selected filter from an URL.
  * @param {string} [url] The URL, the current page one otherwise.
  * @returns {number?} The selected filter index, null if none has been specified.
  */
-function getFilterParamValue( url ) {
+const getFilterParamValue = ( url ) => {
 	const value = mw.util.getParamValue( urlParam, url );
 	return value ? parseInt( value, 10 ) : null;
-}
+};
 
 /**
  * Either sets the value of, or removes, the URL parameter used to store the
  * selected filter from an URL.
  * @param {number?} value The selected filter index, null if none has been specified.
- * @param {string}  [url] The URL, the current page one otherwise.
- * @returns {string} The updated URL.
+ * @param {URL}  [url] The URL, the current page one otherwise.
+ * @returns {URL} The updated URL.
  */
-function setFilterParamValue( value, url ) {
-	const uri = new mw.Uri( url || document.location.href );
+const setFilterParamValue = ( value, url ) => {
+	url = new URL( url || document.location.href );
 
 	if ( value === null ) {
-		delete uri.query[ urlParam ];
+		url.searchParams.delete( urlParam );
 	} else {
-		uri.query[ urlParam ] = value;
+		url.searchParams.set( urlParam, `${value}` );
 	}
 
-	return uri.toString();
-}
+	return url;
+};
 
 /**
  * Updates the index of the currently selected filter.
  *
  * @param {number?} index
  */
-function setSelectedIndex( index ) {
+const setSelectedIndex = ( index ) => {
 	if ( index === null ) {
 		log( 'No filter used.' );
 	} else {
-		log( 'Using ' + Math.pow( 2, index ) + ' as active filter.' );
+		log( `Using ${Math.pow( 2, index )} as active filter.` );
 		lastSelectedIndex = index;
 	}
 	selectedIndex = index;
-}
+};
 
 /**
  * Inserts the filter menu on the page, if it isn't already there.
  */
-function insertMenu() {
+const insertMenu = () => {
 	if ( buttons.filter( isButtonActivated ).length < 2 ) {
 		menu.remove();
 		return;
@@ -152,23 +154,23 @@ function insertMenu() {
 		insertMenuInContent( info );
 		mw.hook( 'contentFilter.filter.menuPlaced' ).fire( menu );
 	}
-}
+};
 
 /**
  * Inserts the filter menu at the end of an element.
  *
  * @param {HTMLElement} parent
  */
-function insertMenuInContent( parent ) {
+const insertMenuInContent = ( parent ) => {
 	parent.appendChild( menu );
 	parent.style.removeProperty( 'display' );
-}
+};
 
 /**
  * Inserts the filter menu in the page interface.
  * Currently puts it next to the page title.
  */
-function insertMenuInInterface() {
+const insertMenuInInterface = () => {
 	const pageTitle = document.getElementsByClassName( 'mw-page-title-main' )[ 0 ];
 	if ( !pageTitle ) {
 		// Panicking here simply means that we couldn't place the buttons on the page.
@@ -178,31 +180,25 @@ function insertMenuInInterface() {
 	}
 
 	pageTitle.insertAdjacentElement( 'afterend', menu );
-}
+};
 
 /**
  * Updates the button element in case the global page filter has been changed.
  *
  * @param {number?} pageFilter The new page filter.
  */
-function updateButtonsForPageContext( pageFilter ) {
-	buttons.forEach( updateButtonsForPageContext.forEachButton, pageFilter );
-}
-
-/**
- * @this {number?}
- * @param {HTMLLIElement} button
- */
-updateButtonsForPageContext.forEachButton = function ( button ) {
-	const filterIndex = getButtonFilterIndex( button );
-	if ( filterIndex === null ) {
-		return;
-	}
-
-	if ( this === null || this & Math.pow( 2, filterIndex ) ) {
-		button.classList.remove( css.deactivatedButtonClass );
-	} else {
-		button.classList.add( css.deactivatedButtonClass );
+const updateButtonsForPageContext = ( pageFilter ) => {
+	for ( const button of buttons ) {
+		const filterIndex = getButtonFilterIndex( button );
+		if ( filterIndex === null ) {
+			return;
+		}
+	
+		if ( pageFilter === null || pageFilter & Math.pow( 2, filterIndex ) ) {
+			button.classList.remove( css.deactivatedButtonClass );
+		} else {
+			button.classList.add( css.deactivatedButtonClass );
+		}
 	}
 };
 
@@ -211,17 +207,19 @@ updateButtonsForPageContext.forEachButton = function ( button ) {
  * @param {HTMLLIElement} button
  * @returns {boolean}
  */
-function isButtonActivated( button ) {
+const isButtonActivated = ( button ) => {
 	return !button.classList.contains( css.deactivatedButtonClass );
-}
+};
 
 /**
  * TODO
  */
-function createMenu() {
+const createMenu = () => {
 	const ul = document.createElement( 'ul' );
 	ul.classList.add( css.menuListClass );
-	buttons.forEach( ul.appendChild, ul );
+	for ( const button of buttons ) {
+		ul.appendChild( button );
+	}
 
 	const content = document.createElement( 'div' );
 	content.classList.add( css.menuContentClass );
@@ -231,24 +229,23 @@ function createMenu() {
 	dropdown.classList.add( css.menuClass );
 	dropdown.append( toggle, content );
 	return dropdown;
-}
+};
 
 /**
  * TODO
  */
-function createToggle() {
+const createToggle = () => {
 	const toggle = document.createElement( 'div' );
 	toggle.classList.add( css.menuToggleClass );
 	toggle.addEventListener( 'click', createToggle.onClick );
 
 	return toggle;
-}
+};
 
 /**
- * @this {HTMLElement}
  * @param {MouseEvent} event
  */
-createToggle.onClick = function ( event ) {
+createToggle.onClick = ( event ) => {
 	triggerFilterUpdate( selectedIndex === null ? lastSelectedIndex : null );
 	event.preventDefault();
 };
@@ -260,9 +257,9 @@ createToggle.onClick = function ( event ) {
  * @param {number?} index
  * @returns {HTMLLIElement}
  */
-function createButton( title, index ) {
+const createButton = ( title, index ) => {
 	const a = document.createElement( 'a' );
-	a.href = setFilterParamValue( index );
+	a.href = setFilterParamValue( index ).href;
 	a.addEventListener( 'click', createButton.onClick );
 
 	if ( index === null ) {
@@ -282,16 +279,12 @@ function createButton( title, index ) {
 	if ( index === null ) {
 		li.id = css.buttonWildcardId;
 	} else {
-	li.id = css.buttonClassPrefix + index;
-	li.id = css.buttonClassPrefix + index;
-	li.classList.add( css.buttonClass );
-		li.id = css.buttonClassPrefix + index;
-	li.classList.add( css.buttonClass );
-		li.dataset.cfFilter = '' + index;
+		li.id = `${css.buttonClassPrefix}${index}`;
+		li.dataset.cfFilter = `${index}`;
 	}
 
 	return li;
-}
+};
 
 /**
  * @this {HTMLElement}
@@ -308,10 +301,10 @@ createButton.onClick = function ( event ) {
  *
  * @param {number?} index
  */
-function triggerFilterUpdate( index ) {
+const triggerFilterUpdate = ( index ) => {
 	mw.hook( 'contentFilter.filter' ).fire( index );
 	window.history.replaceState( {}, '', setFilterParamValue( index ) );
-}
+};
 
 /**
  * Returns the filter a button is controlling.
@@ -319,93 +312,62 @@ function triggerFilterUpdate( index ) {
  * @param {HTMLElement} button
  * @returns {number | null}
  */
-function getButtonFilterIndex( button ) {
+const getButtonFilterIndex = ( button ) => {
 	if ( !button.dataset.cfFilter ) {
 		return null;
 	}
 	return +button.dataset.cfFilter;
-}
+};
 
 /**
  * Updates the selected filter button.
  *
  * @param {number?} index The filter index.
  */
-function updateActiveButton( index ) {
+const updateActiveButton = ( index ) => {
 	const buttonIndex  = index === null ? 0 : index + 1;
 	const activeButton = buttons[ buttonIndex ];
 	if ( !activeButton ) {
-		domPanic( 'Unregistrered button ' + buttonIndex + '.' );
+		domPanic( `Unregistrered button ${buttonIndex}.` );
 	}
 
-	buttons.forEach( unsetActiveButton );
-	setActiveButton( activeButton );
-}
+	for ( const button of buttons ) {
+		button.classList.remove( css.activeButtonClass );
+	}
 
-/**
- * TODO
- * @param {HTMLLIElement} button
- */
-function unsetActiveButton( button ) {
-	button.classList.remove( css.activeButtonClass );
-}
-
-/**
- * TODO
- * @param {HTMLLIElement} button
- */
-function setActiveButton( button ) {
-	button.classList.add( css.activeButtonClass );
-	const a = button.firstElementChild || domPanic();
+	activeButton.classList.add( css.activeButtonClass );
+	const a = activeButton.firstElementChild || domPanic();
 	toggle.innerHTML = a.innerHTML;
-}
+};
 
 /**
  * TODO
  * @param {number?} index
  */
-function updateView( index ) {
-	const activeViewFragments = document.getElementsByClassName( 'cf-view-active' );
-	while ( activeViewFragments[ 0 ] ) {
-		removeViewFragmentVisibility( activeViewFragments[ 0 ] );
-	}
+const updateView = ( index ) => {
+	Array.from( document.getElementsByClassName( 'cf-view-active' ), ( activeViewFragment ) => {
+		activeViewFragment.classList.remove( 'cf-view-active' );
+	} );
 
 	Array.from( document.getElementsByTagName( 'a' ), updateAnchorFilter );
 
 	if ( index !== null ) {
 		cf.parseView( index );
 	
-		Array.from(
-			document.getElementsByClassName( 'cf-view-' + index ),
-			addViewFragmentVisibility
-		);
+		Array.from( document.getElementsByClassName( `cf-view-${index}` ), ( viewFragment ) => {
+			viewFragment.classList.add( 'cf-view-active' );
+		} );
 	}
 
 	mw.hook( 'contentFilter.filter.viewUpdated' ).fire();
-}
-
-/**
- * TODO
- * @param {HTMLElement} viewFragment
- */
-function addViewFragmentVisibility( viewFragment ) {
-	viewFragment.classList.add( 'cf-view-active' );
-}
-
-/**
- * TODO
- * @param {HTMLElement} viewFragment
- */
-function removeViewFragmentVisibility( viewFragment ) {
-	viewFragment.classList.remove( 'cf-view-active' );
-}
+};
 
 /**
  * Adds a corresponding filter URL parameter to an anchor if none is used.
  *
  * @param {HTMLAnchorElement} a The anchor.
  */
-function updateAnchorFilter( a ) {
+const updateAnchorFilter = ( a ) => {
 	if ( !a.parentElement ) {
 		domPanic();
 	}
@@ -414,16 +376,16 @@ function updateAnchorFilter( a ) {
 		return;
 	}
 
-	var uri;
+	let url;
 	try {
-		uri = new mw.Uri( a.href );
+		url = new URL( a.href );
 	} catch ( _ ) {
 		// If it is not an URL, then it probably is some javascript code,
 		// so we just ignore it.
 		return;
 	}
 
-	const match = uri.path.match(
+	const match = url.pathname.match(
 		mw.util
 			.escapeRegExp( config.wgArticlePath )
 			.replace( '\\$1', '(.*)' )
@@ -433,13 +395,13 @@ function updateAnchorFilter( a ) {
 		return;
 	}
 
-	const pageTitle = new mw.Title( mw.Uri.decode( match[ 1 ] ) );
+	const pageTitle = new mw.Title( decodeURIComponent( match[ 1 ] ) );
 	if ( !cf.isFilteringAvailable( pageTitle ) ) {
 		return;
 	}
 
-	a.href = setFilterParamValue( selectedIndex, a.href );
-}
+	a.href = setFilterParamValue( selectedIndex, new URL( a.href ) ).href;
+};
 
 /**
  * TODO
@@ -476,7 +438,7 @@ const paramValue = getFilterParamValue();
  * The index of the currently selected filter form item.
  * @type {number?}
  */
-var selectedIndex = null;
+let selectedIndex = null;
 
 /**
  * The index of the previously selected filter form item.
@@ -485,17 +447,17 @@ var selectedIndex = null;
  *
  * @type {number}
  */
-var lastSelectedIndex = 4;
+let lastSelectedIndex = 4;
 
 mw.hook( 'contentFilter.filter' ).add( setSelectedIndex ).fire( paramValue );
 mw.hook( 'contentFilter.content.pageFilter' ).add( updateButtonsForPageContext );
 mw.hook( 'contentFilter.content.registered' ).add( insertMenu );
 
-hookFiredOnce( 'contentFilter.content.registered' ).then( function () {
+hookFiredOnce( 'contentFilter.content.registered' ).then( () => {
 	mw.hook( 'contentFilter.filter' ).add( updateActiveButton, updateView );
 } );
 
-$.extend( window.cf, {
+Object.assign( window.cf, {
 	paramValue: paramValue,
 	buttons: buttons,
 	getButtonFilterIndex: getButtonFilterIndex

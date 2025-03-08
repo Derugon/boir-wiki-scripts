@@ -1,4 +1,4 @@
-( function ( mw ) {
+( ( mw ) => {
 
 /**
  * Delay between two automatic cycling frames.
@@ -28,7 +28,7 @@ const css = {
  * slideshow is enabled or was enabled before the last slide update.
  * @type {boolean}
  */
-var cyclingEnabled = false;
+let cyclingEnabled = false;
 
 /**
  * The click events added to elements in a slideshow.
@@ -54,20 +54,20 @@ const auto = [];
  * expected DOM elements.
  * @returns {never}
  */
-function domPanic() {
-	throw "Something went wrong, either DOM elements have been modified in " +
-	      "an unexpected way, or they have been disconnected from the document.";
-}
+const domPanic = () => {
+	throw 'Something went wrong, either DOM elements have been modified in an ' +
+	      'unexpected way, or they have been disconnected from the document.';
+};
 
 /**
  * Enables all slideshows in a container.
  * @param {HTMLElement} container The container.
  * @returns {HTMLElement[]} The enabled slideshows in the container.
  */
-function init( container ) {
+const init = ( container ) => {
 	return Array.from( container.getElementsByClassName( css.slideshowClass ) )
 		.filter( enable );
-}
+};
 
 /**
  * Enables a slideshow.
@@ -75,7 +75,7 @@ function init( container ) {
  * @returns {boolean} True if the slideshow is now enabled,
  *                    false if it is now disabled.
  */
-function enable( slideshow ) {
+const enable = ( slideshow ) => {
 	if ( slideshow.classList.contains( css.disabledSlideshowClass ) ) {
 		return false;
 	}
@@ -98,7 +98,31 @@ function enable( slideshow ) {
 	const titlebar = document.createElement( 'div' );
 	titlebar.classList.add( css.titlebarClass );
 
-	const titles = slides.map( enableTitle, newClickEvents );
+	const titles = [];
+	for ( const slide of slides ) {
+		const title = getSlideTitle( slide );
+		if ( !title ) {
+			domPanic();
+		}
+
+		const onClick = () => {
+			if ( title.classList.contains( css.activeTitleClass ) ) {
+				return;
+			}
+
+			const slide = getTitleSlide( title );
+			if ( !slide ) {
+				domPanic();
+			}
+
+			setActiveSlide( slide, title );
+		};
+
+		newClickEvents.titles.set( title, onClick );
+		title.addEventListener( 'click', onClick );
+
+		titles.push( title );
+	}
 
 	if ( newClickEvents.titles.size > 0 ) {
 		const as = titlebar.getElementsByTagName( 'a' );
@@ -123,11 +147,28 @@ function enable( slideshow ) {
 		!slideshow.classList.contains( css.hiddenSlideshowClass ) &&
 		!slideshow.getElementsByClassName( css.slideshowClass )[ 0 ]
 	) {
-		newClickEvents.slide = function () { /* cycle( slideshow ); */ };
-		slides.forEach( setSlideClickEvent, newClickEvents.slide );
+		newClickEvents.slide = () => { /* cycle( slideshow ); */ };
+		for ( const slide of slides ) {
+			slide.addEventListener( 'click', newClickEvents.slide );
+		}
 	}
 
-	titles.forEach( appendTitle, titlebar );
+	// Duplicate titles in the titlebar
+	for ( const title of titles ) {
+		if ( !title ) {
+			titlebar.appendChild( document.createElement( 'span' ) );
+			continue;
+		}
+
+		const titlePlaceholder = title.cloneNode( true );
+		const parent = title.parentElement || domPanic();
+
+		parent.replaceChild( titlePlaceholder, title );
+		titlebar.appendChild( title );
+	
+		titlePlaceholder.classList.remove( css.activeTitleClass, css.titleClass );
+		titlePlaceholder.classList.add( css.titlePlaceholderClass );
+	}
 
 	if ( slideshow.classList.contains( css.autoSlideshowClass ) ) {
 		makeAuto( slideshow );
@@ -143,44 +184,13 @@ function enable( slideshow ) {
 	setMinHeight( slideshow );
 
 	return true;
-}
-
-/**
- * Adds a title to a title bar of a slideshow.
- * @this {HTMLElement} The title bar.
- * @param {HTMLElement?} title The title to add.
- */
-function appendTitle( title ) {
-	if ( !title ) {
-		this.appendChild( document.createElement( 'span' ) );
-		return;
-	}
-
-	const titlePlaceholder = title.cloneNode( true );
-	const parent = title.parentElement || domPanic();
-
-	parent.replaceChild( titlePlaceholder, title );
-	this.appendChild( title );
-
-	titlePlaceholder.classList.remove( css.activeTitleClass );
-	titlePlaceholder.classList.remove( css.titleClass );
-	titlePlaceholder.classList.add( css.titlePlaceholderClass );
-}
-
-/**
- * Sets the event handler when clicking on a slide.
- * @this {EventListener} The event handler.
- * @param {HTMLElement} slide The slide whose click event should be handled.
- */
-function setSlideClickEvent( slide ) {
-	slide.addEventListener( 'click', this );
-}
+};
 
 /**
  * Makes a slideshow cycle slides automatically.
  * @param {HTMLElement} slideshow The slideshow.
  */
-function makeAuto( slideshow ) {
+const makeAuto = ( slideshow ) => {
 	slideshow.classList.add( css.autoSlideshowClass );
 	if ( !isEnabled( slideshow ) || auto.indexOf( slideshow ) !== -1 ) {
 		return;
@@ -193,13 +203,13 @@ function makeAuto( slideshow ) {
 
 	cyclingEnabled = true;
 	setTimeout( runAutoInterval, autoInterval );
-}
+};
 
 /**
  * Disables a slideshow.
  * @param {HTMLElement} slideshow The slideshow to disable.
  */
-function disable( slideshow ) {
+const disable = ( slideshow ) => {
 	if ( slideshow.classList.contains( css.disabledSlideshowClass ) ) {
 		return;
 	}
@@ -222,7 +232,7 @@ function disable( slideshow ) {
 	slideshow.style.minHeight = '';
 	slideshow.classList.remove( css.enabledSlideshowClass );
 
-	slides.forEach( function ( slide ) {
+	for ( const slide of slides ) {
 		slide.classList.remove( css.activeSlideClass );
 		if ( localClickEvents.slide ) {
 			slide.removeEventListener( 'click', localClickEvents.slide );
@@ -249,19 +259,19 @@ function disable( slideshow ) {
 			titlePlaceholder.classList.remove( css.titlePlaceholderClass );
 			titlePlaceholder.classList.add( css.titleClass );
 		}
-	} );
+	}
 
 	if ( titleBar ) {
 		titleBar.remove();
 	}
-}
+};
 
 /**
  * Sets a slide as the active one of a slideshow.
  * @param {HTMLElement} slide   The slide to set as active one.
  * @param {HTMLElement} [title] The title of the slide.
  */
-function setActiveSlide( slide, title ) {
+const setActiveSlide = ( slide, title ) => {
 	const slideshow = slide.parentElement;
 	if ( !slideshow ) {
 		domPanic();
@@ -280,7 +290,7 @@ function setActiveSlide( slide, title ) {
 		return;
 	}
 
-	var activeTitle = getSlideTitle( activeSlide );
+	let activeTitle = getSlideTitle( activeSlide );
 	if ( activeTitle ) {
 		activeTitle.classList.remove( css.activeTitleClass );
 	}
@@ -289,13 +299,13 @@ function setActiveSlide( slide, title ) {
 	if ( slideTitle && slideTitle.classList.contains( css.titleClass ) ) {
 		slideTitle.classList.add( css.activeTitleClass );
 	}
-}
+};
 
 /**
  * Sets the next slide as the active one of a slideshow.
  * @param {HTMLElement} slideshow The slideshow.
  */
-function cycle( slideshow ) {
+const cycle = ( slideshow ) => {
 	const activeSlide = getActiveSlide( slideshow );
 	if ( !activeSlide ) {
 		domPanic();
@@ -306,13 +316,13 @@ function cycle( slideshow ) {
 		getChildByClassName( slideshow, css.slideClass ) ||
 		domPanic()
 	);
-}
+};
 
 /**
  * Removes a slide from a slideshow.
  * @param {HTMLElement} slide The slide to remove.
  */
-function removeSlide( slide ) {
+const removeSlide = ( slide ) => {
 	const title = getSlideTitle( slide );
 	slide.remove();
 
@@ -324,25 +334,21 @@ function removeSlide( slide ) {
 	if ( slideshow && getSlides( slideshow ).length < 2 ) {
 		disable( slideshow );
 	}
-}
+};
 
 /**
  * Indicates whether a slideshow is enabled.
  * @param {HTMLElement} slideshow The slideshow.
  * @returns {boolean} True if the slideshow is enabled, false otherwise.
  */
-function isEnabled( slideshow ) {
-	return slideshow.classList.contains( css.enabledSlideshowClass );
-}
+const isEnabled = ( slideshow ) => slideshow.classList.contains( css.enabledSlideshowClass );
 
 /**
  * Gets all slides of a slideshow.
  * @param {HTMLElement} slideshow The slideshow to enable.
  * @returns {HTMLElement[]} An array of all slides of the slideshow.
  */
-function getSlides( slideshow ) {
-	return Array.from( slideshow.children ).filter( isSlide );
-}
+const getSlides = ( slideshow ) => Array.from( slideshow.children ).filter( isSlide );
 
 /**
  * Gets the currently active slide of a slideshow.
@@ -350,9 +356,7 @@ function getSlides( slideshow ) {
  * @returns {HTMLElement?} The currently active slide of the slideshow,
  *                         null if there is not any.
  */
-function getActiveSlide( slideshow ) {
-	return Array.from( slideshow.children ).find( isActiveSlide ) || null;
-}
+const getActiveSlide = ( slideshow ) => Array.from( slideshow.children ).find( isActiveSlide ) || null;
 
 /**
  * Gets the title bar of a slideshow.
@@ -360,18 +364,14 @@ function getActiveSlide( slideshow ) {
  * @returns {HTMLElement?} The title bar of the slideshow,
  *                         null if it does not have any.
  */
-function getTitleBar( slideshow ) {
-	return Array.from( slideshow.children ).find( isTitleBar ) || null;
-}
+const getTitleBar = ( slideshow ) => Array.from( slideshow.children ).find( isTitleBar ) || null;
 
 /**
  * Indicates whether an element is a slide.
  * @param {HTMLElement} element The element.
  * @returns {boolean} True if the element is a slide, false otherwise.
  */
-function isSlide( element ) {
-	return element.classList.contains( css.slideClass );
-}
+const isSlide = ( element ) => element.classList.contains( css.slideClass );
 
 /**
  * Indicates whether an element is the active slide of a slideshow.
@@ -379,9 +379,7 @@ function isSlide( element ) {
  * @returns {boolean} True if the element is a slide and the active one of its
  *                    slideshow, false otherwise.
  */
-function isActiveSlide( element ) {
-	return element.classList.contains( css.activeSlideClass );
-}
+const isActiveSlide = ( element ) => element.classList.contains( css.activeSlideClass );
 
 /**
  * Indicates whether an element is the title bar of a slideshow.
@@ -389,16 +387,14 @@ function isActiveSlide( element ) {
  * @returns {boolean} True if the element is the title bar of a slideshow,
  *                    false otherwise.
  */
-function isTitleBar( element ) {
-	return element.classList.contains( css.titlebarClass );
-}
+const isTitleBar = ( element ) => element.classList.contains( css.titlebarClass );
 
 /**
  * Gets the title of a slide.
  * @param {HTMLElement} slide The slide.
  * @returns {HTMLElement?} The title of the slide, null if it does not have any.
  */
-function getSlideTitle( slide ) {
+const getSlideTitle = ( slide ) => {
 	const slideshow = slide.parentElement;
 	if ( !slideshow ) {
 		return domPanic();
@@ -410,15 +406,15 @@ function getSlideTitle( slide ) {
 	}
 
 	return slide.getElementsByClassName( css.titleClass )[ 0 ] || null;
-}
+};
 
 /**
  * Gets a slide from its title.
  * @param {HTMLElement} title The title.
  * @returns {HTMLElement?} The associated slide, null if there is not any.
  */
-function getTitleSlide( title ) {
-	for ( var parent = title.parentElement; parent; parent = parent.parentElement ) {
+const getTitleSlide = ( title ) => {
+	for ( let parent = title.parentElement; parent; parent = parent.parentElement ) {
 		if ( isTitleBar( parent ) ) {
 			const slideshow = parent.parentElement;
 			if ( !slideshow ) {
@@ -435,59 +431,30 @@ function getTitleSlide( title ) {
 	}
 
 	return null;
-}
-
-/**
- * Enables the click action from a title to its slide.
- * @this {ClickEvents} The click events of the slideshow.
- * @param {HTMLElement} slide The slide.
- * @returns {HTMLElement} The title of the slide, null if there is not any.
- */
-function enableTitle( slide ) {
-	const title = getSlideTitle( slide );
-	if ( !title ) {
-		domPanic();
-	}
-
-	const click = function () {
-		if ( title.classList.contains( css.activeTitleClass ) ) {
-			return;
-		}
-
-		const slide = getTitleSlide( title );
-		if ( !slide ) {
-			domPanic();
-		}
-
-		setActiveSlide( slide, title );
-	};
-
-	this.titles.set( title, click );
-	title.addEventListener( 'click', click );
-
-	return title;
-}
+};
 
 /**
  * Cycles slides of all enabled slideshows.
  */
-function runAutoInterval() {
+const runAutoInterval = () => {
 	if ( !auto.length ) {
 		cyclingEnabled = false;
 		return;
 	}
 
-	auto.forEach( cycle );
+	for ( const slideshow of auto ) {
+		cycle( slideshow );
+	}
 
 	setTimeout( runAutoInterval, autoInterval );
-}
+};
 
 /**
  * Sets a minimum height to a slideshow to prevent other elements from
  * moving on the page while switching slides.
  * @param {HTMLElement} slideshow The slideshow.
  */
-function setMinHeight( slideshow ) {
+const setMinHeight = ( slideshow ) => {
 	const activeSlide = getActiveSlide( slideshow );
 	if ( !activeSlide ) {
 		domPanic();
@@ -495,29 +462,27 @@ function setMinHeight( slideshow ) {
 
 	activeSlide.classList.remove( css.activeSlideClass );
 
-	const minHeight = getSlides( slideshow ).reduce( function ( maxHeight, slide ) {
+	let minHeight = 0;
+	for ( const slide of getSlides( slideshow ) ) {
 		slide.classList.add( css.activeSlideClass );
-		maxHeight = Math.max(
-			maxHeight,
-			slideshow.getBoundingClientRect().height
-		);
+		const height = slideshow.getBoundingClientRect().height;
+		minHeight = Math.max( minHeight, height );
 		slide.classList.remove( css.activeSlideClass );
-		return maxHeight;
-	}, 0 );
+	}
 
 	activeSlide.classList.add( css.activeSlideClass );
 
-	slideshow.style.minHeight = minHeight + 'px';
-}
+	slideshow.style.minHeight = `${minHeight}px`;
+};
 
 /**
  * Updates the minimum height of a slideshow after a slide change.
  * @param {HTMLElement} slideshow The slideshow.
  */
-function updateMinHeight( slideshow ) {
+const updateMinHeight = ( slideshow ) => {
 	slideshow.style.minHeight = '';
 	setMinHeight( slideshow );
-}
+};
 
 /**
  * Gets the first element following an element which has a given class.
@@ -526,15 +491,15 @@ function updateMinHeight( slideshow ) {
  * @returns {HTMLElement?} An element following the given element which has
  *                         the given class, null if there is not any.
  */
-function getNextSiblingByClassName( element, className ) {
-	for ( var sibling = element.nextElementSibling; sibling; sibling = sibling.nextElementSibling ) {
+const getNextSiblingByClassName = ( element, className ) => {
+	for ( let sibling = element.nextElementSibling; sibling; sibling = sibling.nextElementSibling ) {
 		if ( sibling.classList.contains( className ) ) {
 			return sibling;
 		}
 	}
 
 	return null;
-}
+};
 
 /**
  * Gets the first element within a container which has a given class.
@@ -543,39 +508,33 @@ function getNextSiblingByClassName( element, className ) {
  * @returns {HTMLElement?} An element from the container which has the given class,
  *                         null if there is not any.
  */
-function getChildByClassName( container, className ) {
-	return Array.from( container.getElementsByClassName( className ) ).find( isChild, container ) || null;
-}
-
-/**
- * Indicates whether an element is a direct child of another.
- * @this {HTMLElement} The parent element.
- * @param {HTMLElement} element The element to check.
- * @returns {boolean} True if the given element is a child of the other one,
- *                    false otherwise.
- */
-function isChild( element ) {
-	return element.parentElement === this;
-}
+const getChildByClassName = ( container, className ) => {
+	for ( const element of Array.from( container.getElementsByClassName( className ) ) ) {
+		if ( element.parentElement === container ) {
+			return element;
+		}
+	}
+	return null;
+};
 
 /**
  * Removes an element, leaving its content in place.
  * @param {HTMLElement} element The element to remove.
  */
-function unwrap( element ) {
+const unwrap = ( element ) => {
 	const parent = element.parentElement;
 	if ( !parent ) {
 		domPanic();
 	}
 
-	var childNode = element.firstChild;
+	let childNode = element.firstChild;
 	while ( childNode ) {
 		parent.insertBefore( childNode, element );
 		childNode = element.firstChild;
 	}
 
 	element.remove();
-}
+};
 
 module.exports = {
 	init: init,
@@ -593,18 +552,16 @@ module.exports = {
 	getTitleSlide: getTitleSlide
 };
 
-mw.hook( 'wikipage.content' ).add( function ( $content ) {
+mw.hook( 'wikipage.content' ).add( ( $content ) => {
 	const content = $content[ 0 ];
 	if ( content ) {
 		init( content );
 	}
 } );
 
-mw.hook( 'contentFilter.filter.viewUpdated' ).add( function () {
-	Array.from(
-		document.getElementsByClassName( css.enabledSlideshowClass ),
-		updateMinHeight
-	);
-} );
+mw.hook( 'contentFilter.filter.viewUpdated' ).add( () => Array.from(
+	document.getElementsByClassName( css.enabledSlideshowClass ),
+	updateMinHeight
+) );
 
 } )( mediaWiki );

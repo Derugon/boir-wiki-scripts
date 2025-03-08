@@ -16,6 +16,7 @@ table.floatright {
 table.cf-context,
 th.cf-context,
 td.cf-context,
+dt.cf-context,
 dd.cf-context,
 li.cf-context,
 p.cf-context {
@@ -23,9 +24,16 @@ p.cf-context {
 	max-width: max-content;
 }
 
+.nav-header dt.cf-context,
+.nav-header dd.cf-context,
+.nav-header li.cf-context {
+	max-width: none;
+}
+
 table.cf-context::before,
 th.cf-context::before,
 td.cf-context::before,
+dt.cf-context::before,
 dd.cf-context::before,
 li.cf-context::before,
 p.cf-context::before {
@@ -40,6 +48,7 @@ p.cf-context::before {
 table.cf-context::before,
 th.cf-context::before,
 td.cf-context::before,
+dt.cf-context::before,
 dd.cf-context::before {
 	top   : -5px;
 	height: calc( 100% + 10px );

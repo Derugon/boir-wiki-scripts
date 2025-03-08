@@ -7,8 +7,7 @@
  */
 
 // <nowiki>
-
-( function ( mw ) {
+( ( mw ) => {
 
 if ( !window.cf ) {
 	// Something went wrong.
@@ -24,60 +23,48 @@ const css = {
  * TODO
  * @param {HTMLElement} content
  */
-function setTagEventsInContent( content ) {
-	Array.from( cf.getTags( content ), setTagEvents );
-}
-
-/**
- * TODO
- * @param {HTMLElement} tag
- */
-function setTagEvents( tag ) {
-	tag.removeEventListener( 'mouseenter', onTagEnter );
-	tag.removeEventListener( 'mouseleave', onTagLeave );
-	tag.addEventListener( 'mouseenter', onTagEnter );
-	tag.addEventListener( 'mouseleave', onTagLeave );
-}
+const setTagEventsInContent = ( content ) => {
+	for ( const tag of Array.from( cf.getTags( content ) ) ) {
+		tag.removeEventListener( 'mouseenter', onTagEnter );
+		tag.removeEventListener( 'mouseleave', onTagLeave );
+		tag.addEventListener( 'mouseenter', onTagEnter );
+		tag.addEventListener( 'mouseleave', onTagLeave );
+	}
+};
 
 /**
  * TODO
  * @this {HTMLElement}
  */
-function onTagEnter() {
+const onTagEnter = function() {
 	const context = cf.getContext( this );
-	if ( context !== null ) {
-		context.forEach( enableContextElementHovering );
+	if ( context === null ) {
+		return;
 	}
-}
+
+	for ( const contextElement of context ) {
+		contextElement.classList.add( css.contextHoverClass );
+	}
+};
 
 /**
  * TODO
  * @this {HTMLElement}
  */
-function onTagLeave() {
+const onTagLeave = function () {
 	const context = cf.getContext( this );
-	if ( context !== null ) {
-		context.forEach( disableContextElementHovering );
+	if ( context === null ) {
+		return;
 	}
-}
 
-/**
- * TODO
- * @param {HTMLElement} contextElement
- */
-function enableContextElementHovering( contextElement ) {
-	contextElement.classList.add( css.contextHoverClass );
-}
+	for ( const contextElement of context ) {
+		contextElement.classList.remove( css.contextHoverClass );
+	}
+};
 
-/**
- * TODO
- * @param {HTMLElement} contextElement
- */
-function disableContextElementHovering( contextElement ) {
-	contextElement.classList.remove( css.contextHoverClass );
+for ( const container of cf.containers ) {
+	setTagEventsInContent( container );
 }
-
-cf.containers.forEach( setTagEventsInContent );
 mw.hook( 'contentFilter.content.registered' ).add( setTagEventsInContent );
 
 } )( mediaWiki );

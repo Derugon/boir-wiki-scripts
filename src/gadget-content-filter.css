@@ -1,21 +1,18 @@
 #cf-button-0 {
 	--cf-button-title-color           : #142e59;
 	--cf-button-title-color--secondary: #c3d7f7;
-	--cf-button-title-color--rgb      : 20, 46, 89;
 }
 
 #cf-button-1,
 #cf-button-2 {
 	--cf-button-title-color           : #661200;
 	--cf-button-title-color--secondary: #ff5f47;
-	--cf-button-title-color--rgb      : 102, 18, 0;
 }
 
 #cf-button-3,
 #cf-button-4 {
 	--cf-button-title-color           : #490505;
 	--cf-button-title-color--secondary: #ff1c1c;
-	--cf-button-title-color--rgb      : 73, 5, 5;
 }
 
 .cf-menu {
@@ -33,15 +30,18 @@
 	line-height  : 1;
 	padding      : 7px 10px;
 	white-space  : nowrap;
-	border       : 1px solid rgba( var( --wiki-accent-color--rgb ), 0.3 );
+	border       : 1px solid var( --wiki-accent-color );
+	border-color : color-mix( in srgb, var( --wiki-accent-color ) 30%, transparent );
 	border-radius: 10px;
 	display      : inline-block;
-	background   : rgba( var( --wiki-accent-color--rgb ), 0.2 );
+	background   : var( --wiki-accent-color ); /* fallback */
+	background   : color-mix( in srgb, var( --wiki-accent-color ) 20%, transparent );
 	cursor       : pointer;
 }
 
 .cf-menu:hover > .cf-toggle {
-	background   : rgba( var( --wiki-accent-color--rgb ), 0.4 );
+	background   : var( --wiki-accent-color ); /* fallback */
+	background   : color-mix( in srgb, var( --wiki-accent-color ) 40%, transparent );
 	border-radius: 10px 10px 0 0;
 }
 
@@ -81,7 +81,8 @@ ul.cf-menu-list {
 }
 
 .cf-button > a:hover {
-	background: rgba( var( --wiki-accent-color--rgb ), 0.2 );
+	background: var( --wiki-accent-color ); /* fallback */
+	background: color-mix( in srgb, var( --wiki-accent-color ) 20%, transparent );
 	color     : var( --wiki-content-link-color );
 }
 
@@ -100,4 +101,11 @@ ul.cf-menu-list {
 .cf-button-deactivated,
 .cf-view-active {
 	display: none !important;
+}
+
+@media print {
+	.cf-menu,
+	#cf-info {
+		display: none;
+	}
 }

@@ -15,7 +15,7 @@ declare global {
 			readonly filterMax: number;
 			readonly containers: HTMLElement[];
 			isFilteringAvailable( pageTitle: mw.Title ): boolean;
-			getTags( root?: Document | HTMLElement ): HTMLCollectionOf<HTMLElement>;
+			getTags( root?: Document | HTMLElement ): HTMLElement[];
 			getContainers( root?: Document | HTMLElement ): HTMLCollectionOf<HTMLElement>;
 			getFilter( tag: HTMLElement ): number;
 			getContext( tag: HTMLElement ): HTMLElement[] | null;
