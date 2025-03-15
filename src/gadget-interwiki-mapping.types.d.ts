@@ -13,6 +13,7 @@ declare global {
 			mappings: Record<string, Data.Mapping>;
 			pages: Record<string, Data.Page>;
 			revisions: Record<number, Data.Revision>;
+			callbacks: Record<string, [HTMLElement, Data.Callback][]>;
 		}
 
 		namespace Data {
@@ -31,6 +32,10 @@ declare global {
 				page: Page;
 				id: number;
 				size: number;
+			}
+
+			interface Callback<T extends HTMLElement = HTMLElement> {
+				( element: T, mapping: InterwikiMapping.Data.Mapping ): void;
 			}
 		}
 
@@ -72,9 +77,5 @@ declare global {
 				}
 			}
 		}
-	}
-
-	namespace mw {
-		function hook( name: `interwikiMapping.update.${string}` ): Hook<[ mapping: InterwikiMapping.Data.Mapping ]>;
 	}
 }

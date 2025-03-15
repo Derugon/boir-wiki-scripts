@@ -1,5 +1,5 @@
 // <nowiki>
-( async ( $, mw ) => {
+( ( $, mw ) => {
 
 /**
  * Foreign wiki index URL.
@@ -54,11 +54,19 @@ const css = {
 
 const config = mw.config.get( [ 'wgAction', 'wgPageName' ] );
 
+const actions = {
+	// Actions that make buttons act as in view mode
+	view: new Set( [ 'view' ] ),
+	// Actions that make buttons act as in edit mode
+	edit: new Set( [ 'edit', 'submit' ] )
+}
+
 /** @type {InterwikiMapping.Data} */
 const data = {
 	mappings: {},
 	pages: {},
-	revisions: {}
+	revisions: {},
+	callbacks: {}
 };
 
 /**
@@ -88,7 +96,7 @@ const getMapping = ( element ) => {
 /**
  * @template {HTMLElement} T
  * @param {T} element
- * @param {( element: T, mapping: InterwikiMapping.Data.Mapping ) => void} callback
+ * @param {InterwikiMapping.Data.Callback} callback
  */
 const prepareLoadMapping = ( element, callback ) => {
 	const mapping = getMapping( element );
@@ -106,7 +114,10 @@ const prepareLoadMapping = ( element, callback ) => {
 		}
 	}
 
-	mw.hook( `interwikiMapping.update.${mapping.local}` ).add( ( mapping ) => callback( element, mapping ) );
+	if ( data.callbacks[mapping.local.getPrefixedText()] === undefined ) {
+		data.callbacks[mapping.local.getPrefixedText()] = [];
+	}
+	data.callbacks[mapping.local.getPrefixedText()].push( [ element, callback ] );
 	return true;
 };
 
@@ -121,10 +132,10 @@ const prepareLoadPageMapping = ( localTitle, title ) => {
 
 	if ( data.pages[title] === undefined ) {
 		if ( loadMappings.mappingsPerTitle[title] === undefined ) {
-			loadMappings.mappingsPerTitle[title] = [];
+			loadMappings.mappingsPerTitle[title] = new Set();
 		}
-		loadMappings.mappingsPerTitle[title].push( localTitle );
-		loadMappings.titlesToLoad[title] = true;
+		loadMappings.mappingsPerTitle[title].add( localTitle.getPrefixedText() );
+		loadMappings.titlesToLoad.add( title );
 	}
 
 	return true;
@@ -141,49 +152,79 @@ const prepareLoadRevisionMapping = ( localTitle, revid ) => {
 
 	if ( data.revisions[revid] === undefined ) {
 		if ( loadMappings.mappingsPerRevid[revid] === undefined ) {
-			loadMappings.mappingsPerRevid[revid] = [];
+			loadMappings.mappingsPerRevid[revid] = new Set();
 		}
-		loadMappings.mappingsPerRevid[revid].push( localTitle );
-		loadMappings.revidsToLoad[revid] = true;
+		loadMappings.mappingsPerRevid[revid].add( localTitle.getPrefixedText() );
+		loadMappings.revidsToLoad.add( revid );
 	}
 
 	return true;
 };
 
 /**
+ * @param {Set<string | number>} [queried]
  * @returns {Promise<void>}
  */
-const loadMappings = async () => {
-	if ( loadMappings.running ) {
-		return;
+const loadMappings = ( queried ) => {
+	if ( queried === undefined ) {
+		if ( loadMappings.running ) {
+			return Promise.resolve();
+		}
+		queried = new Set();
+	}
+	loadMappings.running = true;
+
+	if ( loadMappings.revidsToLoad.size > 0 ) {
+		const revids = Array.from( loadMappings.revidsToLoad );
+		loadMappings.revidsToLoad.clear();
+
+		return loadMappings.queryByBatch( 'revids', revids, revidBatchSize ).then( ( newlyQueried ) => {
+			newlyQueried.forEach( queried.add, queried );
+			return loadMappings( queried );
+		} );
 	}
 
-	const revids = Object.keys( loadMappings.revidsToLoad );
-	if ( revids.length > 0 ) {
-		loadMappings.revidsToLoad = {};
-		await loadMappings.queryByBatch( 'revids', revids, revidBatchSize );
-		await loadMappings();
-		return;
+	if ( loadMappings.titlesToLoad.size > 0 ) {
+		const titles = Array.from( loadMappings.titlesToLoad );
+		loadMappings.titlesToLoad.clear();
+
+		return loadMappings.queryByBatch( 'titles', titles, titleBatchSize ).then( ( newlyQueried ) => {
+			newlyQueried.forEach( queried.add, queried );
+			return loadMappings( queried );
+		} );
 	}
 
-	const titles = Object.keys( loadMappings.titlesToLoad );
-	if ( titles.length > 0 ) {
-		loadMappings.titlesToLoad = {};
-		await loadMappings.queryByBatch( 'titles', titles, titleBatchSize );
-		await loadMappings();
-		return;
+	// Resolve mappings only once everything has been loaded.
+	for ( const foreign of queried ) {
+		let mappings;
+		if ( typeof foreign === 'string' ) {
+			mappings = loadMappings.mappingsPerTitle[foreign];
+			delete loadMappings.mappingsPerTitle[foreign];
+		} else {
+			mappings = loadMappings.mappingsPerRevid[foreign];
+			delete loadMappings.mappingsPerRevid[foreign];
+		}
+
+		if ( mappings !== undefined ) {
+			for ( const local of mappings ) {
+				setMapping( foreign, new mw.Title( local ) );
+			}
+		}
 	}
+
+	loadMappings.running = false;
+	return Promise.resolve();
 };
 
 /** @type {boolean} */
 loadMappings.running = false;
-/** @type {Record<string, true>} */
-loadMappings.titlesToLoad = {};
-/** @type {Record<number, true>} */
-loadMappings.revidsToLoad = {};
-/** @type {Record<string, mw.Title[]>} */
+/** @type {Set<string>} */
+loadMappings.titlesToLoad = new Set();
+/** @type {Set<number>} */
+loadMappings.revidsToLoad = new Set();
+/** @type {Record<string, Set<string>>} */
 loadMappings.mappingsPerTitle = {};
-/** @type {Record<number, mw.Title[]>} */
+/** @type {Record<number, Set<string>>} */
 loadMappings.mappingsPerRevid = {};
 
 /**
@@ -191,9 +232,8 @@ loadMappings.mappingsPerRevid = {};
  * @param {string[] | number[]} inputs
  * @param {number} batchSize
  */
-loadMappings.queryByBatch = async ( param, inputs, batchSize ) => {
-	loadMappings.running = true;
-
+loadMappings.queryByBatch = ( param, inputs, batchSize ) => {
+	/** @type {import("types-mediawiki/api_params").ApiQueryInfoParams & import("types-mediawiki/api_params").ApiQueryRevisionsParams} */
 	const params = {
 		action: 'query',
 		prop: [ 'info', 'revisions' ],
@@ -201,33 +241,24 @@ loadMappings.queryByBatch = async ( param, inputs, batchSize ) => {
 	};
 
 	const batchPromises = [];
+	const queried = new Set();
 	for ( let i = 0; i < inputs.length; i += batchSize ) {
 		params[param] = inputs.slice( i, i + batchSize );
-		batchPromises.push( foreignApi.get( params ).then( loadMappings.onResponse ) );
-	}
-	await Promise.all( batchPromises );
-
-	for ( const title in loadMappings.mappingsPerTitle ) {
-		for ( const local of loadMappings.mappingsPerTitle[title] ) {
-			setMapping( title, local );
-		}
-		delete loadMappings.mappingsPerTitle[title];
+		batchPromises.push( foreignApi.get( params ).then( ( response ) => {
+			loadMappings.onResponse( response ).forEach( queried.add, queried );
+		} ) );
 	}
 
-	for ( const revid in loadMappings.mappingsPerRevid ) {
-		for ( const local of loadMappings.mappingsPerRevid[revid] ) {
-			setMapping( +revid, local );
-		}
-		delete loadMappings.mappingsPerRevid[revid];
-	}
-
-	loadMappings.running = false;
+	return Promise.all( batchPromises ).then( () => queried );
 };
 
 /**
  * @param {InterwikiMapping.ApiResponse} response
  */
 loadMappings.onResponse = ( response ) => {
+	/** @type {Set<string | number>} */
+	const queried = new Set();
+
 	for ( const pageid in response.query.pages ) {
 		const pageRes = response.query.pages[pageid];
 
@@ -236,25 +267,33 @@ loadMappings.onResponse = ( response ) => {
 			continue;
 		}
 
-		delete loadMappings.titlesToLoad[pageRes.title];
-		// @ts-ignore
-		data.pages[pageRes.title] = { title: pageRes.title };
+		loadMappings.titlesToLoad.delete( pageRes.title );
+		if ( data.pages[pageRes.title] === undefined ) {
+			// @ts-ignore: need to create revisions before setting page.lastRevision
+			data.pages[pageRes.title] = { title: pageRes.title };
+			queried.add( pageRes.title );
+		}
 		const page = data.pages[pageRes.title];
 
 		for ( const revisionRes of pageRes.revisions ) {
-			delete loadMappings.revidsToLoad[revisionRes.revid];
-			data.revisions[revisionRes.revid] = {
-				page: page,
-				id: revisionRes.revid,
-				size: revisionRes.size
-			};
+			loadMappings.revidsToLoad.delete( revisionRes.revid );
+			if ( data.revisions[revisionRes.revid] === undefined ) {
+				data.revisions[revisionRes.revid] = {
+					page: page,
+					id: revisionRes.revid,
+					size: revisionRes.size
+				};
+				queried.add( revisionRes.revid );
+			}
 		}
 
 		page.lastRevision = data.revisions[pageRes.lastrevid];
 		if ( page.lastRevision === undefined ) {
-			loadMappings.revidsToLoad[pageRes.lastrevid] = true;
+			loadMappings.revidsToLoad.add( pageRes.lastrevid );
 		}
 	}
+
+	return queried;
 };
 
 /**
@@ -264,16 +303,27 @@ loadMappings.onResponse = ( response ) => {
 const setMapping = ( foreign, local ) => {
 	/** @type {InterwikiMapping.Data.Mapping} */
 	const mapping = { localTitle: local };
+
 	if ( typeof foreign === 'string' ) {
 		mapping.foreignPage = data.pages[foreign];
+		if ( mapping.foreignPage === undefined ) {
+			// No data retrieved yet.
+			return;
+		}
 	} else if ( typeof foreign === 'number' ) {
 		mapping.foreignRevision = data.revisions[foreign];
+		if ( mapping.foreignRevision === undefined ) {
+			// No data retrieved yet.
+			return;
+		}
 		mapping.foreignPage = mapping.foreignRevision.page;
 	}
 
 	const localText = local.getPrefixedText();
 	data.mappings[localText] = mapping;
-	mw.hook( `interwikiMapping.update.${local}` ).fire( data.mappings[localText] );
+	for ( const [ element, callback ] of data.callbacks[local.getPrefixedText()] ) {
+		callback( element, data.mappings[localText] );
+	}
 };
 
 /**
@@ -339,7 +389,7 @@ const setRevisionInText = ( text, title, revid ) => {
 		__LOCAL_TITLE__: prefixedTitle,
 		__FOREIGN_REV__: revid
 	} );
-	const newTemplate = `{{${args.join( ' | ' )}}}`;
+	const newTemplate = `{{${args.join( ' | ' )} }}`;
 
 	const closingRegExp = new RegExp( `(\\{\\{\\s*${ignoreFirstCase( closingTemplate )})` );
 	if ( closingRegExp.test( text ) ) {
@@ -466,9 +516,9 @@ const fillActions = ( element, mapping ) => {
 	if ( page === undefined ) {
 		// nothing
 	} else if ( revision === undefined ) {
-		if ( config.wgAction === 'edit' ) {
+		if ( actions.edit.has( config.wgAction ) ) {
 			createActionLink( element, 'lier' ).addEventListener( 'click', setRevisionWithDOM.bind( null, title, page.lastRevision.id ) );
-		} else if ( config.wgAction === 'view' ) {
+		} else if ( actions.view.has( config.wgAction ) ) {
 			/** @type {InterwikiMapping.QueryParams} */
 			const params = { action: 'edit' };
 			params[urlParams.title] = title.getPrefixedText();
@@ -477,13 +527,13 @@ const fillActions = ( element, mapping ) => {
 		}
 	} else if ( revision.id !== page.lastRevision.id ) {
 		const diffUrl = new URL( foreignIndexUrl );
-		diffUrl.searchParams.set( 'type', 'revision' );
 		diffUrl.searchParams.set( 'oldid', `${revision.id}` );
+		diffUrl.searchParams.set( 'diff', 'current' );
 		createActionLink( element, 'diff', diffUrl.href );
 
-		if ( config.wgAction === 'edit' ) {
+		if ( actions.edit.has( config.wgAction ) ) {
 			createActionLink( element, 'synchroniser' ).addEventListener( 'click', setRevisionWithDOM.bind( null, title, page.lastRevision.id ) );
-		} else if ( config.wgAction === 'view' ) {
+		} else if ( actions.view.has( config.wgAction ) ) {
 			/** @type {InterwikiMapping.QueryParams} */
 			const params = { action: 'edit' };
 			params[urlParams.title] = title.getPrefixedText();
@@ -497,12 +547,7 @@ const preloadEdit = () => {
 	const titleText = mw.util.getParamValue( urlParams.title );
 	const revid = mw.util.getParamValue( urlParams.revid );
 	if ( titleText === null || revid === null ) {
-		return false;
-	}
-
-	const preview = document.getElementById( 'wpPreview' );
-	if ( preview !== null ) {
-		preview.click();
+		return;
 	}
 
 	const minorEdit = document.getElementById( 'wpMinoredit' );
@@ -512,16 +557,29 @@ const preloadEdit = () => {
 
 	const title = new mw.Title( decodeURIComponent( titleText ) );
 	setRevisionWithDOM( title, +revid );
-	return true;
 };
 
-await hookFiredOnce( 'wikipage.content' );
-
-if ( config.wgAction === 'edit' ) {
-	preloadEdit();
-}
+hookFiredOnce( 'wikipage.editform' ).then( preloadEdit );
 
 safeAddContentHook( ( $content ) => {
+	// We are only interested in elements generated by the parser
+	if ( !$content.is( '.mw-parser-output' ) ) {
+		$content = $content.children( '.mw-parser-output' );
+		if ( $content.length === 0 ) {
+			return;
+		}
+	}
+
+	// Do not run in real time preview!
+	if ( $content.parents( '.ext-WikiEditor-realtimepreview-preview' ).length > 0 ) {
+		return;
+	}
+
+	data.mappings  = {};
+	data.pages     = {};
+	data.revisions = {};
+	data.callbacks = {};
+
 	$content.find( `.${css.foreignClass}` ).filter( ( _, e ) => prepareLoadMapping( e, fillForeign ) );
 	$content.find( `.${css.diffClass   }` ).filter( ( _, e ) => prepareLoadMapping( e, fillDiff    ) );
 	$content.find( `.${css.actionsClass}` ).filter( ( _, e ) => prepareLoadMapping( e, fillActions ) );

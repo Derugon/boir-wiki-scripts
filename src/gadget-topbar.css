@@ -121,7 +121,9 @@
 	order: 0;
 	width: auto;
 	min-height: 65px;
-	margin: 0 20vw 15px 250px;
+	margin-right: calc( clamp( 5em, 20vw, 20em ) + 76px - 2em );
+	margin-bottom: 15px;
+	margin-left: 250px;
 }
 
 #p-logo {
@@ -344,8 +346,8 @@
 	content: "";
 	display: inline-block;
 	height: 24px;
-	-webkit-mask-size: 100% 100%;
-	mask-size: 100% 100%;
+	-webkit-mask-size: auto 100%;
+	mask-size: auto 100%;
 	-webkit-mask-position: center center;
     mask-position: center center;
 	width: 24px;

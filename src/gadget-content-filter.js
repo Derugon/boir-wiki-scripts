@@ -54,7 +54,9 @@ const css = {
 	buttonWildcardId: 'cf-button-all',
 	buttonTitleClass: 'cf-button-title',
 	deactivatedButtonClass: 'cf-button-deactivated',
-	activeButtonClass: 'cf-button-active'
+	activeButtonClass: 'cf-button-active',
+
+	activeViewClass: 'cf-view-active'
 };
 
 /**
@@ -345,18 +347,20 @@ const updateActiveButton = ( index ) => {
  * @param {number?} index
  */
 const updateView = ( index ) => {
-	Array.from( document.getElementsByClassName( 'cf-view-active' ), ( activeViewFragment ) => {
-		activeViewFragment.classList.remove( 'cf-view-active' );
-	} );
+	for ( const activeViewFragment of queryElementsByClassName( css.activeViewClass ) ) {
+		activeViewFragment.classList.remove( css.activeViewClass );
+	}
 
-	Array.from( document.getElementsByTagName( 'a' ), updateAnchorFilter );
+	for ( const anchor of queryElementsByTagName( 'a' ) ) {
+		updateAnchorFilter( anchor );
+	}
 
 	if ( index !== null ) {
 		cf.parseView( index );
-	
-		Array.from( document.getElementsByClassName( `cf-view-${index}` ), ( viewFragment ) => {
-			viewFragment.classList.add( 'cf-view-active' );
-		} );
+
+		for ( const viewFragment of queryElementsByClassName( `cf-view-${index}` ) ) {
+			viewFragment.classList.add( css.activeViewClass );
+		}
 	}
 
 	mw.hook( 'contentFilter.filter.viewUpdated' ).fire();

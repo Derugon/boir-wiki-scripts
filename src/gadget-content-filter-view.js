@@ -58,7 +58,9 @@ const domPanic = ( note ) => {
  * @param {number} index
  */
 const parseView = ( index ) => {
-	Array.from( cf.getContainers(), ( container ) => addContainerToView( container, index ) );
+	for ( const container of cf.getContainers() ) {
+		addContainerToView( container, index );
+	}
 };
 
 /**
@@ -99,7 +101,7 @@ const parseViewStackContainer = ( container, view ) => {
 	const filter = Math.pow( 2, view );
 	/** @type {Set<HTMLElement>} */
 	const elementSet = new Set();
-	for ( const tag of Array.from( cf.getTags( container ) ) ) {
+	for ( const tag of cf.getTags( container ) ) {
 		if ( cf.getFilter( tag ) & filter ) {
 			// Full match: select the tag.
 			elementSet.add( tag );
@@ -147,12 +149,12 @@ const cleanupViewContainer = ( content, container ) => {
 
 	// TODO: disable active view
 
-	Array.from( content.getElementsByClassName( css.viewClass ), ( element ) => {
+	for ( const element of queryElementsByClassName( css.viewClass, content ) ) {
 		element.classList.remove( css.viewClass );
 		for ( const view of views ) {
 			element.classList.remove( `${css.viewClassPrefix}${view}` );
 		}
-	} );
+	}
 
 	for ( const view of views ) {
 		content.classList.remove( `${css.containerViewClassPrefix}${view}` );

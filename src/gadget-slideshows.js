@@ -64,10 +64,8 @@ const domPanic = () => {
  * @param {HTMLElement} container The container.
  * @returns {HTMLElement[]} The enabled slideshows in the container.
  */
-const init = ( container ) => {
-	return Array.from( container.getElementsByClassName( css.slideshowClass ) )
-		.filter( enable );
-};
+const init = ( container ) => queryElementsByClassName( css.slideshowClass, container )
+	.filter( enable );
 
 /**
  * Enables a slideshow.
@@ -125,9 +123,8 @@ const enable = ( slideshow ) => {
 	}
 
 	if ( newClickEvents.titles.size > 0 ) {
-		const as = titlebar.getElementsByTagName( 'a' );
-		while ( as[ 0 ] ) {
-			unwrap( as[ 0 ] );
+		for ( const anchor of queryElementsByTagName( 'a', titlebar ) ) {
+			unwrap( anchor );
 		}
 	}
 
@@ -509,7 +506,7 @@ const getNextSiblingByClassName = ( element, className ) => {
  *                         null if there is not any.
  */
 const getChildByClassName = ( container, className ) => {
-	for ( const element of Array.from( container.getElementsByClassName( className ) ) ) {
+	for ( const element of queryElementsByClassName( className, container ) ) {
 		if ( element.parentElement === container ) {
 			return element;
 		}
@@ -559,9 +556,10 @@ mw.hook( 'wikipage.content' ).add( ( $content ) => {
 	}
 } );
 
-mw.hook( 'contentFilter.filter.viewUpdated' ).add( () => Array.from(
-	document.getElementsByClassName( css.enabledSlideshowClass ),
-	updateMinHeight
-) );
+mw.hook( 'contentFilter.filter.viewUpdated' ).add( () => {
+	for ( const slideshow of queryElementsByClassName( css.enabledSlideshowClass ) ) {
+		updateMinHeight( slideshow );
+	}
+} );
 
 } )( mediaWiki );

@@ -103,15 +103,18 @@ $(function() {
 // [START: module]
 ( ( $, mw ) => {
 
-	/****************************
-	/* queryElementsByClassName *
-	/****************************/
+	/********************
+	/* queryElementsBy_ *
+	/********************/
 
 	// Clearer (and faster) alternative to querySelectorAll.
 
 	// @ts-ignore
 	window.queryElementsByClassName = ( classNames, root ) =>
 		Array.from( ( root || document ).getElementsByClassName( classNames ) );
+	// @ts-ignore
+	window.queryElementsByTagName = ( qualifiedName, root ) =>
+		Array.from( ( root || document ).getElementsByTagName( qualifiedName ) );
 
 	/**********************
 	/* safeAddContentHook *

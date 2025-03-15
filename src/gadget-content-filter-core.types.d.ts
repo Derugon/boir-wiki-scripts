@@ -16,7 +16,7 @@ declare global {
 			readonly containers: HTMLElement[];
 			isFilteringAvailable( pageTitle: mw.Title ): boolean;
 			getTags( root?: Document | HTMLElement ): HTMLElement[];
-			getContainers( root?: Document | HTMLElement ): HTMLCollectionOf<HTMLElement>;
+			getContainers( root?: Document | HTMLElement ): HTMLElement[];
 			getFilter( tag: HTMLElement ): number;
 			getContext( tag: HTMLElement ): HTMLElement[] | null;
 			getPreviousSibling( node: Node ): SiblingSearchResult;

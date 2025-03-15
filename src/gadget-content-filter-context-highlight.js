@@ -24,7 +24,7 @@ const css = {
  * @param {HTMLElement} content
  */
 const setTagEventsInContent = ( content ) => {
-	for ( const tag of Array.from( cf.getTags( content ) ) ) {
+	for ( const tag of cf.getTags( content ) ) {
 		tag.removeEventListener( 'mouseenter', onTagEnter );
 		tag.removeEventListener( 'mouseleave', onTagLeave );
 		tag.addEventListener( 'mouseenter', onTagEnter );

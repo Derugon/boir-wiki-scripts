@@ -46,7 +46,7 @@ const domPanic = ( note ) => {
  * @param {HTMLElement} container The container.
  */
 const init = ( container ) => {
-	for ( const source of Array.from( container.getElementsByClassName( css.tooltipClass ) ) ) {
+	for ( const source of queryElementsByClassName( css.tooltipClass, container ) ) {
 		source.addEventListener( 'mouseenter', createTooltipOnEvent );
 	}
 };
@@ -94,14 +94,17 @@ const createTooltipOnEvent = function ( event ) {
  * @param {HTMLElement} target The tooltip target element.
  */
 const createTooltip = ( source, target ) => {
-	Array.from( source.getElementsByTagName( 'a' ), removeTitle );
+	for ( const anchor of queryElementsByClassName( 'a', source ) ) {
+		removeTitle( anchor );
+	}
 
-	target.id = source.dataset.tooltip;
+	if ( source.dataset.tooltip !== undefined ) {
+		target.id = source.dataset.tooltip;
+	}
 	target.classList.add( css.contentClass );
-	Array.from(
-		target.getElementsByClassName( 'boir-slideshow' ),
-		makeSlideshowAuto
-	);
+	for ( const slideshow of queryElementsByClassName( 'boir-slideshow', target ) ) {
+		makeSlideshowAuto( slideshow );
+	}
 
 	if ( !document.contains( wrapper ) ) {
 		placeWrapper();

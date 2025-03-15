@@ -5642,8 +5642,11 @@ ul.mw-gallery-traditional li.gallerybox .thumb:hover {
 	border-color: var( --wiki-accent-color );
 }
 
+.mw-collapsible-toggle .oo-ui-iconElement-icon,
 .oo-ui-dropdownWidget .oo-ui-indicatorElement-indicator,
-.oo-ui-inputWidget .oo-ui-iconElement-icon {
+.oo-ui-inputWidget .oo-ui-iconElement-icon,
+.oo-ui-buttonWidget .oo-ui-iconElement-icon,
+.oo-ui-buttonWidget .oo-ui-indicatorElement-indicator {
 	filter: var( --wiki-icon-to-accent-filter );
 }
 

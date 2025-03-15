@@ -1,4 +1,4 @@
-tr .iwm-diff-uptodate {
+tr:has( .iwm-diff-uptodate ) {
 	display: none;
 }
 

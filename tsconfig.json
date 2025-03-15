@@ -14,12 +14,12 @@
 		"noUnusedParameters": true,
 		"strict": true,
 		"typeRoots": [
-			"./node_modules/@types",
-			"./node_modules/types-mediawiki"
+			"./node_modules/@types"
 		]
 	},
 	"include": [
 		"./types",
-		"./src"
+		"./src",
+		"./node_modules/types-mediawiki"
 	]
 }
