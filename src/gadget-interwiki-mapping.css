@@ -1,4 +1,4 @@
-tr:has( .iwm-diff-uptodate ) {
+tr:has( .iwm-langlink-same ):has( .iwm-diff-uptodate ) {
 	display: none;
 }
 

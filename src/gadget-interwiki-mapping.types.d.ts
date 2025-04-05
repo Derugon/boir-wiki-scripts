@@ -1,5 +1,4 @@
 import type { ApiResponse as MwApiResponse } from "types-mediawiki/mw/Api";
-import type { Hook } from "types-mediawiki/mw/hook";
 import type { QueryParams as MwQueryParams } from "types-mediawiki/mw/Uri";
 
 declare global {
@@ -26,6 +25,7 @@ declare global {
 			interface Page {
 				title: string;
 				lastRevision: Revision;
+				langLinks: string[];
 			}
 
 			interface Revision {
@@ -65,10 +65,16 @@ declare global {
 					touched: string;
 					lastrevid: number;
 					length: number;
+					langlinks?: Page.LangLink[];
 					revisions: Page.Revision[];
 				}
 
 				namespace Page {
+					interface LangLink {
+						lang: string;
+						'*': string;
+					}
+
 					interface Revision {
 						revid: number;
 						parentid: number;

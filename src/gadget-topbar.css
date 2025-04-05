@@ -146,6 +146,7 @@
 #mw-panel .portal {
 	height: fit-content;
 	position: relative;
+	padding: 0;
 }
 
 #mw-panel .portal .vector-menu-heading {
@@ -159,7 +160,7 @@
 	justify-content: space-between;
 	line-height: 18px;
 	margin: 0;
-	padding: 6px 4px;
+	padding: 0.625em;
 	text-transform: uppercase;
 }
 
@@ -169,12 +170,11 @@
 	pointer-events: none;
 	width: 14px;
 	height: 14px;
-	margin-top: 1px;
+	margin-left: 0.5em;
 	-webkit-mask: var( --icon-chevron-down ) no-repeat center center / 100% 100%;
 	mask: var( --icon-chevron-down ) no-repeat center center / 100% 100%;
 	background-color: var( --wiki-body-dynamic-color );
-	transform: scaleY( -1 );
-	padding-left: 10px;
+	transform: none;
 	transition: transform 0.3s;
 }
 
@@ -184,10 +184,6 @@
 
 .client-nojs #mw-panel .portal .vector-menu-heading::after {
 	display: none;
-}
-
-#mw-panel .portal:not( :hover ) .vector-menu-heading::after {
-	transform: none;
 }
 
 #mw-panel .portal .body {
@@ -216,18 +212,13 @@
 }
 
 #mw-panel .portal .body ul {
-	padding: 4px;
+	padding: 0.4em;
 }
 
 #mw-panel .portal .body li {
-	padding-left: 6px;
-	padding-right: 6px;
 	margin: 0;
+	padding: 0;
 	transition: background 0.3s;
-}
-
-#mw-panel .portal .body li:first-child {
-	margin-top: 6px;
 }
 
 #mw-panel .portal .body li a {
@@ -235,7 +226,7 @@
 	display: block;
 	font-size: 14px;
 	text-decoration: none;
-	padding: 6px 9px;
+	padding: 0.625em;
 	z-index: 100;
 }
 
@@ -457,98 +448,6 @@ body:not( .ns--1 ) #mw-indicator-mw-helplink {
 
 #mw-head #p-cactions {
 	background-image: none;
-}
-
-/***********************
-/* Interlanguage links *
-/***********************/
-
-#p-lang .vector-menu-heading {
-	align-items: center;
-	background-image: none;
-	color: var( --wiki-content-text-color );
-	display: flex;
-	font-size: 13px;
-	justify-content: center;
-	position: relative;
-}
-
-#p-lang .vector-menu-heading::after {
-	content: "";
-	display: block;
-	pointer-events: none;
-	width: 14px;
-	height: 14px;
-	margin-top: 1px;
-	-webkit-mask: var( --icon-chevron-down ) no-repeat center center / 100% 100%;
-	mask: var( --icon-chevron-down ) no-repeat center center / 100% 100%;
-	background-color: var( --wiki-body-dynamic-color );
-	transform: scaleY( -1 );
-	padding-left: 10px;
-}
-
-#p-lang:not( :hover ) .vector-menu-heading::after {
-	transform: none;
-}
-
-#p-lang .body {
-	padding: 0;
-	margin: 0;
-	display: none;
-	position: absolute;
-	left: 0;
-	top: 100%;
-	width: max-content;
-	min-width: 8em;
-	background: var( --wiki-content-background-color--secondary );
-	box-shadow: 0px 0px 15px 0px rgba( 10, 10, 10, 0.7 );
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
-	z-index: 201;
-}
-
-#p-lang .body ul {
-	padding: 4px;
-}
-
-#p-lang .body li {
-	padding-left: 6px;
-	padding-right: 6px;
-	margin: 0;
-	transition: background 0.3s;
-}
-
-#p-lang .body li:first-child {
-	margin-top: 6px;
-}
-
-#p-lang .body li a {
-	color: var( --wiki-content-text-color );
-	display: block;
-	font-size: 14px;
-	text-decoration: none;
-	padding: 6px 9px;
-	z-index: 200;
-}
-
-#p-lang .body li a:hover {
-	background: var( --wiki-accent-color ); /* fallback */
-	background: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
-	color: var( --wiki-content-link-color );
-}
-
-#p-lang:hover .vector-menu-heading {
-	background: var( --wiki-accent-color ); /* fallback */
-	background: color-mix( in srgb, var( --wiki-accent-color ) 25%, transparent );
-	border-radius: 0;
-}
-
-#p-lang:hover .body {
-	display: block;
-}
-
-.interlanguage-link {
-	display: flex;
 }
 
 }

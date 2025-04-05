@@ -2,6 +2,11 @@
 ( ( $, mw ) => {
 
 /**
+ * Local wiki language code, as declared in [[Special:Interwiki]] of the foreign wiki.
+ */
+const localLangCode = 'fr';
+
+/**
  * Foreign wiki index URL.
  */
 const foreignIndexUrl = new URL( 'https://bindingofisaacrebirth.wiki.gg/index.php' );
@@ -32,24 +37,42 @@ const titleBatchSize = 100;
  */
 const revidBatchSize = 100;
 
-// TODO: add a reload button
-
 const urlParams = {
 	title: 'iwmtitle',
-	revid: 'iwmrevid'
+	revid: 'iwmrevid',
+	lang: 'iwmlang',
+	link: 'iwmlink'
 };
 
 const css = {
 	foreignClass: 'iwm-foreign',
+	langLinkClass: 'iwm-langlink',
+	langLink: {
+		unsetClass: 'iwm-langlink-unset',
+		diffClass: 'iwm-langlink-diff',
+		sameClass: 'iwm-langlink-same'
+	},
 	diffClass: 'iwm-diff',
-	actionsClass: 'iwm-actions',
+	diff: {
+		unsetClass: 'iwm-diff-unset',
+		uptodateClass: 'iwm-diff-uptodate',
+		outdatedClass: 'mw-diff-bytes',
+		outdated: {
+			nullClass: 'mw-plusminus-null',
+			posClass: 'mw-plusminus-pos',
+			negClass: 'mw-plusminus-neg'
+		}
+	},
+	actionsClass: 'iwm-actions'
+};
 
-	unsetDiffClass: 'iwm-diff-unset',
-	uptodateDiffClass: 'iwm-diff-uptodate',
-	outdatedDiffClass: 'mw-diff-bytes',
-	outdatedNullDiffClass: 'mw-plusminus-null',
-	outdatedPosDiffClass: 'mw-plusminus-pos',
-	outdatedNegDiffClass: 'mw-plusminus-neg'
+const i18n = {
+	syncContent: '[contenu]',
+	syncLangLink: '[interlangue]',
+	uptodateDiff: '(à jour)',
+	invalidForeign: '(invalide)',
+	unsetForeign: '',
+	sameForeign: '(identique)'
 };
 
 const config = mw.config.get( [ 'wgAction', 'wgPageName' ] );
@@ -59,7 +82,7 @@ const actions = {
 	view: new Set( [ 'view' ] ),
 	// Actions that make buttons act as in edit mode
 	edit: new Set( [ 'edit', 'submit' ] )
-}
+};
 
 /** @type {InterwikiMapping.Data} */
 const data = {
@@ -68,13 +91,14 @@ const data = {
 	revisions: {},
 	callbacks: {}
 };
+window.data = data;
 
 /**
  * @param {HTMLElement?} element
  * @returns {InterwikiMapping.Mapping?}
  */
 const getMapping = ( element ) => {
-	let localTitle = undefined, foreignTitle = undefined, foreignRevid = undefined;
+	let localTitle, foreignTitle, foreignRevid;
 	while ( element !== null ) {
 		if ( localTitle   === undefined ) { localTitle   = element.dataset.iwmTitle;     }
 		if ( foreignTitle === undefined ) { foreignTitle = element.dataset.iwmLoadTitle; }
@@ -233,10 +257,12 @@ loadMappings.mappingsPerRevid = {};
  * @param {number} batchSize
  */
 loadMappings.queryByBatch = ( param, inputs, batchSize ) => {
-	/** @type {import("types-mediawiki/api_params").ApiQueryInfoParams & import("types-mediawiki/api_params").ApiQueryRevisionsParams} */
+	/** @type {import("types-mediawiki-api").ApiQueryInfoParams & import("types-mediawiki-api").ApiQueryRevisionsParams & import("types-mediawiki-api").ApiQueryLangLinksParams} */
 	const params = {
 		action: 'query',
-		prop: [ 'info', 'revisions' ],
+		prop: [ 'info', 'langlinks', 'revisions' ],
+		lllang: localLangCode,
+		lllimit: 5000,
 		rvprop: [ 'ids', 'size' ]
 	};
 
@@ -263,17 +289,28 @@ loadMappings.onResponse = ( response ) => {
 		const pageRes = response.query.pages[pageid];
 
 		if ( +pageid < 0 ) {
-			console.error( `IWM: Page "${pageRes.title}" inexistante.` );
+			console.error( `IWM: Missing page "${pageRes.title}".` );
 			continue;
 		}
 
 		loadMappings.titlesToLoad.delete( pageRes.title );
-		if ( data.pages[pageRes.title] === undefined ) {
-			// @ts-ignore: need to create revisions before setting page.lastRevision
-			data.pages[pageRes.title] = { title: pageRes.title };
+		let page = data.pages[pageRes.title];
+		if ( page === undefined ) {
+			page = data.pages[pageRes.title] = {
+				title: pageRes.title,
+				langLinks: [],
+				// @ts-ignore: need to create revisions before setting page.lastRevision
+				lastRevision: undefined
+			};
+
+			if ( pageRes.langlinks !== undefined ) {
+				for ( const langlinkRes of pageRes.langlinks ) {
+					page.langLinks.push( langlinkRes['*'] );
+				}
+			}
+
 			queried.add( pageRes.title );
 		}
-		const page = data.pages[pageRes.title];
 
 		for ( const revisionRes of pageRes.revisions ) {
 			loadMappings.revidsToLoad.delete( revisionRes.revid );
@@ -414,8 +451,6 @@ const setRevisionWithDOM = ( title, revid ) => {
 	contents = setRevisionInText( contents, title, revid );
 	$textarea.textSelection( 'setContents', contents );
 
-	// TODO: change edit summary
-
 	setMapping( revid, title );
 };
 
@@ -426,9 +461,9 @@ const setRevisionWithDOM = ( title, revid ) => {
 const fillForeign = ( element, mapping ) => {
 	const page = mapping.foreignPage;
 
-	element.textContent = '';
-
-	if ( page !== undefined ) {
+	if ( page === undefined ) {
+		element.textContent = i18n.invalidForeign;
+	} else {
 		const url = new URL( foreignIndexUrl );
 		url.searchParams.set( 'title', page.title );
 		url.searchParams.set( 'action', 'edit' );
@@ -438,9 +473,44 @@ const fillForeign = ( element, mapping ) => {
 		a.href = url.href;
 		a.textContent = page.title;
 
+		element.textContent = '';
 		element.appendChild( a );
+	}
+};
+
+/**
+ * @param {HTMLElement} element
+ * @param {InterwikiMapping.Data.Mapping} mapping
+ */
+const fillLangLink = ( element, mapping ) => {
+	const title = mapping.localTitle;
+	const page = mapping.foreignPage;
+
+	element.classList.remove(
+		css.langLink.unsetClass, css.langLink.sameClass, css.langLink.diffClass
+	);
+
+	if ( page === undefined ) {
+		element.textContent = '';
+	} else if ( page.langLinks.length === 0 ) {
+		element.classList.add( css.langLink.unsetClass );
+		element.textContent = i18n.unsetForeign;
+	} else if ( page.langLinks.includes( title.getPrefixedText() ) ) {
+		element.classList.add( css.langLink.sameClass );
+		element.textContent = i18n.sameForeign;
 	} else {
-		element.textContent = '(invalid)';
+		const langLink = page.langLinks[0];
+
+		const diffUrl = new URL( foreignIndexUrl );
+		diffUrl.searchParams.set( 'title', langLink );
+
+		const a = document.createElement( 'a' );
+		a.href = new mw.Title( langLink ).getUrl();
+		a.textContent = langLink;
+
+		element.classList.add( css.langLink.diffClass );
+		element.textContent = '';
+		element.appendChild( a );
 	}
 };
 
@@ -453,29 +523,42 @@ const fillDiff = ( element, mapping ) => {
 	const revision = mapping.foreignRevision;
 
 	element.classList.remove(
-		css.unsetDiffClass, css.uptodateDiffClass, css.outdatedDiffClass,
-		css.outdatedNullDiffClass, css.outdatedPosDiffClass, css.outdatedNegDiffClass
+		css.diff.unsetClass, css.diff.uptodateClass, css.diff.outdatedClass,
+		css.diff.outdated.nullClass, css.diff.outdated.posClass, css.diff.outdated.negClass
 	);
 
 	if ( page === undefined || revision === undefined ) {
-		element.classList.add( css.unsetDiffClass );
+		element.classList.add( css.diff.unsetClass );
 		element.textContent = '';
 	} else if ( revision.id === page.lastRevision.id ) {
-		element.classList.add( css.uptodateDiffClass );
-		element.textContent = '(up-to-date)';
+		element.classList.add( css.diff.uptodateClass );
+		element.textContent = i18n.uptodateDiff;
 	} else {
-		element.classList.add( css.outdatedDiffClass );
 		const sizeDiff = page.lastRevision.size - revision.size;
+
+		const diffUrl = new URL( foreignIndexUrl );
+		diffUrl.searchParams.set( 'oldid', `${revision.id}` );
+		diffUrl.searchParams.set( 'diff', 'current' );
+
+		const span = document.createElement( 'span' );
 		if ( sizeDiff === 0 ) {
-			element.classList.add( css.outdatedNullDiffClass );
-			element.textContent = '0';
+			span.classList.add( css.diff.outdated.nullClass );
+			span.textContent = '0';
 		} else if ( sizeDiff > 0 ) {
-			element.classList.add( css.outdatedPosDiffClass );
-			element.textContent = `+${sizeDiff}`;
+			span.classList.add( css.diff.outdated.posClass );
+			span.textContent = `+${sizeDiff}`;
 		} else {
-			element.classList.add( css.outdatedNegDiffClass );
-			element.textContent = `-${sizeDiff}`;
+			span.classList.add( css.diff.outdated.negClass );
+			span.textContent = `-${sizeDiff}`;
 		}
+
+		const a = document.createElement( 'a' );
+		a.href = diffUrl.href;
+		a.appendChild( span );
+
+		element.classList.add( css.diff.outdatedClass );
+		element.textContent = '';
+		element.appendChild( a );
 	}
 };
 
@@ -485,10 +568,8 @@ const fillDiff = ( element, mapping ) => {
  * @param {string} [href]
  */
 const createActionLink = ( element, text, href ) => {
-	if ( element.firstChild === null ) {
-		element.appendChild( document.createTextNode( '[' ) );
-	} else {
-		element.appendChild( document.createTextNode( ' [' ) ).normalize();
+	if ( element.firstChild !== null ) {
+		element.appendChild( document.createTextNode( ' ' ) ).normalize();
 	}
 
 	const a = document.createElement( 'a' );
@@ -496,9 +577,8 @@ const createActionLink = ( element, text, href ) => {
 		a.href = href;
 	}
 	a.textContent = text;
-	element.appendChild( a );
 
-	element.appendChild( document.createTextNode( ']' ) );
+	element.appendChild( a );
 	return a;
 };
 
@@ -514,32 +594,28 @@ const fillActions = ( element, mapping ) => {
 	element.textContent = '';
 
 	if ( page === undefined ) {
-		// nothing
-	} else if ( revision === undefined ) {
-		if ( actions.edit.has( config.wgAction ) ) {
-			createActionLink( element, 'lier' ).addEventListener( 'click', setRevisionWithDOM.bind( null, title, page.lastRevision.id ) );
-		} else if ( actions.view.has( config.wgAction ) ) {
-			/** @type {InterwikiMapping.QueryParams} */
-			const params = { action: 'edit' };
-			params[urlParams.title] = title.getPrefixedText();
-			params[urlParams.revid] = page.lastRevision.id;
-			createActionLink( element, 'lier', new mw.Title( config.wgPageName ).getUrl( params ) );
-		}
-	} else if ( revision.id !== page.lastRevision.id ) {
-		const diffUrl = new URL( foreignIndexUrl );
-		diffUrl.searchParams.set( 'oldid', `${revision.id}` );
-		diffUrl.searchParams.set( 'diff', 'current' );
-		createActionLink( element, 'diff', diffUrl.href );
+		return;
+	}
 
+	if ( revision === undefined || revision.id !== page.lastRevision.id  ) {
 		if ( actions.edit.has( config.wgAction ) ) {
-			createActionLink( element, 'synchroniser' ).addEventListener( 'click', setRevisionWithDOM.bind( null, title, page.lastRevision.id ) );
+			createActionLink( element, i18n.syncContent ).addEventListener( 'click', setRevisionWithDOM.bind( null, title, page.lastRevision.id ) );
 		} else if ( actions.view.has( config.wgAction ) ) {
 			/** @type {InterwikiMapping.QueryParams} */
 			const params = { action: 'edit' };
 			params[urlParams.title] = title.getPrefixedText();
 			params[urlParams.revid] = page.lastRevision.id;
-			createActionLink( element, 'synchroniser', new mw.Title( config.wgPageName ).getUrl( params ) );
+			createActionLink( element, i18n.syncContent, new mw.Title( config.wgPageName ).getUrl( params ) );
 		}
+	}
+
+	if ( !page.langLinks.includes( title.getPrefixedText() ) ) {
+		const url = new URL( foreignIndexUrl );
+		url.searchParams.set( 'title', page.title );
+		url.searchParams.set( 'action', 'edit' );
+		url.searchParams.set( urlParams.lang, localLangCode );
+		url.searchParams.set( urlParams.link, new mw.Title( config.wgPageName ).getPrefixedText() );
+		createActionLink( element, i18n.syncLangLink, url.href );
 	}
 };
 
@@ -580,9 +656,10 @@ safeAddContentHook( ( $content ) => {
 	data.revisions = {};
 	data.callbacks = {};
 
-	$content.find( `.${css.foreignClass}` ).filter( ( _, e ) => prepareLoadMapping( e, fillForeign ) );
-	$content.find( `.${css.diffClass   }` ).filter( ( _, e ) => prepareLoadMapping( e, fillDiff    ) );
-	$content.find( `.${css.actionsClass}` ).filter( ( _, e ) => prepareLoadMapping( e, fillActions ) );
+	$content.find( `.${css.foreignClass }` ).filter( ( _, e ) => prepareLoadMapping( e, fillForeign  ) );
+	$content.find( `.${css.langLinkClass}` ).filter( ( _, e ) => prepareLoadMapping( e, fillLangLink ) );
+	$content.find( `.${css.diffClass    }` ).filter( ( _, e ) => prepareLoadMapping( e, fillDiff     ) );
+	$content.find( `.${css.actionsClass }` ).filter( ( _, e ) => prepareLoadMapping( e, fillActions  ) );
 	loadMappings();
 } );
 

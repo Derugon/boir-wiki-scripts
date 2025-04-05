@@ -1,5 +1,5 @@
 /* All CSS here will be loaded for users of the Vector skin */
-/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Vector.css?diff=latest&oldid=2169] */
+/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Vector.css?diff=latest&oldid=2257] */
 
 /*********************************************************
 * Backwards compatibility with deprecated variable names *
@@ -14,6 +14,10 @@
 /************************************
 * Body, head, and general framework *
 *************************************/
+html, body{
+	height: auto;
+	min-height: 100%;
+}
 body {
 	background-color: var(--wiki-body-background-color);
 	background-image: var(--wiki-body-background-image);
@@ -24,6 +28,13 @@ body {
 	background-attachment: var(--wiki-body-background-attachment, fixed);
     font-family: var(--wiki-body-font-family);
     accent-color: var(--wiki-accent-color);
+    box-sizing: border-box;
+}
+/* clear fix */
+body::after{
+    content: "";
+    display: table;
+    clear: both;
 }
 
 #mw-page-base {
@@ -51,7 +62,7 @@ ul {
 	background-image: linear-gradient(
         to top,
         var(--wiki-navigation-border-color) 0,
-        var(--wiki-navigation-background-color) 1px,
+        var(--wiki-navigation-background-color) var(--wiki-content-border-width, 1px),
         var(--wiki-navigation-background-color--secondary) 100%);
 }
 
@@ -116,13 +127,17 @@ div.vectorMenu .mw-list-item a,
 .vector-menu-tabs li a:hover,
 .vector-menu-tabs li.new a:hover,
 .vector-menu-tabs li.new a:visited:hover,
-.vector-menu-tabs .selected a:hover,
-.vector-menu-tabs .selected a:visited:hover,
 #mw-head .vector-menu-dropdown .vector-menu-heading:hover,
 div.vectorMenu .mw-list-item a:hover,
 .vector-menu-dropdown .mw-list-item.selected a:hover,
 .vector-menu-dropdown .mw-list-item.selected a:visited:hover {
 	color:var(--wiki-navigation-text-color--hover);
+}
+
+.vector-menu-tabs .selected a:hover,
+.vector-menu-tabs .selected a:visited:hover {
+	/* don't use the regular hover color because the background of selected could be different */
+	color: var(--wiki-navigation-selected-text-color);
 }
 
 .vector-menu-dropdown .vector-menu-heading::after {
@@ -209,6 +224,10 @@ a:visited:active,
 .mw-parser-output a.external::after {
 	margin-left:0;
 	--icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22%3E %3Cpath d=%22M6 1h5v5L8.86 3.85 4.7 8 4 7.3l4.15-4.16L6 1ZM2 3h2v1H2v6h6V8h1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z%22/%3E %3C/svg%3E");
+}
+
+.plainlinks a.external::after {
+	display:none;
 }
 
 a.extiw[title^="wikipedia:"]::after,
@@ -389,7 +408,7 @@ a.extiw[title^="support:"]::after {
 #mw-panel .vector-menu-portal + .vector-menu-portal {
 	/* This keeps the border from doubling up if there is no spacing between them,
 		The portals other than the first only have a top border if there is spacing */
-	border-top-width: min(1px, var(--wiki-sidebar-portal-spacing, 0px)); /* the 0px fallback is for backwards compatibility with older versions of the loadout */
+	border-top-width: min(var(--wiki-sidebar-border-width, 1px), var(--wiki-sidebar-portal-spacing, 0px)); /* the 1px and 0px fallbacks are for backwards compatibility with older versions of the loadout */
 }
 /* end sidebar spacing and border-radius */
 
@@ -431,7 +450,12 @@ a.extiw[title^="support:"]::after {
 .mw-footer li {
     color: var(--wiki-content-text-color);
 }
-
+/* fix */
+@media screen and (max-width: 900px) {
+  #footer-icons, #footer-places {
+    clear: unset;
+  }
+}
 @media screen and (max-width: 981px) {
     .mw-body,
     .parsoid-body,
@@ -1050,7 +1074,7 @@ html .thumbimage {
     box-sizing: border-box;
 }
 
-.thumb .thumbimage {
+.thumb .thumbimage:not(audio) {
     height: auto;
 }
 
@@ -3849,14 +3873,6 @@ fieldset#mw-searchoptions {
     color: var(--wiki-content-text-mix-color);
 }
 
-.mw-mmv-dialog .mw-mmv-dialog-warning {
-    color: #000;
-}
-
-.mw-mmv-dialog .mw-mmv-dialog-warning a {
-    color: #0645ad;
-}
-
 .mw-mmv-download-pane .mw-mmv-download-area .mw-mmv-download-select-menu {
     background-image: none;
 }
@@ -4732,6 +4748,11 @@ table.jexcel > thead > tr > td{
   color: color-mix(in srgb, var(--wiki-content-text-color) 95%, transparent);
 }
 
+.cs-comment-author-anonymous {
+  color:var(--wiki-content-text-color); /* fallback */
+  color:color-mix(in srgb, var(--wiki-content-text-color) 95%, transparent);
+}
+
 .cs-comment {
   border:1px solid var(--wiki-content-border-color);
 }
@@ -5109,14 +5130,8 @@ table.jexcel > thead > tr > td{
         left:0;
         width:100%;
         top:calc(var(--wiki-head-height) + var( --wikigg-header-height ) - var(--wiki-navigation-height));
-        border:none;
-        border-image:none;
     }
     
-    #mw-navigation {
-        position:unset;
-    }
-
     #left-navigation,
     #right-navigation {
         margin-top: 0;
@@ -5207,6 +5222,17 @@ table.jexcel > thead > tr > td{
         background-color: var(--wiki-sidebar-background-color);
     }
     
+    table.wikitable,
+    table.responsive-table {
+        display: block;
+        overflow-x: auto;
+        border: 0;
+    }
+    
+    .mw-installed-software {
+        word-break: unset;
+    }
+    
 	.gallerybox,
 	.gallerybox > div,
 	.gallerybox .thumb {
@@ -5248,6 +5274,7 @@ table.jexcel > thead > tr > td{
 
     body.has-vector-mobile-menu #mw-panel .mobile-nav-toggle {
         position: relative;
+        cursor: pointer;
         z-index: 5;
         display: block;
         appearance: none;
@@ -5374,6 +5401,10 @@ table.jexcel > thead > tr > td{
     #mw-head .vector-menu-dropdown .vector-menu-heading:hover::before,
     #mw-panel .mobile-nav-toggle:hover::before,
     #mw-panel .mobile-nav-toggle.nav--expanded::before {
+        background-color: var(--wiki-navigation-text-color--hover);
+    }
+    
+    #mw-head .vector-menu-tabs .mw-list-item.selected a::before {
         background-color: var(--wiki-navigation-selected-text-color);
     }
 
@@ -5640,6 +5671,10 @@ ul.mw-gallery-traditional li.gallerybox .thumb:hover {
 .suggestions-results,
 .suggestions-special {
 	border-color: var( --wiki-accent-color );
+}
+
+.mw-changeslist-legend summary::marker {
+    color: var( --wiki-accent-color );
 }
 
 .mw-collapsible-toggle .oo-ui-iconElement-icon,

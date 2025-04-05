@@ -2,6 +2,7 @@
 	"name": "content-filter",
 	"scripts": {},
 	"devDependencies": {
-		"types-mediawiki": "^1.10.0"
+		"types-mediawiki-api": "^2.0.0",
+		"types-mediawiki": "^1.10.1"
 	}
 }

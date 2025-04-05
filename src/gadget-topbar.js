@@ -34,7 +34,7 @@ const addPageLinkToElement = ( node, acceptWhole ) => {
 			}
 
 			const anchor = document.createElement( 'a' );
-			anchor.href = config.wgActionPaths['view'].replace( '$1', config.wgPageName );
+			anchor.href = config.wgActionPaths['view'].replace( '$1', encodeURIComponent( config.wgPageName ) );
 			anchor.text = toReplace;
 
 			node.textContent = parts[0];

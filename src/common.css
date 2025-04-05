@@ -1,5 +1,5 @@
 /* CSS placed here will be applied to all skins */
-/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Common.css?diff=latest&oldid=2163] */
+/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Common.css?diff=latest&oldid=2253] */
 
 /*****************
 /* Font settings *
@@ -610,59 +610,6 @@
 	outline-color: transparent;
 }
 
-/* MP icon lists */
-.mp-iconlists {
-	display: flex;
-	flex-flow: wrap;
-	gap: 5px 20px;
-}
-
-.mp-iconlists > .mp-iconlist {
-	flex: 1;
-	min-width: fit-content;
-}
-
-.mp-iconlist > h3 {
-	padding: 0;
-	margin: 0;
-}
-
-.mp-iconlist > ul {
-	list-style: none;
-	margin: 0;
-}
-
-/* MP gallery */
-.mp-box ul.gallery.gallery.gallery { /* this selector looks ridiculous but is actually part of stock Vector and therefore a necessary override */
-	display: flex;
-	flex-flow: wrap;
-	gap: 5px 10px;
-	align-items: flex-end;
-	justify-content: space-evenly;
-	margin: auto;
-}
-
-.mp-box ul.gallery .gallerytext {
-	margin-top: 1em;
-	padding: 0;
-	background-color: var( --wiki-content-background-color--secondary );
-	border: 1px solid var( --wiki-content-link-color );
-}
-
-.mp-box .gallerybox:hover .gallerytext {
-	background-color: var( --wiki-content-background-color ); /* fallback */
-	background-color: color-mix( in srgb, var( --wiki-content-link-color ) 20%, transparent );
-}
-
-.mp-box ul.gallery .gallerytext > p {
-	margin: 0;
-}
-
-.mp-box ul.gallery .gallerytext a {
-	display: block;
-	padding: .5em 0;
-}
-
 /********************
 /* Main page layout *
 /********************/
@@ -1108,6 +1055,18 @@ div.nav-header {
 	background: var( --tb-nav-color );
 	line-height: 2em;
 	height: 2.5em;
+	position: relative;
+}
+
+/* Remove expand-collapse links in nav-box tables from flow */
+.nav-title > .mw-collapsible-toggle {
+	font-size  : 0.75em;
+	font-style : normal;
+	font-weight: normal;
+	position   : absolute;
+	right      : 1em;
+	width      : 0;
+	direction  : rtl;
 }
 
 .nav-title .mw-collapsible-text {
@@ -1137,17 +1096,6 @@ div.nav-header {
 .nav-box > * > tr:last-child > td:last-child,
 .nav-box > * > tr:last-child > th:last-child {
 	border-bottom-right-radius: 4px;
-}
-
-/* Remove expand-collapse links in nav-box tables from flow */
-table.nav-box .mw-collapsible-toggle {
-	font-size: 0.75em;
-	font-style: normal;
-	font-weight: normal;
-	width: 0;
-	overflow: visible;
-	position: relative;
-	right: 4.5em;
 }
 
 .tb-box-header {
