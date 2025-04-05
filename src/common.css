@@ -1,5 +1,5 @@
 /* CSS placed here will be applied to all skins */
-/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Common.css?diff=latest&oldid=2253] */
+/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Common.css?diff=latest&oldid=2275] */
 
 /*****************
 /* Font settings *
@@ -333,6 +333,10 @@
 .pi-media-collection .pi-tab-link.current {
 	background: var( --pi-secondary-background );
 	color: var( --pi-secondary-background-label );
+}
+
+.pi-collapse > .pi-item:first-child {
+	cursor: pointer;
 }
 
 /* overqualify these to overwrite normal content heading styles */

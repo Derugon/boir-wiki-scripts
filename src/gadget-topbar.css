@@ -223,7 +223,6 @@
 
 #mw-panel .portal .body li a {
 	color: var( --wiki-content-text-color );
-	display: block;
 	font-size: 14px;
 	text-decoration: none;
 	padding: 0.625em;

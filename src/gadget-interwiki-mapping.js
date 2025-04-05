@@ -56,7 +56,7 @@ const css = {
 	diff: {
 		unsetClass: 'iwm-diff-unset',
 		uptodateClass: 'iwm-diff-uptodate',
-		outdatedClass: 'mw-diff-bytes',
+		outdatedClass: 'iwm-diff-outdated',
 		outdated: {
 			nullClass: 'mw-plusminus-null',
 			posClass: 'mw-plusminus-pos',
@@ -523,8 +523,7 @@ const fillDiff = ( element, mapping ) => {
 	const revision = mapping.foreignRevision;
 
 	element.classList.remove(
-		css.diff.unsetClass, css.diff.uptodateClass, css.diff.outdatedClass,
-		css.diff.outdated.nullClass, css.diff.outdated.posClass, css.diff.outdated.negClass
+		css.diff.unsetClass, css.diff.uptodateClass, css.diff.outdatedClass
 	);
 
 	if ( page === undefined || revision === undefined ) {
@@ -614,7 +613,7 @@ const fillActions = ( element, mapping ) => {
 		url.searchParams.set( 'title', page.title );
 		url.searchParams.set( 'action', 'edit' );
 		url.searchParams.set( urlParams.lang, localLangCode );
-		url.searchParams.set( urlParams.link, new mw.Title( config.wgPageName ).getPrefixedText() );
+		url.searchParams.set( urlParams.link, title.getPrefixedText() );
 		createActionLink( element, i18n.syncLangLink, url.href );
 	}
 };
