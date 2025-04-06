@@ -5538,9 +5538,7 @@ main {
 	.mw-footer {
 		border-style: solid;
 		border-width: 37px;
-		border-image-source: var( --wiki-content-border-image );
-		border-image-slice: 48;
-		border-image-repeat: repeat;
+		border-image: var( --wiki-content-border-image ) repeat;
 		background-clip: padding-box;
 		box-shadow: 0 0 15px #000 inset;
 		padding: 8px 12px;
@@ -5577,7 +5575,7 @@ main {
 		content     : "";
 		display     : block;
 		border      : 24px solid;
-		border-image: var( --wiki-search-border-image ) 24 fill round;
+		border-image: var( --wiki-search-border-image ) fill round;
 		position    : absolute;
 		bottom      : 0;
 		top         : 0;

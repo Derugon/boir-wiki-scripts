@@ -71,7 +71,7 @@
 	--wiki-content-dynamic-color--secondary: #dddddd;
 	--wiki-content-dynamic-color--secondary--inverted: #333333;
 	/* Wiki-specific */
-	--wiki-content-border-image: url( /images/1/17/CSS_border.png ); /* [[File:CSS border.png]] */
+	--wiki-content-border-image: url( /images/1/17/CSS_border.png ) 48; /* [[File:CSS border.png]] */
 	--wiki-content-text-shadow: #261c1c;
 
 	/* Maybe edit these */
@@ -93,7 +93,7 @@
 	--wiki-sidebar-heading-color: var( --wiki-heading-color );
 
 	/* Wiki-specific */
-	--wiki-search-border-image: url( /images/c/c0/CSS_border_search.png ); /* [[File:CSS border search.png]] */;
+	--wiki-search-border-image: url( /images/c/c0/CSS_border_search.png ) 24; /* [[File:CSS border search.png]] */;
 
 	/* Maybe edit these */
 	--wiki-navigation-background-color: var( --wiki-content-background-color--secondary );
@@ -181,7 +181,7 @@
 	--wiki-content-dynamic-color--secondary: #333333;
 	--wiki-content-dynamic-color--secondary--inverted: #dddddd;
 	/* Wiki-specific */
-	--wiki-content-border-image: url( /images/8/88/CSS_border_light.png ); /* [[File:CSS border light.png]] */
+	--wiki-content-border-image: url( /images/8/88/CSS_border_light.png ) 48; /* [[File:CSS border light.png]] */
 	--wiki-content-text-shadow: #aca598;
 
 	/* Maybe edit these */
@@ -203,7 +203,7 @@
 	--wiki-sidebar-heading-color: var( --wiki-heading-color );
 
 	/* Wiki-specific */
-	--wiki-search-border-image: url( /images/3/38/CSS_border_search_light.png ); /* [[File:CSS border search light.png]] */;
+	--wiki-search-border-image: url( /images/3/38/CSS_border_search_light.png ) 24; /* [[File:CSS border search light.png]] */;
 
 	/* Maybe edit these */
 	--wiki-navigation-background-color: var( --wiki-content-background-color--secondary );
