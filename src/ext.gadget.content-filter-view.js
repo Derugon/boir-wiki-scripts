@@ -7,45 +7,19 @@
  */
 
 // <nowiki>
-( ( mw, console ) => mw.loader.using( 'ext.gadget.content-filter-core', ( require ) => {
+( ( mw ) => mw.loader.using( [
+	'ext.gadget.content-filter-core', 'ext.gadget.logger'
+], ( require ) => {
 
 const cf = require( 'ext.gadget.content-filter-core' );
 
-/**
- * @this {( ...msg: string[] ) => void}
- * @param {...string} msgs
- */
-const logger = function ( ...msgs ) {
-	msgs.unshift( '[content-filter-view]' );
-	this.apply( null, msgs );
-};
-const log   = logger.bind( console.log );
-const warn  = logger.bind( mw.log.warn );
-const error = logger.bind( mw.log.error );
+const Logger = require( 'ext.gadget.logger' );
+const log = new Logger( 'content-filter-view' );
 
 const css = {
 	viewClass: 'cf-view',
 	viewClassPrefix: 'cf-view-',
 	containerViewClassPrefix: 'cf-container-view-',
-};
-
-/**
- * Handles an "impossible" case, supposedly caused by other scripts breaking the
- * expected DOM elements.
- * @param {string} [note] Some information about the missing or invalid elements.
- * @returns {never}
- */
-const domPanic = ( note ) => {
-	let message = (
-		'Something went wrong, either DOM elements have been modified in an ' +
-		'unexpected way, or they have been disconnected from the document.'
-	);
-
-	if ( note ) {
-		message += `\nAdditional note: ${note}`;
-	}
-
-	throw message;
 };
 
 /**
@@ -355,5 +329,5 @@ mw.hook( 'contentFilter.content.registered' ).add( ( content, container ) => {
 	// TODO: re-enable active view
 } );
 
-} ) )( mediaWiki, console );
+} ) )( mediaWiki );
 // </nowiki>

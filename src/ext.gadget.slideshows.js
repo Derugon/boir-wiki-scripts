@@ -1,5 +1,9 @@
 // <nowiki>
-( ( mw ) => {
+( ( mw ) => mw.loader.using( [ 'ext.gadget.logger' ], ( require ) => {
+
+const Logger = require( 'ext.gadget.logger' );
+/** @type {Logger} */
+const log = new Logger( 'slideshows' );
 
 /**
  * Delay between two automatic cycling frames.
@@ -51,16 +55,6 @@ const clickEvents = new Map();
 const auto = [];
 
 /**
- * Handles an "impossible" case, supposedly caused by other scripts breaking the
- * expected DOM elements.
- * @returns {never}
- */
-const domPanic = () => {
-	throw 'Something went wrong, either DOM elements have been modified in an ' +
-	      'unexpected way, or they have been disconnected from the document.';
-};
-
-/**
  * Enables all slideshows in a container.
  * @param {HTMLElement} container The container.
  * @returns {HTMLElement[]} The enabled slideshows in the container.
@@ -101,7 +95,7 @@ const enable = ( slideshow ) => {
 	for ( const slide of slides ) {
 		const title = getSlideTitle( slide );
 		if ( !title ) {
-			domPanic();
+			log.panic();
 		}
 
 		const onClick = () => {
@@ -111,7 +105,7 @@ const enable = ( slideshow ) => {
 
 			const slide = getTitleSlide( title );
 			if ( !slide ) {
-				domPanic();
+				log.panic();
 			}
 
 			setActiveSlide( slide, title );
@@ -133,7 +127,7 @@ const enable = ( slideshow ) => {
 	const activeSlide = slides[ activeIndex ];
 	const activeTitle = titles[ activeIndex ];
 	if ( !activeSlide || !activeTitle ) {
-		domPanic();
+		log.panic();
 	}
 
 	activeSlide.classList.add( css.activeSlideClass );
@@ -159,7 +153,7 @@ const enable = ( slideshow ) => {
 		}
 
 		const titlePlaceholder = title.cloneNode( true );
-		const parent = title.parentElement || domPanic();
+		const parent = title.parentElement || log.panic();
 
 		parent.replaceChild( titlePlaceholder, title );
 		titlebar.appendChild( title );
@@ -223,7 +217,7 @@ const disable = ( slideshow ) => {
 	const titleBar         = getTitleBar( slideshow );
 	const localClickEvents = clickEvents.get( slideshow );
 	if ( !localClickEvents ) {
-		domPanic();
+		log.panic();
 	}
 
 	clickEvents.delete( slideshow );
@@ -242,7 +236,7 @@ const disable = ( slideshow ) => {
 
 		const title = getSlideTitle( slide );
 		if ( !title ) {
-			domPanic();
+			log.panic();
 		}
 
 		const titleEvent = localClickEvents.titles.get( title );
@@ -272,12 +266,12 @@ const disable = ( slideshow ) => {
 const setActiveSlide = ( slide, title ) => {
 	const slideshow = slide.parentElement;
 	if ( !slideshow ) {
-		domPanic();
+		log.panic();
 	}
 
 	const activeSlide = getActiveSlide( slideshow );
 	if ( !activeSlide ) {
-		domPanic();
+		log.panic();
 	}
 
 	activeSlide.classList.remove( css.activeSlideClass );
@@ -306,13 +300,13 @@ const setActiveSlide = ( slide, title ) => {
 const cycle = ( slideshow ) => {
 	const activeSlide = getActiveSlide( slideshow );
 	if ( !activeSlide ) {
-		domPanic();
+		log.panic();
 	}
 
 	setActiveSlide(
 		getNextSiblingByClassName( activeSlide, css.slideClass ) ||
 		getChildByClassName( slideshow, css.slideClass ) ||
-		domPanic()
+		log.panic()
 	);
 };
 
@@ -395,12 +389,12 @@ const isTitleBar = ( element ) => element.classList.contains( css.titlebarClass 
 const getSlideTitle = ( slide ) => {
 	const slideshow = slide.parentElement;
 	if ( !slideshow ) {
-		return domPanic();
+		return log.panic();
 	}
 
 	const titlebar = getTitleBar( slideshow );
 	if ( titlebar ) {
-		return titlebar.children[ getSlides( slideshow ).indexOf( slide ) ] || domPanic();
+		return titlebar.children[ getSlides( slideshow ).indexOf( slide ) ] || log.panic();
 	}
 
 	return slide.getElementsByClassName( css.titleClass )[ 0 ] || null;
@@ -416,7 +410,7 @@ const getTitleSlide = ( title ) => {
 		if ( isTitleBar( parent ) ) {
 			const slideshow = parent.parentElement;
 			if ( !slideshow ) {
-				domPanic();
+				log.panic();
 			}
 	
 			const index = Array.from( parent.children ).indexOf( title );
@@ -455,7 +449,7 @@ const runAutoInterval = () => {
 const setMinHeight = ( slideshow ) => {
 	const activeSlide = getActiveSlide( slideshow );
 	if ( !activeSlide ) {
-		domPanic();
+		log.panic();
 	}
 
 	activeSlide.classList.remove( css.activeSlideClass );
@@ -522,7 +516,7 @@ const getChildByClassName = ( container, className ) => {
 const unwrap = ( element ) => {
 	const parent = element.parentElement;
 	if ( !parent ) {
-		domPanic();
+		log.panic();
 	}
 
 	let childNode = element.firstChild;
@@ -552,5 +546,5 @@ mw.hook( 'contentFilter.filter.viewUpdated' ).add( () => {
 	}
 } );
 
-} )( mediaWiki );
+} ) )( mediaWiki );
 // </nowiki>

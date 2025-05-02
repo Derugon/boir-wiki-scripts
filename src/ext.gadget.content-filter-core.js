@@ -6,21 +6,15 @@
  */
 
 // <nowiki>
-( ( mw, document, console ) => mw.loader.using( [ 'site', 'mediawiki.Title' ], () => {
+( ( mw, document ) => mw.loader.using( [
+	'site', 'mediawiki.Title', 'ext.gadget.logger'
+], ( require ) => {
 
-/**
- * @this {( ...msg: string[] ) => void}
- * @param {...string} msgs
- */
-const logger = function ( ...msgs ) {
-	msgs.unshift( '[content-filter-core]' );
-	this.apply( null, msgs );
-};
-const log   = logger.bind( console.log );
-const warn  = logger.bind( mw.log.warn );
-const error = logger.bind( mw.log.error );
+const Logger = require( 'ext.gadget.logger' );
+/** @type {Logger} */
+const log = new Logger( 'content-filter-core' );
 
-log( 'Loading.' );
+log.info( 'Loading.' );
 
 /**
  * MediaWiki configuration values.
@@ -248,7 +242,7 @@ const getPageFilter = () => {
 
 	const tagChild = document.getElementsByClassName( css.tagClass )[ 0 ];
 	if ( !tagChild ) {
-		error(
+		log.error(
 			'Neither the page context and any of its children have a ' +
 			'filter value property.'
 		);
@@ -277,13 +271,13 @@ const parseFilter = ( container ) => {
 	}
 
 	if ( container.getElementsByClassName( css.containerClass )[ 0 ] ) {
-		error(
+		log.error(
 			'The newly added content contains elements which are already ' +
 			'managed by this script. The filtering has been disabled ' +
 			'on the newly added content.'
 		);
 		// TODO: handle this case properly, by only registering new tags and
-		//       regenerating the associated view fragments, or domPanic().
+		//       regenerating the associated view fragments, or log.panic().
 		return;
 	}
 
@@ -303,7 +297,7 @@ const parseFilter = ( container ) => {
 	container.classList.add( css.containerClass );
 
 	if ( isMainContent( container ) ) {
-		log( 'Initializing state.' );
+		log.info( 'Initializing state.' );
 		pageFilter = getPageFilter();
 		mw.hook( 'contentFilter.content.pageFilter' ).fire( pageFilter );
 	}
@@ -349,7 +343,7 @@ const parseTag = ( tag ) => {
 
 	const context = getContext( tag );
 	if ( context === null ) {
-		warn( 'No context found for the following tag:', tag );
+		log.warn( 'No context found for the following tag:', tag );
 		return;
 	}
 
@@ -769,5 +763,5 @@ safeAddContentHook( ( $content ) => {
 	}
 } );
 
-} ) )( mediaWiki, document, console );
+} ) )( mediaWiki, document );
 // </nowiki>

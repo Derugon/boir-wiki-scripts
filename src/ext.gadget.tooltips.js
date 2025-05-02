@@ -4,7 +4,11 @@
  */
 
 // <nowiki>
-( ( $, mw ) => mw.loader.using( 'mediawiki.api', () => {
+( ( $, mw ) => mw.loader.using( [ 'mediawiki.api', 'ext.gadget.logger' ], () => {
+
+const Logger = require( 'ext.gadget.logger' );
+/** @type {Logger} */
+const log = new Logger( 'tooltips' );
 
 const css = {
 	tooltipClass: 'tooltip',
@@ -21,25 +25,6 @@ const css = {
  * The MediaWiki API.
  */
 const api = new mw.Api();
-
-/**
- * Handles an "impossible" case, supposedly caused by other scripts breaking the
- * expected DOM elements.
- * @param {string} [note] Some information about the missing or invalid elements.
- * @returns {never}
- */
-const domPanic = ( note ) => {
-	let message = (
-		'Something went wrong, either DOM elements have been modified in an ' +
-		'unexpected way, or they have been disconnected from the document.'
-	);
-
-	if ( note ) {
-		message += `\nAdditional note: ${note}`;
-	}
-
-	throw message;
-};
 
 /**
  * Initializes all tooltips in a container.
@@ -66,7 +51,7 @@ const createTooltipOnEvent = function ( event ) {
 			bindSourceEvents( source );
 		} else {
 			api.parse( `{{${template}}}` ).then( ( output ) => {
-				createTooltip( source, stringToElements( output ) || domPanic() );
+				createTooltip( source, stringToElements( output ) || log.panic() );
 			} );
 		}
 	} else if ( source.title ) {
@@ -144,7 +129,7 @@ const bindSourceEvents = ( source ) => {
  */
 const showTooltip = function () {
 	wrapper.classList.add( css.activeWrapperClass );
-	const target = document.getElementById( this.dataset.tooltip ) || domPanic();
+	const target = document.getElementById( this.dataset.tooltip ) || log.panic();
 	target.classList.add( css.activeContentClass );
 };
 
@@ -154,7 +139,7 @@ const showTooltip = function () {
  */
 const hideTooltip = function() {
 	wrapper.classList.remove( css.activeWrapperClass );
-	const target = document.getElementById( this.dataset.tooltip ) || domPanic();
+	const target = document.getElementById( this.dataset.tooltip ) || log.panic();
 	target.classList.remove( css.activeContentClass );
 };
 
@@ -175,7 +160,7 @@ const createWrapper = () => {
 const placeWrapper = () => {
 	const content = document.getElementById( 'mw-content-text' );
 	if ( content === null ) {
-		domPanic( 'No page content found, could not place the tooltip wrapper.' );
+		log.panic( 'No page content found, could not place the tooltip wrapper.' );
 	}
 
 	content.appendChild( wrapper );

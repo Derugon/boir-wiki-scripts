@@ -7,26 +7,18 @@
  */
 
 // <nowiki>
-( ( mw, document, console ) => mw.loader.using( [
-	'mediawiki.Uri', 'ext.gadget.content-filter-view'
+( ( mw, document ) => mw.loader.using( [
+	'mediawiki.Uri', 'ext.gadget.content-filter-view', 'ext.gadget.logger'
 ], ( require ) => {
 
 const cf = require( 'ext.gadget.content-filter-core' );
 const cfView = require( 'ext.gadget.content-filter-view' );
 
-/**
- * @this {( ...msg: string[] ) => void}
- * @param {...string} msgs
- */
-const logger = function ( ...msgs ) {
-	msgs.unshift( '[content-filter]' );
-	this.apply( null, msgs );
-};
-const log   = logger.bind( console.log );
-const warn  = logger.bind( mw.log.warn );
-const error = logger.bind( mw.log.error );
+const Logger = require( 'ext.gadget.logger' );
+/** @type {Logger} */
+const log = new Logger( 'content-filter' );
 
-log( 'Loading.' );
+log.info( 'Loading.' );
 
 /**
  * The name of the URL parameter used to store the selected filter.
@@ -63,7 +55,7 @@ const css = {
 const config = mw.config.get( [ 'skin', 'wgAction', 'wgArticlePath' ] );
 
 if ( config.skin !== 'vector' ) {
-	warn(
+	log.warn(
 		'This gadget has been written to be used with the vector skin only.' +
 		'Some things may not be displayed properly with the current skin.'
 	);
@@ -73,25 +65,6 @@ if ( config.skin !== 'vector' ) {
 if ( config.wgAction !== 'view' ) {
 	return;
 }
-
-/**
- * Handles an "impossible" case, supposedly caused by other scripts breaking the
- * expected DOM elements.
- * @param {string} [note] Some information about the missing or invalid elements.
- * @returns {never}
- */
-const domPanic = ( note ) => {
-	let message = (
-		'Something went wrong, either DOM elements have been modified in an ' +
-		'unexpected way, or they have been disconnected from the document.'
-	);
-
-	if ( note ) {
-		message += `\nAdditional note: ${note}`;
-	}
-
-	throw message;
-};
 
 /**
  * Gets the value of the URL parameter used to store the selected filter from an URL.
@@ -129,9 +102,9 @@ const setFilterParamValue = ( value, url ) => {
  */
 const setSelectedIndex = ( index ) => {
 	if ( index === null ) {
-		log( 'No filter used.' );
+		log.info( 'No filter used.' );
 	} else {
-		log( `Using ${Math.pow( 2, index )} as active filter.` );
+		log.info( `Using ${Math.pow( 2, index )} as active filter.` );
 		lastSelectedIndex = index;
 	}
 	selectedIndex = index;
@@ -176,7 +149,7 @@ const insertMenuInInterface = () => {
 		// Panicking here simply means that we couldn't place the buttons on the page.
 		// If this happens, we should either add a fallback location,
 		// or place the buttons somewhere other than in the page title.
-		domPanic( 'Page title not found.' );
+		log.panic( 'Page title not found.' );
 	}
 
 	pageTitle.insertAdjacentElement( 'afterend', menu );
@@ -291,7 +264,7 @@ const createButton = ( title, index ) => {
  * @param {MouseEvent} event
  */
 createButton.onClick = function ( event ) {
-	const li = this.parentElement || domPanic();
+	const li = this.parentElement || log.panic();
 	triggerFilterUpdate( getButtonFilterIndex( li ) );
 	event.preventDefault();
 };
@@ -328,7 +301,7 @@ const updateActiveButton = ( index ) => {
 	const buttonIndex  = index === null ? 0 : index + 1;
 	const activeButton = buttons[ buttonIndex ];
 	if ( !activeButton ) {
-		domPanic( `Unregistrered button ${buttonIndex}.` );
+		log.panic( `Unregistrered button ${buttonIndex}.` );
 	}
 
 	for ( const button of buttons ) {
@@ -336,7 +309,7 @@ const updateActiveButton = ( index ) => {
 	}
 
 	activeButton.classList.add( css.activeButtonClass );
-	const a = activeButton.firstElementChild || domPanic();
+	const a = activeButton.firstElementChild || log.panic();
 	toggle.innerHTML = a.innerHTML;
 };
 
@@ -371,7 +344,7 @@ const updateView = ( index ) => {
  */
 const updateAnchorFilter = ( a ) => {
 	if ( !a.parentElement ) {
-		domPanic();
+		log.panic();
 	}
 
 	if ( !a.href || a.parentElement.classList.contains( css.buttonClass ) ) {
@@ -461,5 +434,5 @@ hookFiredOnce( 'contentFilter.content.registered' ).then( () => {
 	mw.hook( 'contentFilter.filter' ).add( updateActiveButton, updateView );
 } );
 
-} ) )( mediaWiki, document, console );
+} ) )( mediaWiki, document );
 // </nowiki>

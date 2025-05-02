@@ -1,6 +1,11 @@
 // <nowiki>
-( ( $, mw ) => mw.loader.using( [ 'jquery.textSelection', 'mediawiki.ForeignApi' ], () => {
+( ( $, mw ) => mw.loader.using( [
+	'jquery.textSelection', 'mediawiki.ForeignApi', 'ext.gadget.logger'
+], () => {
 
+const Logger = require( 'ext.gadget.logger' );
+const log = new Logger( 'interwiki-mapping' );
+	
 /**
  * Local wiki language code, as declared in [[Special:Interwiki]] of the foreign wiki.
  */
@@ -288,7 +293,7 @@ loadMappings.onResponse = ( response ) => {
 		const pageRes = response.query.pages[pageid];
 
 		if ( +pageid < 0 ) {
-			console.error( `IWM: Missing page "${pageRes.title}".` );
+			log.error( `IWM: Missing page "${pageRes.title}".` );
 			continue;
 		}
 
