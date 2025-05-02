@@ -1,5 +1,5 @@
 // <nowiki>
-( ( $, mw ) => {
+( ( $, mw ) => mw.loader.using( [ 'jquery.textSelection', 'mediawiki.ForeignApi' ], () => {
 
 /**
  * Local wiki language code, as declared in [[Special:Interwiki]] of the foreign wiki.
@@ -91,7 +91,6 @@ const data = {
 	revisions: {},
 	callbacks: {}
 };
-window.data = data;
 
 /**
  * @param {HTMLElement?} element
@@ -389,6 +388,13 @@ const ignoreFirstCase = ( str ) => {
 };
 
 /**
+ * @param {string} title
+ */
+const formatTitleForRegExp = function ( title ) {
+	return ignoreFirstCase( title.replaceAll( /([()*+?])/g, '\\$1' ) );
+};
+
+/**
  * @this {Record<string, string>}
  * @param {string} str
  */
@@ -406,33 +412,65 @@ const replaceTokens = function ( str ) {
  */
 const setRevisionInText = ( text, title, revid ) => {
 	const prefixedTitle = title.getPrefixedText();
-	const regExpTitle = ignoreFirstCase( prefixedTitle );
-	const regExpArgs = templateArgs.map( replaceTokens, {
-		__LOCAL_TITLE__: regExpTitle,
+
+	// (1) Try to replace an already specified revision template:
+	//
+	// {{interlangue | bla | blo }}
+	// ----------------------***---
+	const replaceRegExpArgs = templateArgs.map( replaceTokens, {
+		__LOCAL_TITLE__: formatTitleForRegExp( prefixedTitle ),
 		__FOREIGN_REV__: ')\\d+('
 	} );
-	regExpArgs[0] = ignoreFirstCase( regExpArgs[0] );
+	replaceRegExpArgs[0] = ignoreFirstCase( replaceRegExpArgs[0] );
 
-	const regExpParts = intersperse( regExpArgs, '\\|' );
-	regExpParts.unshift( '(\\{\\{' );
-	regExpParts.push( '\\}\\})' );
-
-	const regExp = new RegExp( regExpParts.join( '\\s*' ) );
-	if ( regExp.test( text ) ) {
-		return text.replace( regExp, `$1${revid}$2` );
+	const replaceRegExpParts = [ '(\\{\\{', ...intersperse( replaceRegExpArgs, '\\|' ), '\\}\\})' ];
+	const replaceRegExp = new RegExp( replaceRegExpParts.join( '\\s*' ) );
+	if ( replaceRegExp.test( text ) ) {
+		return text.replace( replaceRegExp, `$1${revid}$2` );
 	}
 
-	const args = templateArgs.map( replaceTokens, {
+	// (2) Try to add a new revision template in lexicographical page order.
+	const newArgs = templateArgs.map( replaceTokens, {
 		__LOCAL_TITLE__: prefixedTitle,
 		__FOREIGN_REV__: revid
 	} );
-	const newTemplate = `{{${args.join( ' | ' )} }}`;
+	const newTemplate = `{{${newArgs.join( ' | ' )} }}`;
 
-	const closingRegExp = new RegExp( `(\\{\\{\\s*${ignoreFirstCase( closingTemplate )})` );
-	if ( closingRegExp.test( text ) ) {
-		return text.replace( closingRegExp, `${newTemplate}\n$1` );
+	const lookupRegExpArgs = templateArgs.map( replaceTokens, {
+		__LOCAL_TITLE__: '(.*?)',
+		__FOREIGN_REV__: '\\d+'
+	} );
+	lookupRegExpArgs[0] = ignoreFirstCase( lookupRegExpArgs[0] );
+
+	const lookupRegExpParts = [ '\\{\\{', ...intersperse( lookupRegExpArgs, '\\|' ), '\\}\\}' ];
+	const lookupRegExp = new RegExp( lookupRegExpParts.join( '\\s*' ), 'g' );
+	/** @type {string?} */
+	let previousTitle = null;
+	for ( const match of text.matchAll( lookupRegExp ) ) {
+		if ( previousTitle === null || previousTitle < match[1] && match[1] < prefixedTitle ) {
+			previousTitle = match[1];
+		}
 	}
 
+	if ( previousTitle !== null ) {
+		const insertRegExpArgs = templateArgs.map( replaceTokens, {
+			__LOCAL_TITLE__: formatTitleForRegExp( previousTitle ),
+			__FOREIGN_REV__: '\\d+'
+		} );
+		insertRegExpArgs[0] = ignoreFirstCase( insertRegExpArgs[0] );
+
+		const insertRegExpParts = [ '(\\{\\{', ...intersperse( insertRegExpArgs, '\\|' ), '\\}\\})' ];
+		const insertRegExp = new RegExp( insertRegExpParts.join( '\\s*' ) );
+		return text.replace( insertRegExp, `$1\n${newTemplate}` );
+	}
+
+	// (3) Try to add a new revision template before the closing one.
+	const appendRegExp = new RegExp( `(\\{\\{\\s*${ignoreFirstCase( closingTemplate )})` );
+	if ( appendRegExp.test( text ) ) {
+		return text.replace( appendRegExp, `${newTemplate}\n$1` );
+	}
+
+	// (4) Otherwise, add a new revision template at the end of the page.
 	return `${text.trimEnd()}\n${newTemplate}`;
 };
 
@@ -662,5 +700,5 @@ safeAddContentHook( ( $content ) => {
 	loadMappings();
 } );
 
-} )( jQuery, mediaWiki );
+} ) )( jQuery, mediaWiki );
 // </nowiki>

@@ -899,6 +899,33 @@
 	cursor: help;
 }
 
+/******************************
+/* [[Template:Documentation]] *
+/******************************/
+
+.documentation {
+	margin       : 0.5em auto 1em;
+	border       : 2px solid var( --wiki-content-border-color );
+	padding      : 0.8em 1.2em;
+	border-radius: 5px;
+	background   : color-mix( in srgb, var( --wiki-content-background-color ) 50%, var( --wiki-body-background-color ) );
+}
+
+.documentation-header {
+	margin-bottom: 1em;
+}
+
+.documentation-heading {
+	margin-right: 10px;
+	font-weight : bold;
+	font-size   : 125%;
+}
+
+.documentation-heading-sub {
+	font-size : 90%;
+	font-style: italic;
+}
+
 /**********************
 /* [[Template:Ghost]] *
 /**********************/

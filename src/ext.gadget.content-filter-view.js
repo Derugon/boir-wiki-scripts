@@ -7,14 +7,9 @@
  */
 
 // <nowiki>
+( ( mw, console ) => mw.loader.using( 'ext.gadget.content-filter-core', ( require ) => {
 
-( ( mw, console ) => {
-
-if ( !window.cf || 'parseView' in window.cf ) {
-	// Already loaded, or something went wrong.
-	return;
-}
-const cf = window.cf;
+const cf = require( 'ext.gadget.content-filter-core' );
 
 /**
  * @this {( ...msg: string[] ) => void}
@@ -192,6 +187,7 @@ const nodePostOrder = ( n1, n2 ) => {
 const applyViewRule = ( element, stack ) => {
 	const result = (
 		applyViewRule_parentInView( element, stack ) ||
+		applyViewRule_ghostParents( element ) ||
 		applyViewRule_allChildren( element, stack ) ||
 		applyViewRule_allHeaderElements( element, stack ) ||
 		null
@@ -207,9 +203,33 @@ const applyViewRule = ( element, stack ) => {
 };
 
 /**
+ * Wrap covered ghost containers.
+ *
+ * @param {HTMLElement} element
+ * @returns {HTMLElement?}
+ */
+const applyViewRule_ghostParents = ( element ) => {
+	let ghostParent = null;
+	let parent = element.parentElement;
+
+	while (
+		parent !== null &&
+		cf.isGhostContainer( parent ) &&
+		cf.getPreviousSibling( element, parent ).sibling === null &&
+		cf.getNextSibling( element, parent ).sibling === null
+	) {
+		ghostParent = element = parent;
+		parent = element.parentElement;
+	}
+
+	return ghostParent;
+};
+
+/**
  * Remove child fragment.
  * [ <A> ... [ <X/> ] ... </A> ]
  *     ==>   [ <A> ... <X/> ... </A> ]
+ *
  * @param {HTMLElement} element
  * @param {HTMLElement[]} stack
  * @returns {HTMLElement?}
@@ -234,16 +254,13 @@ const applyViewRule_parentInView = ( element, stack ) => {
  * Merge adjacent fragments.
  * <A> [ <B1/> ] ... [ <Bn/> ] [ <X/> ] </A>
  *     ==>   [ <A> <B1/> ... <Bn/> <X/> </A> ]
+ *
  * @param {HTMLElement} element
  * @param {HTMLElement[]} stack
  * @returns {HTMLElement?}
  */
 const applyViewRule_allChildren = ( element, stack ) => {
-	let parent = element.parentElement;
-	while ( parent !== null && parent instanceof HTMLDivElement ) {
-		parent = parent.parentElement;
-	}
-
+	const parent = cf.getParent( element );
 	if ( parent === null ) {
 		return null;
 	}
@@ -265,12 +282,12 @@ const applyViewRule_allChildren = ( element, stack ) => {
 		return null;
 	}
 
-	if ( cf.getNextSibling( element ).sibling ) {
+	if ( cf.getNextSibling( element, parent ).sibling !== null ) {
 		return null;
 	}
 
 	let i = stack.length - 1;
-	let previousInfo = cf.getPreviousSibling( element );
+	let previousInfo = cf.getPreviousSibling( element, parent );
 	while ( previousInfo.sibling !== null && i >= 0 ) {
 		const previousSibling = previousInfo.sibling;
 		const previousElement = stack[ i ];
@@ -284,7 +301,7 @@ const applyViewRule_allChildren = ( element, stack ) => {
 		}
 
 		--i;
-		previousInfo = cf.getPreviousSibling( previousElement );
+		previousInfo = cf.getPreviousSibling( previousElement, parent );
 	}
 
 	if ( previousInfo.sibling !== null ) {
@@ -301,6 +318,7 @@ const applyViewRule_allChildren = ( element, stack ) => {
  * Merge adjacent fragments.
  * <hi/> [ <B1/> ] ... [ <Bn/> ] [ <X/> ] <hi/>
  *     ==>   [ <hi/> <B1/> ... <Bn/> <X/> ] <hi/>
+ *
  * @param {HTMLElement} element
  * @param {HTMLElement[]} stack
  * @returns {HTMLElement?}
@@ -321,6 +339,8 @@ const isChildOf = ( child, parent ) => {
 	return ( cmp & Node.DOCUMENT_POSITION_CONTAINS ) > 0;
 };
 
+module.exports = { parseView };
+
 mw.hook( 'contentFilter.content.beforeRegistered' ).add( ( content, container ) => {
 	cleanupViewContainer( content, container );
 } );
@@ -335,9 +355,5 @@ mw.hook( 'contentFilter.content.registered' ).add( ( content, container ) => {
 	// TODO: re-enable active view
 } );
 
-Object.assign( window.cf, {
-	parseView: parseView
-} );
-
-} )( mediaWiki, console );
+} ) )( mediaWiki, console );
 // </nowiki>

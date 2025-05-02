@@ -7,14 +7,12 @@
  */
 
 // <nowiki>
+( ( mw, document, console ) => mw.loader.using( [
+	'mediawiki.Uri', 'ext.gadget.content-filter-view'
+], ( require ) => {
 
-( ( mw, document, console ) => {
-
-if ( !window.cf || !( 'parseView' in window.cf ) || 'buttons' in window.cf ) {
-	// Already loaded, or something went wrong.
-	return;
-}
-const cf = window.cf;
+const cf = require( 'ext.gadget.content-filter-core' );
+const cfView = require( 'ext.gadget.content-filter-view' );
 
 /**
  * @this {( ...msg: string[] ) => void}
@@ -356,7 +354,7 @@ const updateView = ( index ) => {
 	}
 
 	if ( index !== null ) {
-		cf.parseView( index );
+		cfView.parseView( index );
 
 		for ( const viewFragment of queryElementsByClassName( `cf-view-${index}` ) ) {
 			viewFragment.classList.add( css.activeViewClass );
@@ -453,6 +451,8 @@ let selectedIndex = null;
  */
 let lastSelectedIndex = 4;
 
+module.exports = { paramValue, buttons, getButtonFilterIndex };
+
 mw.hook( 'contentFilter.filter' ).add( setSelectedIndex ).fire( paramValue );
 mw.hook( 'contentFilter.content.pageFilter' ).add( updateButtonsForPageContext );
 mw.hook( 'contentFilter.content.registered' ).add( insertMenu );
@@ -461,11 +461,5 @@ hookFiredOnce( 'contentFilter.content.registered' ).then( () => {
 	mw.hook( 'contentFilter.filter' ).add( updateActiveButton, updateView );
 } );
 
-Object.assign( window.cf, {
-	paramValue: paramValue,
-	buttons: buttons,
-	getButtonFilterIndex: getButtonFilterIndex
-} );
-
-} )( mediaWiki, document, console );
+} ) )( mediaWiki, document, console );
 // </nowiki>

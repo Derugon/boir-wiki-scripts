@@ -1,5 +1,5 @@
 // <nowiki>
-( ( $, mw ) => {
+( ( $, mw ) => mw.loader.using( [ 'site', 'mediawiki.util' ], () => {
 
 /**
  * Name of the template that manages interwiki links.
@@ -43,7 +43,7 @@ const replaceInText = ( text, langCode, foreignTitle ) => {
 		return text.replace( appendRegExp, `$1|${langCode}=${foreignTitle}}` );
 	}
 
-	// (3) Otherwise, add a new template with languagelang link.
+	// (3) Otherwise, add a new template with language link.
 	return `${text.trimEnd()}\n\n{{${template}|${langCode}=${foreignTitle}}}`;
 };
 
@@ -92,5 +92,5 @@ const preloadEdit = () => {
 
 hookFiredOnce( 'wikipage.editform' ).then( preloadEdit );
 
-} )( jQuery, mediaWiki );
+} ) )( jQuery, mediaWiki );
 // </nowiki>

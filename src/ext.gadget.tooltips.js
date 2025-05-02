@@ -4,7 +4,7 @@
  */
 
 // <nowiki>
-( ( $, mw ) => {
+( ( $, mw ) => mw.loader.using( 'mediawiki.api', () => {
 
 const css = {
 	tooltipClass: 'tooltip',
@@ -223,5 +223,5 @@ safeAddContentHook( ( $content ) => {
 	}
 } );
 
-} )( jQuery, mediaWiki );
+} ) )( jQuery, mediaWiki );
 // </nowiki>

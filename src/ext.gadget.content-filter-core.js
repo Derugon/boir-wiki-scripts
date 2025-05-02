@@ -6,13 +6,7 @@
  */
 
 // <nowiki>
-
-( ( mw, document, console ) => {
-
-if ( window.cf ) {
-	// Already loaded, or something went wrong.
-	return;
-}
+( ( mw, document, console ) => mw.loader.using( [ 'site', 'mediawiki.Title' ], () => {
 
 /**
  * @this {( ...msg: string[] ) => void}
@@ -607,11 +601,29 @@ const getWrapper = ( node ) => {
 };
 
 /**
- * TODO
- * @param {Node} node The node.
+ * Get the non-ghost parent of a node.
+ *
+ * @param {Node} node Node.
+ * @returns {HTMLElement?}
+ */
+const getParent = ( node ) => {
+	let parent = node.parentElement;
+	while ( parent !== null && isGhostContainer( parent ) ) {
+		parent = parent.parentElement;
+	}
+
+	return parent;
+};
+
+/**
+ * Get the non-ghost previous sibling of a node.
+ * If no sibling is found, the non-ghost parent it stopped searching at is given instead.
+ *
+ * @param {Node} node Node.
+ * @param {HTMLElement} [container] Container assumed to be the non-ghost parent of the node.
  * @returns {ContentFilter.SiblingSearchResult}
  */
-const getPreviousSibling = ( node ) => {
+const getPreviousSibling = ( node, container ) => {
 	while ( true ) {
 		let sibling = node.previousSibling;
 		while ( sibling !== null && isGhostNode( sibling ) ) {
@@ -623,7 +635,7 @@ const getPreviousSibling = ( node ) => {
 		}
 
 		const parent = node.parentElement;
-		if ( !isGhostContainer( parent ) ) {
+		if ( parent === null || parent === container || !isGhostContainer( parent ) ) {
 			return { sibling: null, parent: parent };
 		}
 
@@ -632,11 +644,14 @@ const getPreviousSibling = ( node ) => {
 };
 
 /**
- * TODO
- * @param {Node} node The node.
+ * Get the non-ghost next sibling of a node.
+ * If no sibling is found, the non-ghost parent it stopped searching at is given instead.
+ *
+ * @param {Node} node Node.
+ * @param {HTMLElement} [container] Container assumed to be the non-ghost parent of the node.
  * @returns {ContentFilter.SiblingSearchResult}
  */
-const getNextSibling = ( node ) => {
+const getNextSibling = ( node, container ) => {
 	while ( true ) {
 		let sibling = node.nextSibling;
 		while ( sibling !== null && isGhostNode( sibling ) ) {
@@ -648,7 +663,7 @@ const getNextSibling = ( node ) => {
 		}
 
 		const parent = node.parentElement;
-		if ( !isGhostContainer( parent ) ) {
+		if ( parent === null || parent === container || !isGhostContainer( parent ) ) {
 			return { sibling: null, parent: parent };
 		}
 
@@ -675,6 +690,21 @@ const isEmptyNode = ( node ) => {
 };
 
 /**
+ * Indicates whether an element should not be considered as a container,
+ * and its children should then be considered being part of its parent.
+ *
+ * @param {HTMLElement} element The container element.
+ * @returns {boolean} True if the element is not an actual container, false otherwise.
+ */
+const isGhostContainer = ( element ) => {
+	if ( element instanceof HTMLSpanElement || element instanceof HTMLDivElement ) {
+		return true;
+	}
+
+	return false;
+};
+
+/**
  * Indicates whether a node should be considered as an additional non-essential node.
  *
  * @param {Node} node The node.
@@ -696,32 +726,21 @@ const isGhostNode = ( node ) => {
 			return true;
 		}
 
-		// TODO: if isGhostContainer( element ), we need to find some non-ghost thing in it.
+		if ( !isGhostContainer( element ) ) {
+			return false;
+		}
 
-		return false;
+		for ( const child of element.childNodes ) {
+			if ( !isGhostNode( child ) ) {
+				return false;
+			}
+		}
+
+		return true;
 
 	default:
 		return false;
 	}
-};
-
-/**
- * Indicates whether an element should not be considered as a container,
- * and its children should then be considered being part of its parent.
- *
- * @param {HTMLElement?} element The container element.
- * @returns {element is HTMLElement} True if the element is not an actual container, false otherwise.
- */
-const isGhostContainer = ( element ) => {
-	if ( !element ) {
-		return false;
-	}
-
-	if ( element.tagName === 'SPAN' ) {
-		return true;
-	}
-
-	return false;
 };
 
 /**
@@ -730,17 +749,17 @@ const isGhostContainer = ( element ) => {
  */
 const filteringAvailable = isFilteringAvailable( currentTitle );
 
-window.contentFilter =
-window.cf = {
-	filterMax: filterMax,
-	containers: containers,
-	isFilteringAvailable: isFilteringAvailable,
+module.exports = {
+	filterMax, containers, isFilteringAvailable, getFilter, getContext, getParent,
+	getPreviousSibling, getNextSibling, isGhostContainer, isGhostNode,
+	/**
+	 * @param {Document | HTMLElement} [root]
+	 */
 	getTags: ( root ) => queryElementsByClassName( css.tagClass, root ),
-	getContainers: ( root ) => queryElementsByClassName( css.containerClass, root ),
-	getFilter: getFilter,
-	getContext: getContext,
-	getPreviousSibling: getPreviousSibling,
-	getNextSibling: getNextSibling
+	/**
+	 * @param {Document | HTMLElement} [root]
+	 */
+	getContainers: ( root ) => queryElementsByClassName( css.containerClass, root )
 };
 
 safeAddContentHook( ( $content ) => {
@@ -750,5 +769,5 @@ safeAddContentHook( ( $content ) => {
 	}
 } );
 
-} )( mediaWiki, document, console );
+} ) )( mediaWiki, document, console );
 // </nowiki>

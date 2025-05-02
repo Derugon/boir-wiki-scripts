@@ -1,3 +1,4 @@
+// <nowiki>
 ( ( mw ) => {
 
 /**
@@ -534,19 +535,8 @@ const unwrap = ( element ) => {
 };
 
 module.exports = {
-	init: init,
-	enable: enable,
-	makeAuto: makeAuto,
-	disable: disable,
-	setActiveSlide: setActiveSlide,
-	cycle: cycle,
-	removeSlide: removeSlide,
-	isEnabled: isEnabled,
-	getSlides: getSlides,
-	getActiveSlide: getActiveSlide,
-	getTitleBar: getTitleBar,
-	getSlideTitle: getSlideTitle,
-	getTitleSlide: getTitleSlide
+	init, enable, makeAuto, disable, setActiveSlide, cycle, removeSlide, isEnabled, getSlides,
+	getActiveSlide, getTitleBar, getSlideTitle, getTitleSlide
 };
 
 mw.hook( 'wikipage.content' ).add( ( $content ) => {
@@ -563,3 +553,4 @@ mw.hook( 'contentFilter.filter.viewUpdated' ).add( () => {
 } );
 
 } )( mediaWiki );
+// </nowiki>

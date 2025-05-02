@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"lib": ["ESNext", "DOM"],
 		"checkJs": true,
+		"moduleDetection": "auto",
 		"outDir": "./dist",
 		"downlevelIteration": true,
 		"allowUnreachableCode": false,
@@ -13,13 +14,12 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"strict": true,
-		"typeRoots": [
-			"./node_modules/@types"
-		]
+		"paths": {
+			"*": [ "./src/*" ]
+		}
 	},
 	"include": [
-		"./types",
-		"./src",
-		"./node_modules/types-mediawiki"
+		"./node_modules/types-mediawiki",
+		"./src"
 	]
 }

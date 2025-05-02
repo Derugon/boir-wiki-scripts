@@ -1,6 +1,7 @@
-( ( mw, $ ) => {
-
-mw.loader.using( [ 'ext.gadget.topbarCSS', 'skins.vector.legacy.js' ] );
+// <nowiki>
+( ( mw, $ ) => mw.loader.using( [
+	'ext.gadget.topbarCSS', 'mediawiki.Title', 'skins.vector.legacy.js'
+], () => {
 
 const config = mw.config.get( [ 'wgAction', 'wgActionPaths', 'wgPageName' ] );
 
@@ -34,7 +35,7 @@ const addPageLinkToElement = ( node, acceptWhole ) => {
 			}
 
 			const anchor = document.createElement( 'a' );
-			anchor.href = config.wgActionPaths['view'].replace( '$1', encodeURIComponent( config.wgPageName ) );
+			anchor.href = config.wgActionPaths.view.replace( '$1', encodeURIComponent( config.wgPageName ) );
 			anchor.text = toReplace;
 
 			node.textContent = parts[0];
@@ -51,20 +52,17 @@ const addPageLinkToElement = ( node, acceptWhole ) => {
 };
 
 $( () => {
-	mw.loader.using( 'skins.vector.legacy.js', () => {
-		if ( $.collapsibleTabs ) {
-			$.collapsibleTabs.calculateTabDistance = () => Infinity;
-			$.collapsibleTabs.handleResize();
-		}
-	} );
+	if ( $.collapsibleTabs ) {
+		$.collapsibleTabs.calculateTabDistance = () => Infinity;
+		$.collapsibleTabs.handleResize();
+	}
 
 	$( '#ca-history, #ca-watch, #ca-unwatch' )
 		.prependTo( '#p-cactions .menu' )
 		.removeClass( 'collapsible' );
 
-	mw.loader.using( 'mediawiki.Title', () => {
-		addPageLinkToElement( document.getElementById( 'firstHeading' ) );
-	} );
+	addPageLinkToElement( document.getElementById( 'firstHeading' ) );
 } );
 
-} )( mediaWiki, jQuery );
+} ) )( mediaWiki, jQuery );
+// </nowiki>

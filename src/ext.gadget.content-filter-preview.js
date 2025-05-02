@@ -6,22 +6,25 @@
  */
 
 // <nowiki>
+( ( document ) => mw.loader.using( 'site', ( require ) =>
+hookFiredOnce( 'contentFilter.filter.menuPlaced' ).then( () => {
 
-( ( document ) => {
+const cfView = require( 'ext.gadget.content-filter-view' );
+const cfSwitch = require( 'ext.gadget.content-filter' );
 
 /**
  * TODO
  * @this {HTMLElement}
  */
 const onButtonEnter = function () {
-	const filterIndex = cf.getButtonFilterIndex( this );
+	const filterIndex = cfSwitch.getButtonFilterIndex( this );
 	if ( filterIndex === null ) {
 		return;
 	}
 
 	// We do not know whether the view is computed when the page is loaded
 	// or lazily when the associated filter is activated.
-	cf.parseView( filterIndex );
+	cfView.parseView( filterIndex );
 
 	for ( const viewFragment of document.querySelectorAll( `.cf-view-${filterIndex}` ) ) {
 		viewFragment.classList.add( 'cf-view-hover' );
@@ -33,7 +36,7 @@ const onButtonEnter = function () {
  * @this {HTMLElement}
  */
 const onButtonLeave = function () {
-	const filterIndex = cf.getButtonFilterIndex( this );
+	const filterIndex = cfSwitch.getButtonFilterIndex( this );
 	if ( filterIndex === null ) {
 		return;
 	}
@@ -43,12 +46,10 @@ const onButtonLeave = function () {
 	}
 };
 
-hookFiredOnce( 'contentFilter.filter.menuPlaced' ).then( () => {
-	for ( const button of cf.buttons ) {
-		button.addEventListener( 'mouseenter', onButtonEnter );
-		button.addEventListener( 'mouseleave', onButtonLeave );
-	}
-} );
+for ( const button of cfSwitch.buttons ) {
+	button.addEventListener( 'mouseenter', onButtonEnter );
+	button.addEventListener( 'mouseleave', onButtonLeave );
+}
 
-} )( document );
+} ) ) )( document );
 // </nowiki>

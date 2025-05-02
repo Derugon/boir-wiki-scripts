@@ -179,6 +179,14 @@ $( () => {
             }
         }
     }
+
+	// Negative
+    
+    $("[data-image-name='Collectible Teleport! icon.png'").addClass("teleportation")
+    $(".teleportation").click(function(){
+	    location.href = "https://bindingofisaacrebirth.fandom.com/fr/wiki/Spécial:Random";
+	})
+
 } );
 // [END: DOM ready]
 

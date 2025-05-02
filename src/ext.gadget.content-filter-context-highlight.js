@@ -7,13 +7,9 @@
  */
 
 // <nowiki>
-( ( mw ) => {
+( ( mw ) => mw.loader.using( 'ext.gadget.content-filter-core', ( require ) => {
 
-if ( !window.cf ) {
-	// Something went wrong.
-	return;
-}
-const cf = window.cf;
+const cf = require( 'ext.gadget.content-filter-core' );
 
 const css = {
 	contextHoverClass: 'cf-context-hover'
@@ -67,5 +63,5 @@ for ( const container of cf.containers ) {
 }
 mw.hook( 'contentFilter.content.registered' ).add( setTagEventsInContent );
 
-} )( mediaWiki );
+} ) )( mediaWiki );
 // </nowiki>
