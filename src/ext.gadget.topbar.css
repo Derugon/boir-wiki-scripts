@@ -230,13 +230,11 @@
 }
 
 #mw-panel .portal .body li a:hover {
-	background: var( --wiki-accent-color ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
 	color: var( --wiki-content-link-color );
 }
 
 #mw-panel .portal:hover .vector-menu-heading {
-	background: var( --wiki-accent-color ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-accent-color ) 25%, transparent );
 	border-radius: 0;
 }
@@ -253,6 +251,13 @@
 	margin: 0;
 	background-color: transparent;
 	border-width: 0;
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	#mw-panel .portal .body li a:hover,
+	#mw-panel .portal:hover .vector-menu-heading {
+		background: var( --wiki-accent-color );
+	}
 }
 
 /******************
@@ -321,7 +326,6 @@
 #ca-viewsource a:hover,
 #ca-talk a:hover,
 #p-cactions:hover #p-cactions-label {
-	background: var( --wiki-accent-color ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
 	text-decoration: none;
 }
@@ -392,6 +396,17 @@
 	width: 0;
 }
 
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	#ca-edit a:hover,
+	#ca-ve-edit a:hover,
+	#ca-addsection a:hover,
+	#ca-viewsource a:hover,
+	#ca-talk a:hover,
+	#p-cactions:hover #p-cactions-label {
+		background: var( --wiki-accent-color );
+	}
+}
+
 /**********
 /* Search *
 /**********/
@@ -437,7 +452,6 @@ body:not( .ns--1 ) #mw-indicator-mw-helplink {
 }
 
 #p-cactions .mw-list-item:hover {
-	background: var( --wiki-accent-color ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
 }
 
@@ -447,6 +461,12 @@ body:not( .ns--1 ) #mw-indicator-mw-helplink {
 
 #mw-head #p-cactions {
 	background-image: none;
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	#p-cactions .mw-list-item:hover {
+		background: var( --wiki-accent-color );
+	}
 }
 
 }

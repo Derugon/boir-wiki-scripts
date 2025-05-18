@@ -1,5 +1,5 @@
 /* CSS placed here will be applied to all skins */
-/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Common.css?diff=latest&oldid=2275] */
+/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Common.css?diff=latest&oldid=2317] */
 
 /*****************
 /* Font settings *
@@ -290,12 +290,6 @@
 	--wiki-content-link-color--hover: var( --wiki-content-link-color );
 }
 
-@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
-	:root {
-		--pi-border-color: var( --pi-secondary-background );
-	}
-}
-
 .portable-infobox {
 	position: relative;
 	text-align: center;
@@ -307,12 +301,11 @@
 .portable-infobox .pi-header {
 	text-align: center;
 	font-size: 1.5em;
-	background: var( --pi-secondary-background ); /* fallback */
 	background: color-mix( in srgb, var( --pi-secondary-background ) 75%, transparent );
 }
 
-.portable-infobox .pi-data {
-	background: var( --pi-secondary-background ); /* fallback */
+.portable-infobox .pi-data,
+.portable-infobox .pi-group {
 	background: color-mix( in srgb, var( --pi-secondary-background ) 18%, transparent );
 }
 
@@ -400,6 +393,19 @@
 	padding-left: 0;
 }
 
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	:root {
+		--pi-border-color: var( --pi-secondary-background );
+	}
+
+	.portable-infobox .pi-title,
+	.portable-infobox .pi-header,
+	.portable-infobox .pi-data,
+	.portable-infobox .pi-group {
+		background: var( --pi-secondary-background );
+	}
+}
+
 /********************
 /* Main page layout *
 /********************/
@@ -448,7 +454,6 @@
 	flex-flow: column nowrap;
 	width: calc( 100% - 2px );
 	box-sizing: border-box;
-	background: var( --wiki-content-background-color--secondary ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-background-color--secondary ) 25%, transparent );
 	border: 1px solid var( --wiki-content-border-color );
 	padding: 0px;
@@ -516,7 +521,6 @@
 
 #mp-welcome .welcome-subtitle {
 	height: 100%;
-	background: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 85%, transparent );
 	padding: 0.5em;
 }
@@ -539,6 +543,16 @@
 
 .view-light #mp-banner {
 	filter: blur( 5px ) contrast( 50% );
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	.mp-box {
+		background: var( --wiki-content-background-color--secondary );
+	}
+
+	#mp-welcome .welcome-subtitle {
+		background: var( --wiki-content-dynamic-color--inverted );
+	}
 }
 
 /* [[Template:MP_link]] */
@@ -566,18 +580,18 @@
 }
 
 .mp-links > ul > li:hover {
-	background-color: var( --wiki-content-link-color ); /* fallback */
 	background-color: color-mix( in srgb, var( --wiki-content-link-color ) 20%, transparent );
 }
 
-.mp-links.columns-1 > ul > li {flex: max( calc( 100% - var( --gap ) ), 5em ) 1 1;}
-.mp-links.columns-2 > ul > li {flex: max( calc( 50% - var( --gap ) ), 5em ) 1 1;}
-.mp-links.columns-3 > ul > li {flex: max( calc( ( 100% / 3 ) - var( --gap ) ), 5em ) 1 1;}
-.mp-links.columns-4 > ul > li {flex: max( calc( 25% - var( --gap ) ), 5em ) 1 1;}
-.mp-links.columns-5 > ul > li {flex: max( calc( 20% - var( --gap ) ), 5em ) 1 1;}
-.mp-links.columns-6 > ul > li {flex: max( calc( ( 100% / 6 ) - var( --gap ) ), 5em ) 1 1;}
-.mp-links.columns-7 > ul > li {flex: max( calc( ( 100% / 7 ) - var( --gap ) ), 5em ) 1 1;}
-.mp-links.columns-max > ul > li {flex: max( calc( 0% - var( --gap ) ), 5em ) 1 1;}
+.mp-links.columns-1 > ul > li { flex: max( calc( 100% - var( --gap ) ), 5em ) 1 1; }
+.mp-links.columns-2 > ul > li { flex: max( calc( 50% - var( --gap ) ), 5em ) 1 1; }
+.mp-links.columns-3 > ul > li { flex: max( calc( ( 100% / 3 ) - var( --gap ) ), 5em ) 1 1; }
+.mp-links.columns-4 > ul > li { flex: max( calc( 25% - var( --gap ) ), 5em ) 1 1; }
+.mp-links.columns-5 > ul > li { flex: max( calc( 20% - var( --gap ) ), 5em ) 1 1; }
+.mp-links.columns-6 > ul > li { flex: max( calc( ( 100% / 6 ) - var( --gap ) ), 5em ) 1 1; }
+.mp-links.columns-7 > ul > li { flex: max( calc( ( 100% / 7 ) - var( --gap ) ), 5em ) 1 1; }
+.mp-links.columns-8 > ul > li { flex: max( calc( ( 100% / 8 ) - var( --gap ) ), 5em ) 1 1; }
+.mp-links.columns-max > ul > li { flex: 5em 1 1; }
 
 .mp-links > ul > li:hover a {
 	text-decoration: underline;
@@ -612,6 +626,12 @@
 
 .mp-links.plain > ul > li {
 	outline-color: transparent;
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	.mp-links > ul > li:hover {
+		background-color: var( --wiki-content-link-color );
+	}
 }
 
 /********************
@@ -690,9 +710,8 @@
 }
 
 #mp-backinf > dl {
-	background: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 25%, transparent );
-	border: 1px solid var( --wiki-content-dynamic-color--inverted );
+	border: 1px solid;
 	border-color: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 25%, transparent );
 	border-radius: 4px;
 	max-width: 1000px;
@@ -711,6 +730,13 @@
 	font-size: 1.875em;
 	color: var( --tb-fhead-color );
 	text-shadow: 3px 1px 3px var( --wiki-content-text-shadow );
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	#mp-backinf > dl {
+		background: var( --wiki-content-dynamic-color--inverted );
+		border-color: var( --wiki-content-dynamic-color--inverted );
+	}
 }
 
 /**********************************************************
@@ -998,14 +1024,12 @@ div.nav-header {
 
 .nav-header dt {
 	padding   : .25em .5em;
-	background: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 40%, transparent );
 }
 
 .nav-header li {
 	padding        : .25em .5em;
 	list-style-type: none;
-	background: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 25%, transparent );
 }
 
@@ -1021,6 +1045,13 @@ div.nav-header {
 .nav-header td,
 .nav-header .nav-header-selected {
 	background: var( --tb-header-color );
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	.nav-header dt,
+	.nav-header li {
+		background: var( --wiki-content-dynamic-color--inverted );
+	}
 }
 
 /*******************************
@@ -1060,7 +1091,6 @@ div.nav-header {
 	min-width: 200px;
 	max-width: 800px;
 	margin: 0.5em auto;
-	background: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 33%, transparent );
 	text-align: center;
 	vertical-align: bottom;
@@ -1068,13 +1098,11 @@ div.nav-header {
 }
 
 .nav-box td {
-	background: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 12.5%, transparent );
 	padding: 2px 4px;
 }
 
 .nav-box th {
-	background: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 25%, transparent );
 	padding: 2px 4px;
 }
@@ -1140,10 +1168,8 @@ div.nav-header {
 .nav-category {
 	clear       : both;
 	width       : auto;
-	background  : var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background  : color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 40%, transparent );
 	margin      : 5px auto;
-	border-color: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	border-color: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 50%, transparent );
 	text-align  : center;
 	font-size   : 1em;
@@ -1161,13 +1187,30 @@ div.nav-header {
 
 .nav-category > tr > th,
 .nav-category > * > tr > th {
-	background: var( --wiki-content-dynamic-color--inverted ); /* fallback */
 	background: color-mix( in srgb, var( --wiki-content-dynamic-color--inverted ) 20%, transparent );
 }
 
 .nav-list-vertical > tr > td:not( :last-of-type ),
 .nav-list-vertical > * > tr > td:not( :last-of-type ) {
 	padding-right: 10px;
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	.nav-box,
+	.nav-box td,
+	.nav-box th {
+		background: var( --wiki-content-dynamic-color--inverted );
+	}
+
+	.nav-category {
+		background  : var( --wiki-content-dynamic-color--inverted );
+		border-color: var( --wiki-content-dynamic-color--inverted );
+	}
+
+	.nav-category > tr > th,
+	.nav-category > * > tr > th {
+		background: var( --wiki-content-dynamic-color--inverted );
+	}
 }
 
 /*********************
@@ -1252,7 +1295,6 @@ div.nav-header {
 /************************/
 
 .spoiler-content {
-	background-color: var( --wiki-content-dynamic-color ); /* fallback */
 	background-color: color-mix( in srgb, var( --wiki-content-dynamic-color ) 50%, transparent );
 	transition: all 0.3s;
 	cursor: pointer;
@@ -1271,6 +1313,12 @@ div.nav-header {
 .spoiler-content.show > * {
 	pointer-events: unset;
 	opacity: 1;
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	.spoiler-content {
+		background-color: var( --wiki-content-dynamic-color );
+	}
 }
 
 /************************************
