@@ -1,9 +1,9 @@
 /* CSS placed here will be applied to all skins */
 /* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Common.css?diff=latest&oldid=2317] */
 
-/*****************
-/* Font settings *
-/*****************/
+/********************
+/* Design variables *
+/********************/
 
 @font-face {
 	font-family: "tboi";
@@ -11,24 +11,109 @@
 }
 
 :root {
+	--wiki-is-top-logo: 0; /* 1 = center logo at the top of the page; 0 = logo at the top left of the page */
+	--wiki-is-navigation-inside-content: 0; /* 0 = default navigation tabs layout; 1 = navigation tabs inside content box */
+
+	/* Probably edit these */
+	--wiki-logo-file-width: 160; /* Width of the image file in px. Put a number without the letters `px`. */
+	--wiki-logo-file-height: 160; /* Height of the image file in px. Put a number without the letters `px`. */	
+	--wiki-logo-height: calc( var( --wiki-logo-file-height ) * 1px ); /* Valid only when --wiki-is-top-logo is 1. The height the logo should be shown */
+	--wiki-logo-margin: 15px; /* the width of margin below the logo. When --wiki-is-top-logo is 1, this is also the default value of --wiki-top-spacing */
+	/* Maybe edit these */
+	--wiki-logo-filter: none;
+
+	/* Probably edit these */
 	--wiki-body-font-family: sans-serif;
+
+	/* Probably edit these */
 	--wiki-heading-font-family: arial, sans-serif;
+
+	/* Probably edit these */
+	--wiki-firstheading-font-family: var( --wiki-heading-font-family );
+
+	/* Probably edit these */
+	--wiki-content-border-width: 1px;
+	/* Maybe edit these */
+	--wiki-content-border-radius: 0px;
+	--wiki-content-border-top-radius: var( --wiki-content-border-radius );
+	--wiki-content-border-style: solid;
+	--wiki-content-backdrop-filter: none;
+
+	/* Maybe edit these */
+	--wiki-page-content-max-width: 9999px; /* max width of sidebar+gap+content, must be a length value. A huge value can be used to indicate no limit, e.g. 99999px */
+	--wiki-gap-between-sidebar-and-content: 0.5em; /* gap between sidebar(#mw-panel) and content(#content) */
+
+	/* Probably edit these */
 	--wiki-sidebar-heading-font-family: sans-serif;
+	--wiki-sidebar-width: 10em;
+	--wiki-sidebar-border-width: 1px;
+	--wiki-sidebar-border-radius: 0px;
+	--wiki-sidebar-portal-spacing: 0px;
+	/* Maybe edit these */
+	--wiki-sidebar-font-size: 0.75em; /* please use em or rem for this */
+	--wiki-sidebar-line-height: 1.125;
+	--wiki-sidebar-heading-background: none;
+	--wiki-sidebar-heading-font-size: 0.75em; /* please use em or rem for this */
+	--wiki-sidebar-margin: 0.5em;
+	--wiki-sidebar-list-item-padding: 0.25em 0.25rem;
+	--wiki-sidebar-list-padding: 0.25rem;
+	--wiki-sidebar-list-item-background--hover: none;
+
+	/* Probably edit these */
+	--wiki-navigation-border-radius: 0px;
+	/* Maybe edit these */
+	--wiki-navigation-font-size: 0.8125em; /* please use em or rem for this */
+	--wiki-navigation-height: 2.5rem; /* height of navigation area,include spacing above tabs */
+	--wiki-navigation-left-spacing: var( --wiki-content-border-radius );
+	--wiki-navigation-right-spacing: 0px;
+	--wiki-navigation-box-background: none; /* usually only needed when --wiki-is-navigation-inside-content is 1 */
+	--wiki-navigation-box-border-image: none; /* usually only needed when --wiki-is-navigation-inside-content is 1 */
+	--wiki-navigation-box-backdrop-filter: none; /* usually only needed when --wiki-is-navigation-inside-content is 1 */
+
+	/* Maybe edit these */
+	--wiki-navigation-tab-spacing: -1px; /* width of the space between tabs, can be a negative number, in which case adjacent tabs will overlap  */
+	--wiki-navigation-tab-padding-top: 1.25em;
+	--wiki-navigation-tab-padding-x: 0.75em;
+	--wiki-navigation-tab-padding-bottom: 4px;
+ 	--wiki-navigation-selected-border-width: 0px;
+	--wiki-navigation-border-width: var( --wiki-navigation-selected-border-width );
+	--wiki-navigation-border-image: none;
+	--wiki-navigation-selected-border-image: var( --wiki-navigation-border-image );
+	--wiki-navigation-background-image:
+		linear-gradient( to bottom, transparent 0, var( --wiki-content-border-color ) 100% ),
+		linear-gradient( to bottom, transparent 0, var( --wiki-content-border-color ) 100% ),
+		linear-gradient( to top, var( --wiki-navigation-background-color ) 0, var( --wiki-navigation-selected-background-color ) 100% );
+	--wiki-navigation-background-repeat: no-repeat, no-repeat, repeat-x;
+	--wiki-navigation-background-position: left bottom, right bottom, left bottom;
+	--wiki-navigation-background-size: 1px 100%, 1px 100%, 100%;
+	--wiki-navigation-selected-background-image:
+		linear-gradient( to bottom, transparent 0, var( --wiki-content-border-color ) 100% ),
+		linear-gradient( to bottom, transparent 0, var( --wiki-content-border-color ) 100% );
+	--wiki-navigation-selected-background-repeat: no-repeat, no-repeat;
+	--wiki-navigation-selected-background-position: left bottom, right bottom;
+	--wiki-navigation-selected-background-size: 1px 100%, 1px 100%;
+	--wiki-navigation-selected-border-bottom-background:
+		linear-gradient( to right, var( --wiki-content-border-color ) 0, var( --wiki-content-border-color ) 1px, transparent 1px ),
+		linear-gradient( to left, var( --wiki-content-border-color ) 0, var( --wiki-content-border-color ) 1px, transparent 1px );
+
+	/* Maybe edit these */
+	--wiki-navigation-dropdown-font-size: var( --wiki-navigation-font-size ); /* please use em or rem for this */
+	--wiki-navigation-dropdown-border-width: var( --wiki-content-border-width );
+	--wiki-navigation-dropdown-border-radius: var( --wiki-navigation-border-radius );
+	--wiki-navigation-dropdown-padding: calc( max( min( 0px, var( --wiki-navigation-tab-spacing ) ), var( --wiki-navigation-tab-spacing ) ) );
+	--wiki-navigation-dropdown-item-padding: 0.625em;
+	--wiki-navigation-dropdown-item-background--hover: none;
+	--wiki-navigation-dropdown-border-image: none;
+	--wiki-navigation-dropdown-backdrop-filter: none;
+	--wiki-navigation-dropdown-shadow: none;
+
+	--wiki-top-spacing: calc( var( --wiki-is-top-logo ) * var( --wiki-logo-margin ) + ( 1 - var( --wiki-is-top-logo ) ) * 1em ); /* extra spacing below wiki.gg netbar */
+	--wiki-left-spacing: 0.5em;
+	--wiki-right-spacing: 1em;
+	--wiki-bottom-spacing: 2em;
 
 	/* Wiki-specific */
 	--tb-title-font: tboi, sans-serif;
-}
-
-/********************
-/* Design variables *
-/********************/
-
-:root {
-	--wiki-sidebar-border-radius: 0px; /* these two variables must have units specified even if 0, ignore the warning */
-	--wiki-sidebar-portal-spacing: 0px;
-
-	--wiki-content-border-width: 1px;
-	--wiki-sidebar-border-width: 1px;
 }
 
 /********************
@@ -62,6 +147,7 @@
 	--wiki-content-link-color--visited: var( --wiki-content-link-color );
 	--wiki-content-link-color--hover: var( --wiki-content-link-color );
 	--wiki-content-redlink-color: #fc3b2c;
+	--wiki-content-heading-color: #ffffff;
 	/* Likely do not need to edit these */
 	--wiki-content-border-color--secondary: color-mix( in srgb, var( --wiki-content-border-color ) 50%, transparent );
 	--wiki-content-border-color--accent: color-mix( in srgb, var( --wiki-accent-color ) 50%, transparent );
@@ -74,33 +160,18 @@
 	--wiki-content-border-image: url( /images/1/17/CSS_border.png ) 48; /* [[File:CSS border.png]] */
 	--wiki-content-text-shadow: #261c1c;
 
-	/* Maybe edit these */
-	--wiki-heading-color: #ffffff;
-
 	/* Probably edit these */
 	--wiki-accent-color: #ab7e69;
 	--wiki-accent-label-color: #000;
 	--wiki-accent-link-color: #051d4f;
-	/* Maybe edit these */
-	--wiki-accent-color--hover: #6f4e3e;
-
-	/* Maybe edit these */
-	--wiki-sidebar-background-color: var( --wiki-content-background-color );
-	--wiki-sidebar-background-opacity: var( --wiki-content-background-opacity );
-	--wiki-sidebar-border-color: var( --wiki-content-border-color );
-	--wiki-sidebar-link-color: var( --wiki-content-link-color );
-	--wiki-sidebar-link-color--hover: var( --wiki-content-link-color--hover );
-	--wiki-sidebar-heading-color: var( --wiki-heading-color );
 
 	/* Wiki-specific */
 	--wiki-search-border-image: url( /images/c/c0/CSS_border_search.png ) 24; /* [[File:CSS border search.png]] */;
 
 	/* Maybe edit these */
 	--wiki-navigation-background-color: var( --wiki-content-background-color--secondary );
-	--wiki-navigation-background-color--secondary: var( --wiki-content-background-color );
 	--wiki-navigation-border-color: var( --wiki-content-border-color );
 	--wiki-navigation-text-color: var( --wiki-content-link-color );
-	--wiki-navigation-text-color--hover: var( --wiki-content-link-color--hover );
 	--wiki-navigation-selected-background-color: var( --wiki-content-background-color );
 	--wiki-navigation-selected-border-color: var( --wiki-navigation-border-color );
 	--wiki-navigation-selected-text-color: var( --wiki-content-text-color );
@@ -125,7 +196,7 @@
 	/* Wiki-specific */
 	--tb-header-color: #392018;
 	--tb-scroll-color: #b07c6b;
-	--tb-fhead-color: var( --wiki-heading-color );
+	--tb-fhead-color: var( --wiki-content-heading-color );
 	--tb-line-color: #501616;
 	--tb-nav-color: #221712;
 	--tb-collection-color: #4c3026;
@@ -172,6 +243,7 @@
 	--wiki-content-link-color--visited: var( --wiki-content-link-color );
 	--wiki-content-link-color--hover: var( --wiki-content-link-color );
 	--wiki-content-redlink-color: #ba0000;
+	--wiki-content-heading-color: #3a3a3a;
 	/* Likely do not need to edit these */
 	--wiki-content-border-color--secondary: color-mix( in srgb, var( --wiki-content-border-color ) 50%, transparent );
 	--wiki-content-border-color--accent: color-mix( in srgb, var( --wiki-accent-color ) 50%, transparent );
@@ -184,35 +256,20 @@
 	--wiki-content-border-image: url( /images/8/88/CSS_border_light.png ) 48; /* [[File:CSS border light.png]] */
 	--wiki-content-text-shadow: #aca598;
 
-	/* Maybe edit these */
-	--wiki-heading-color: #3a3a3a;
-
 	/* Probably edit these */
 	--wiki-accent-color: #6c4537;
 	--wiki-accent-label-color: #ffffff;
 	--wiki-accent-link-color: #CED694;
-	/* Maybe edit these */
-	--wiki-accent-color--hover: #ac715c;
-
-	/* Maybe edit these */
-	--wiki-sidebar-background-color: var( --wiki-content-background-color );
-	--wiki-sidebar-background-opacity: var( --wiki-content-background-opacity );
-	--wiki-sidebar-border-color: var( --wiki-content-border-color );
-	--wiki-sidebar-link-color: var( --wiki-content-link-color );
-	--wiki-sidebar-link-color--hover: var( --wiki-content-link-color--hover );
-	--wiki-sidebar-heading-color: var( --wiki-heading-color );
 
 	/* Wiki-specific */
 	--wiki-search-border-image: url( /images/3/38/CSS_border_search_light.png ) 24; /* [[File:CSS border search light.png]] */;
 
 	/* Maybe edit these */
 	--wiki-navigation-background-color: var( --wiki-content-background-color--secondary );
-	--wiki-navigation-background-color--secondary: var( --wiki-content-background-color );
-	--wiki-navigation-border-color: var( --wiki-content-border-color );
+	--wiki-navigation-border-color: var( --wiki-navigation-selected-border-color );
 	--wiki-navigation-text-color: var( --wiki-content-link-color );
-	--wiki-navigation-text-color--hover: var( --wiki-content-link-color--hover );
 	--wiki-navigation-selected-background-color: var( --wiki-content-background-color );
-	--wiki-navigation-selected-border-color: var( --wiki-navigation-border-color );
+	--wiki-navigation-selected-border-color: var( --wiki-content-border-color );
 	--wiki-navigation-selected-text-color: var( --wiki-content-text-color );
 
 	/* Maybe edit these */
@@ -235,7 +292,7 @@
 	/* Wiki-specific */
 	--tb-header-color: #d8cebe;
 	--tb-scroll-color: #8c755a;
-	--tb-fhead-color: var( --wiki-heading-color );
+	--tb-fhead-color: var( --wiki-content-heading-color );
 	--tb-line-color: #ac7248;
 	--tb-nav-color: #d9cdba;
 	--tb-collection-color: #e7dfd1;
@@ -257,9 +314,76 @@
 /*****************/
 
 :root {
-	/* Likely do not need to edit these */
+	/* Do not edit these */
+	--wiki-content-border-bottom-width: var( --wiki-content-border-width );
+	--wiki-content-border-bottom-style: var( --wiki-content-border-style );
+	--wiki-content-border-bottom-color: var( --wiki-content-border-color );
 	--wiki-content-text-mix-color: color-mix( in srgb, var( --wiki-content-background-color ), var( --wiki-content-text-color ) 62% );
 	--wiki-content-text-mix-color-95: color-mix( in srgb, var( --wiki-content-background-color ) 95%, var( --wiki-content-text-color ) );
+	--wiki-content-text-color--hover: var( --wiki-content-text-color );
+
+	--wiki-logo-offset-x: 0px;
+	--wiki-logo-offset-y: 0px;
+	--wiki-logo-offset-x--mobile: 0px;
+	--wiki-logo-offset-y--mobile: 0px;
+
+	--wiki-sidebar-background-color: var( --wiki-content-background-color );
+	--wiki-sidebar-background-opacity: var( --wiki-content-background-opacity );
+	--wiki-sidebar-background-image: none;
+	--wiki-sidebar-background-position: center;
+	--wiki-sidebar-background-repeat: repeat;
+	--wiki-sidebar-background-size: auto;
+	--wiki-sidebar-backdrop-filter: var( --wiki-content-backdrop-filter );
+	--wiki-sidebar-border-color: var( --wiki-content-border-color );
+	--wiki-sidebar-border-style: solid;
+	--wiki-sidebar-border-image: none;
+	--wiki-sidebar-padding: 0px;
+	--wiki-sidebar-link-color: var( --wiki-content-link-color );
+	--wiki-sidebar-link-color--hover: var( --wiki-content-link-color--hover );
+	--wiki-sidebar-heading-color: var( --wiki-content-heading-color );
+	--wiki-sidebar-heading-font-weight: normal;
+	--wiki-sidebar-heading-padding: 0.5rem 0.25rem 0.5rem 0.5rem;
+	--wiki-sidebar-heading-margin-bottom: -0.5rem;
+	--wiki-sidebar-icon-to-link-filter: var( --wiki-icon-to-link-filter );
+	
+	--wiki-accent-color--hover: color-mix( in srgb, var( --wiki-accent-color ) 90%, var( --wiki-accent-label-color ) );
+
+	--wiki-footer-border-width: var( --wiki-content-border-width );
+	--wiki-footer-border-style: var( --wiki-content-border-style );
+	--wiki-footer-border-color: var( --wiki-content-border-color );
+	--wiki-footer-background-color: var( --wiki-content-background-color );
+	--wiki-footer-background-opacity: var( --wiki-content-background-opacity );
+	--wiki-footer-backdrop-filter: var( --wiki-content-backdrop-filter );
+	--wiki-footer-text-color: var( --wiki-content-text-color );
+	--wiki-footer-link-color: var( --wiki-content-link-color );
+	--wiki-footer-link-color--hover: var( --wiki-content-link-color--hover );
+	--wiki-footer-border-radius: var( --wiki-content-border-radius );
+
+	--wiki-navigation-background-opacity: var( --wiki-content-background-opacity );
+	--wiki-navigation-background-color--hover: var( --wiki-navigation-background-color );
+	--wiki-navigation-background-opacity--hover: var( --wiki-navigation-background-opacity );
+	--wiki-navigation-background-image--hover: var( --wiki-navigation-background-image );
+	--wiki-navigation-background-position--hover: var( --wiki-navigation-background-position );
+	--wiki-navigation-background-repeat--hover: var( --wiki-navigation-background-repeat );
+	--wiki-navigation-background-size--hover: var( --wiki-navigation-background-size );
+	--wiki-navigation-text-color--hover: var( --wiki-content-link-color--hover );
+	--wiki-navigation-selected-border-style: solid;
+	--wiki-navigation-selected-background-opacity: var( --wiki-content-background-opacity );
+	--wiki-navigation-border-style: solid;
+	--wiki-navigation-border-color--hover: var( --wiki-navigation-border-color );
+	--wiki-navigation-border-image--hover: var( --wiki-navigation-border-image );
+	--wiki-navigation-border-bottom-color: var( --wiki-navigation-selected-border-color );
+	--wiki-navigation-border-bottom-style: var( --wiki-navigation-selected-border-style );
+	--wiki-navigation-border-bottom-width: calc( var( --wiki-is-navigation-inside-content, 0 ) * var( --wiki-navigation-selected-border-width, 1px ) + ( 1 - var( --wiki-is-navigation-inside-content, 0 ) ) * var( --wiki-content-border-width, 1px ) );
+	--wiki-navigation-icon-size: 1em;
+	--wiki-navigation-tab-padding-x--icon: var( --wiki-navigation-tab-padding-x );
+	--wiki-navigation-dropdown-background-color: var( --wiki-navigation-selected-background-color );
+	--wiki-navigation-dropdown-background-opacity: var( --wiki-content-background-opacity );
+	--wiki-navigation-dropdown-border-color: var( --wiki-navigation-border-color );
+	--wiki-navigation-search-font-size: var( --wiki-navigation-font-size );
+	--wiki-navigation-search-height: 2em;
+	--wiki-navigation-search-bottom-spacing: 3px;
+	--wiki-navigation-gap-between-left-and-right: 0px; /* minimum width between #left-navigation and #right-navigation before tabs start to col
 
 	/* Wiki-specific */
 	--tb-infobox-color: #473a3c;
@@ -281,13 +405,6 @@
 	--pi-secondary-background: var( --wiki-accent-color );
 	--pi-secondary-background-label: var( --wiki-accent-label-color );
 	--pi-border-color: color-mix( in srgb, var( --pi-secondary-background ) 50%, transparent );
-}
-
-.portable-infobox {
-	/* override normal link styles */
-	--wiki-content-link-color: #740;
-	--wiki-content-link-color--visited: var( --wiki-content-link-color );
-	--wiki-content-link-color--hover: var( --wiki-content-link-color );
 }
 
 .portable-infobox {
@@ -351,8 +468,8 @@
 
 .pi-smart-group {
 	border-top-style: dashed;
-	padding-top: 9px;
-	padding-bottom: 9px;
+	padding-top     : 0.5em;
+	padding-bottom  : 0.5em;
 }
 
 .pi-smart-group-head + .pi-smart-group-body {
@@ -492,7 +609,7 @@
 	font-size: 150%;
 	margin: 0;
 	padding: 5px 0;
-	color: var( --wiki-heading-color );
+	color: var( --wiki-content-heading-color );
 }
 
 .mp-box .welcome-message {
@@ -895,14 +1012,12 @@
 /****************************/
 
 .context-box {
-	float          : right;
-	box-sizing     : content-box;
-	width          : 36px;
-	height         : 30px;
-	padding        : 8px;
-	background     : url( /images/1/19/TableDlc.png ) no-repeat scroll center border-box; /* [[File:TableDlc.png]] */
-	background-size: 100%;
-	text-align     : center;
+	float        : right;
+	box-sizing   : content-box;
+	border-radius: 10px;
+	padding      : 4px 8px 8px;
+	background   : #000;
+	text-align   : center;
 }
 
 @media screen and ( min-width: 721px ) {
@@ -950,6 +1065,14 @@
 .documentation-heading-sub {
 	font-size : 90%;
 	font-style: italic;
+}
+
+/**********************
+/* [[Template:Error]] *
+/**********************/
+
+.error {
+	display: none;
 }
 
 /**********************
@@ -1397,6 +1520,10 @@ section.mw-templatedata-doc-wrap {
 .multicolumn-list {
 	max-width: 100%;
 	column-count: 3;
+}
+
+span.multicolumn-list {
+	display: block;
 }
 
 /* For compact lists in navs */

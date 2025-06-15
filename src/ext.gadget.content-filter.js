@@ -164,9 +164,9 @@ const updateButtonsForPageContext = ( pageFilter ) => {
 	for ( const button of buttons ) {
 		const filterIndex = getButtonFilterIndex( button );
 		if ( filterIndex === null ) {
-			return;
+			continue;
 		}
-	
+
 		if ( pageFilter === null || pageFilter & Math.pow( 2, filterIndex ) ) {
 			button.classList.remove( css.deactivatedButtonClass );
 		} else {

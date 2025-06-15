@@ -1,3 +1,12 @@
+@media screen {
+
+.portable-infobox {
+	/* override normal link styles */
+	--wiki-content-link-color         : #740;
+	--wiki-content-link-color--visited: var( --wiki-content-link-color );
+	--wiki-content-link-color--hover  : var( --wiki-content-link-color );
+}
+
 .portable-infobox {
 	padding   : 30px 15px 20px;
 	background: transparent;
@@ -24,10 +33,11 @@
 	color: var( --tb-infobox-color );
 }
 
-.mw-parser-output .pi-secondary-background,
-.mw-parser-output .portable-infobox .pi-data,
-.mw-parser-output .portable-infobox .pi-title,
-.mw-parser-output .portable-infobox .pi-header {
+.mw-body .pi-secondary-background,
+.mw-body .portable-infobox .pi-data,
+.mw-body .portable-infobox .pi-group,
+.mw-body .portable-infobox .pi-title,
+.mw-body .portable-infobox .pi-header {
 	background: transparent;
 }
 
@@ -45,4 +55,19 @@
 	background-color: rgba( 0,0,0, 0.2 );
 	border          : 1px solid rgba( 255,255,255, 0.2 );
 	color           : var( --tb-infobox-color );
+}
+
+/****************************
+/* [[Template:Context box]] *
+/****************************/
+
+.context-box {
+	width          : 36px;
+	height         : 30px;
+	border-radius  : 0;
+	padding-top    : 8px;
+	background     : url( /images/1/19/TableDlc.png ) no-repeat scroll center border-box; /* [[File:TableDlc.png]] */
+	background-size: 100%;
+}
+
 }

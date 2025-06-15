@@ -1,5 +1,19 @@
 /* All CSS here will be loaded for users of the Vector skin */
-/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Vector.css?diff=latest&oldid=2316] */
+/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Vector.css?diff=latest&oldid=2426] */
+
+/*
+	This is the wiki.gg default loadout,
+	please do not modify it inline. To add your own skin customizations,
+	scroll down to the end of the default loadout (or search for "[END]" to jump there).
+	If you modify the sheet above that point, your changes may be overwritten in updates without warning!!!
+
+	If you want to maintain your own CSS for annual MediaWiki updates & be responsible for ALL bugfixes YOURSELF, change UPDATE in the following line to say NOUPDATE:
+    DLW: NOUPDATE
+    DLW VERSION: 2.1.3
+
+	IMPORTANT: if you are updating your wiki from a version before May 22, 2025,
+	you need to copy [[MediaWiki:Gadgets/vectorScripts]] and [[MediaWiki:Gadgets/vectorScripts/main.js]] as well or your navigation tabs will break.
+*/
 
 /*********************************************************
 * Backwards compatibility with deprecated variable names *
@@ -7,6 +21,7 @@
 :root {
 	--wiki-heading-color: var(--wiki-content-heading-color);
 }
+
 /****************************************
 * End backwards compatibility variables *
 *****************************************/
@@ -14,7 +29,7 @@
 /************************************
 * Body, head, and general framework *
 *************************************/
-html, body{
+html, body {
 	height: auto;
 	min-height: 100%;
 }
@@ -33,14 +48,14 @@ body {
 }
 
 /* clear fix */
-body::after{
+body::after {
 	content: "";
 	display: table;
 	clear: both;
 }
 
 #mw-page-base {
-	background:none;
+	background: none;
 }
 
 /* let ul default to text that respects color */
@@ -110,8 +125,8 @@ ul {
 .vector-menu-dropdown .vector-menu-content {
 	background: none;
 	border: none;
-	box-shadow:none;
-	margin-top:-1px;
+	box-shadow: none;
+	margin-top: -1px;
 }
 
 .vector-menu-dropdown .vector-menu-content-list {
@@ -133,7 +148,7 @@ div.vectorMenu .mw-list-item a,
 div.vectorMenu .mw-list-item a:hover,
 .vector-menu-dropdown .mw-list-item.selected a:hover,
 .vector-menu-dropdown .mw-list-item.selected a:visited:hover {
-	color:var(--wiki-navigation-text-color--hover, var(--wiki-content-link-color--hover)); /* fallback for backwards compatibility */
+	color: var(--wiki-navigation-text-color--hover, var(--wiki-content-link-color--hover)); /* fallback for backwards compatibility */
 }
 
 .vector-menu-tabs .selected a:hover,
@@ -147,11 +162,10 @@ div.vectorMenu .mw-list-item a:hover,
 }
 
 #p-search {
-	z-index:2;
+	z-index: 2;
 }
-
 #p-search .searchButton {
-	background-color:transparent;
+	background-color: transparent;
 }
 
 /******************
@@ -179,14 +193,14 @@ a:visited:hover,
 .mw-parser-output a.extiw:visited:hover,
 .mw-parser-output a.external:hover,
 .mw-parser-output a.external:visited:hover {
-	color:var(--wiki-content-link-color--hover);
+	color: var(--wiki-content-link-color--hover);
 }
 
 a.new,
 a.new:visited,
 a.new:hover,
 .mw-usertoollinks-contribs-no-edits {
-	color:var(--wiki-content-redlink-color);
+	color: var(--wiki-content-redlink-color);
 }
 
 a:not(.mw-selflink):active,
@@ -200,16 +214,16 @@ a:visited:active,
 
 /* move external marker to an after so we can filter it to link color */
 .mw-parser-output a.external {
-	background:none;
+	background: none;
 	padding-right: 0;
 }
 
 .mw-parser-output a.external::after {
-	display:inline-block;
-	width:1em;
-	height:1em;
-	margin-left:1px;
-	content:'';
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	margin-left: 1px;
+	content: '';
 	vertical-align: text-top;
 	--mask: var(--icon) no-repeat;
 	--mask-size: 0.857em;
@@ -224,12 +238,12 @@ a:visited:active,
 }
 
 .mw-parser-output a.external::after {
-	margin-left:0;
+	margin-left: 0;
 	--icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22%3E %3Cpath d=%22M6 1h5v5L8.86 3.85 4.7 8 4 7.3l4.15-4.16L6 1ZM2 3h2v1H2v6h6V8h1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z%22/%3E %3C/svg%3E");
 }
 
 .plainlinks a.external::after {
-	display:none;
+	display: none;
 }
 
 /*
@@ -237,27 +251,30 @@ a:visited:active,
 	but prevents it from being recolored. Use this only for icons that should not be recolored, otherwise
 	use the ::after method used for external links above
 */
+
 a.extiw[title^="wikipedia:"],
 a.extiw[title^="wp:"],
 a.extiw[title^="mw:"],
 a.extiw[title^="support:"] {
-	padding-right:1em;
-	background-position:center right;
-	background-repeat:no-repeat;
-	background-size:0.857em;
+	padding-right: 1em;
+	background-position: center right;
+	background-repeat: no-repeat;
+	background-size: 0.857em;
 }
 
 a.extiw[title^="wikipedia:"],
 a.extiw[title^="wp:"] {
-	background-image:url(https://commons.wiki.gg/images/2/28/Wikipedia.svg?202406)
+	background-image: url(https://commons.wiki.gg/images/2/28/Wikipedia.svg?202406)
 }
 
 a.extiw[title^="mw:"] {
-	background-image:url(https://commons.wiki.gg/images/9/9b/MediaWiki.svg?202406)
+	background-image: url(https://commons.wiki.gg/images/9/9b/MediaWiki.svg?202406)
 }
+
 a.extiw[title^="support:"] {
-	background-image:url(https://commons.wiki.gg/images/9/9b/Wiki.gg_icon-pink.svg)
+	background-image: url(https://commons.wiki.gg/images/9/9b/Wiki.gg_icon-pink.svg)
 }
+
 /************
 * End links *
 *************/
@@ -283,7 +300,7 @@ a.extiw[title^="support:"] {
 }
 
 #mw-panel .vector-menu-portal:last-child {
-	margin-bottom:0;
+	margin-bottom: 0;
 }
 
 .vector-menu-portal .vector-menu-heading {
@@ -291,8 +308,9 @@ a.extiw[title^="support:"] {
 	margin: 0;
 	background: none;
 	color: var(--wiki-sidebar-heading-color);
-	font-family:var(--wiki-sidebar-heading-font-family);
+	font-family: var(--wiki-sidebar-heading-font-family);
 }
+
 .vector-menu-portal .vector-menu-content {
 	margin: 0 0.5em;
 }
@@ -300,6 +318,7 @@ a.extiw[title^="support:"] {
 .vector-menu-portal .vector-menu-content li a{
 	display: block;
 }
+
 .vector-menu-portal .vector-menu-content .mw-list-item a,
 .vector-menu-portal .vector-menu-content .mw-list-item a:visited,
 .vector-menu-portal .vector-menu-content li a,
@@ -309,37 +328,37 @@ a.extiw[title^="support:"] {
 
 .vector-menu-portal .vector-menu-content .mw-list-item a:hover,
 .vector-menu-portal .vector-menu-content .mw-list-item a:visited:hover {
-	color:var(--wiki-sidebar-link-color--hover, var(--wiki-content-link-color--hover)); /* fallback for backwards compatibility */
+	color: var(--wiki-sidebar-link-color--hover, var(--wiki-content-link-color--hover)); /* fallback for backwards compatibility */
 }
 
 #t-newpage {
-	--sidebar-icon:url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 384 512%22%3E%3C!--%21Font Awesome Free 6.5.2 by %40fontawesome - https%3A%2F%2Ffontawesome.com License - https%3A%2F%2Ffontawesome.com%2Flicense%2Ffree Copyright 2024 Fonticons%2C Inc.--%3E%3Cpath d%3D%22M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z%22%2F%3E%3C%2Fsvg%3E');
-	order:-1;
+	--sidebar-icon: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 384 512%22%3E%3C!--%21Font Awesome Free 6.5.2 by %40fontawesome - https%3A%2F%2Ffontawesome.com License - https%3A%2F%2Ffontawesome.com%2Flicense%2Ffree Copyright 2024 Fonticons%2C Inc.--%3E%3Cpath d%3D%22M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z%22%2F%3E%3C%2Fsvg%3E');
+	order: -1;
 }
 
 #t-upload {
 	--sidebar-icon: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 512 512%22%3E%3C!--%21Font Awesome Free 6.5.2 by %40fontawesome - https%3A%2F%2Ffontawesome.com License - https%3A%2F%2Ffontawesome.com%2Flicense%2Ffree Copyright 2024 Fonticons%2C Inc.--%3E%3Cpath d%3D%22M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z%22%2F%3E%3C%2Fsvg%3E');
-	order:-1;
+	order: -1;
 }
 
 #t-print {
 	--sidebar-icon: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 512 512%22%3E%3C!--%21Font Awesome Free 6.5.2 by %40fontawesome - https%3A%2F%2Ffontawesome.com License - https%3A%2F%2Ffontawesome.com%2Flicense%2Ffree Copyright 2024 Fonticons%2C Inc.--%3E%3Cpath d%3D%22M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zM432 248a24 24 0 1 1 0 48 24 24 0 1 1 0-48z%22%2F%3E%3C%2Fsvg%3E');
-	order:-1;
+	order: -1;
 }
 
 #t-whatlinkshere {
 	--sidebar-icon: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 640 512%22%3E%3C!--%21Font Awesome Free 6.5.2 by %40fontawesome - https%3A%2F%2Ffontawesome.com License - https%3A%2F%2Ffontawesome.com%2Flicense%2Ffree Copyright 2024 Fonticons%2C Inc.--%3E%3Cpath d%3D%22M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z%22%2F%3E%3C%2Fsvg%3E');
-	order:-1;
+	order: -1;
 }
 
 #t-specialpages {
 	--sidebar-icon: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 576 512%22%3E%3C!--%21Font Awesome Free 6.5.2 by %40fontawesome - https%3A%2F%2Ffontawesome.com License - https%3A%2F%2Ffontawesome.com%2Flicense%2Ffree Copyright 2024 Fonticons%2C Inc.--%3E%3Cpath d%3D%22M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z%22%2F%3E%3C%2Fsvg%3E');
-	order:-1;
+	order: -1;
 }
 
 #t-cargopagevalueslink {
 	--sidebar-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 126.971 136.024'%3E%3Cpath d='m105.999 0-84 .049L0 8.957v127.065h126.97V8.957Z' fill='none' display='inline' opacity='1' paint-order='normal'/%3E%3Cpath d='m9.735 8.774 12.265-5h84l12.25 5H9.75' fill='%23000' fill-opacity='1' display='inline'/%3E%3Cpath d='M3.5 41.024H28v63.5H3.5zm95.5 0h24.5v63.5H99zm-95.5 67.5H123v24H3.5zm0-95.5H123v24H3.5zm27.985 28V59.67l13.61 13.61 17.323 17.324 1.788 1.787 12.131 12.132h19.147v-16.21l-13.6-13.6-1.788-1.787-17.325-17.324-14.578-14.579H31.485zm45.865 0-12.2 12.2 17.324 17.324 13.01-13.01V41.024H77.35zM42.716 75.658l-11.23 11.231v17.634h17.013l11.541-11.54-17.324-17.325z' fill='%23000' fill-opacity='1' fill-rule='nonzero' display='inline' opacity='1' paint-order='normal'/%3E%3C/svg%3E");
-	order:-1;
+	order: -1;
 }
 
 #t-specialpages > a::before,
@@ -348,67 +367,59 @@ a.extiw[title^="support:"] {
 #t-newpage > a::before,
 #t-upload > a::before,
 #t-cargopagevalueslink > a::before {
-	content:'';
-	background-image:var(--sidebar-icon);
-	background-size:contain;
-	background-repeat:no-repeat;
-	background-position:center;
-	display:inline-block;
-	width:15px;
-	height:15px
+	content: '';
+	background-image: var(--sidebar-icon);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	display: inline-block;
+	width: 15px;
+	height: 15px
 }
 
 #p-tb .mw-list-item > a::before {
-	filter:var(--wiki-icon-to-link-filter)
+	filter: var(--wiki-icon-to-link-filter)
 }
 
 #p-tb .mw-list-item > a {
-	display:flex;
-	align-items:center;
-	gap:3px
+	display: flex;
+	align-items: center;
+	gap: 3px;
 }
 
 #p-tb .vector-menu-content-list {
-	display:flex;
-	flex-direction:column;
+	display: flex;
+	flex-direction: column;
 }
 
 /* Sidebar spacing and border-radius section */
 #mw-panel .vector-menu-portal:not(:last-child) {
-	margin-bottom:var(--wiki-sidebar-portal-spacing);
+	margin-bottom: var(--wiki-sidebar-portal-spacing);
 }
 
 #mw-panel #p-logo + .vector-menu-portal {
 	/*
 		The way this works is that if the sidebar does not have any spacing, only the top and bottom corners
 		of the top and bottom portals respectively should be rounded, instead of all corners of every portal.
-		
+
 		min and calc are combined here to basically create an `if x > 0 then y else z` function.
-		
+
 		The lower of (sidebar-border-radius) and (spacing * 999) are compared and the smaller value is taken (999 is simply an arbitrary large number).
 		If portal spacing is zero, multiplying it gets 0 and will be the smaller value. If it's non-zero, it will be large and sidebar-border-radius will be the smaller value.
-		
+
 		This is only applied to the "inner" corners because we'd want the "outer" corners rounded in either scenario.
 	*/
-	border-radius:
-		var(--wiki-sidebar-border-radius)
-		var(--wiki-sidebar-border-radius)
-		calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999 ))
-		calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999 ));
+	border-radius: var(--wiki-sidebar-border-radius) var(--wiki-sidebar-border-radius) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999));
 }
 
 #mw-panel .vector-menu-portal:last-child {
 	/* see rule above for explanation */
-	border-radius:
-		calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999 ))
-		calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999 ))
-		var(--wiki-sidebar-border-radius)
-		var(--wiki-sidebar-border-radius);
+	border-radius: calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) var(--wiki-sidebar-border-radius) var(--wiki-sidebar-border-radius);
 }
 
 #mw-panel .vector-menu-portal {
 	/* see above rules for explanation */
-	border-radius:calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999 ));
+	border-radius: calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999));
 }
 
 #mw-panel .vector-menu-portal + .vector-menu-portal {
@@ -457,16 +468,17 @@ a.extiw[title^="support:"] {
 }
 
 .mw-footer {
-	border-top-width:0;
+	border-top-width: 0;
 }
 
 .mw-footer li {
 	color: var(--wiki-content-text-color);
 }
+
 /* fix */
 @media screen and (max-width: 900px) {
 	#footer-icons, #footer-places {
-	clear: unset;
+		clear: unset;
 	}
 }
 @media screen and (max-width: 981px) {
@@ -515,26 +527,24 @@ h1, h2, h3, h4, h5, h6 {
 	color: var(--wiki-content-text-color);
 }
 
-.wikitable>tr>th,
-.wikitable>*>tr>th {
+.wikitable > tr > th,
+.wikitable > * > tr > th {
 	background: var(--wiki-content-background-color--secondary);
 	border: 1px solid var(--wiki-content-border-color);
 }
 
-.wikitable>tr>td,
-.wikitable>*>tr>td {
+.wikitable > tr > td,
+.wikitable > * > tr > td {
 	border: 1px solid var(--wiki-content-border-color);
 }
 
 /* Forward = yes bg on Special:Interwiki */
 table.mw-interwikitable.body td.mw-interwikitable-local-yes {
-
 	background: color-mix(in srgb, var(--wiki-success-color) 25%, transparent);
 }
 
 .zebra-table > * > tr:nth-of-type(2n),
 .zebra-table > tr:nth-of-type(2n) {
-
 	background: color-mix(in srgb, var(--wiki-content-dynamic-color--secondary) 5%, transparent);
 }
 
@@ -543,6 +553,7 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 	background-image: unset;
 	position: relative;
 }
+
 .client-js .sortable:not(.jquery-tablesorter) > * > tr:first-child > th:not(.unsortable)::after,
 .jquery-tablesorter th.headerSort::after {
 	content: "";
@@ -578,7 +589,7 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 * Preferences *
 ***************/
 .mw-prefs-tabs-wrapper.oo-ui-panelLayout-framed,
-.mw-prefs-tabs>.oo-ui-menuLayout-content>.oo-ui-indexLayout-stackLayout>.oo-ui-tabPanelLayout {
+.mw-prefs-tabs > .oo-ui-menuLayout-content > .oo-ui-indexLayout-stackLayout > .oo-ui-tabPanelLayout {
 	border: none;
 }
 
@@ -589,7 +600,6 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 
 .oo-ui-tabSelectWidget-framed .oo-ui-tabOptionWidget.oo-ui-widget-enabled,
 .oo-ui-tabSelectWidget-framed .oo-ui-tabOptionWidget.oo-ui-widget-enabled:hover {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-label-color) 75%, transparent);
 	color: var(--wiki-accent-color);
 }
@@ -624,7 +634,7 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 
 .oo-ui-pendingElement-pending {
 	background-color: var(--wiki-content-background-color--secondary);
-	background-image: linear-gradient(135deg,var(--wiki-content-background-color) 25%,transparent 25%,transparent 50%,var(--wiki-content-background-color) 50%,var(--wiki-content-background-color) 75%,transparent 75%,transparent);
+	background-image: linear-gradient(135deg, var(--wiki-content-background-color) 25%, transparent 25%, transparent 50%, var(--wiki-content-background-color) 50%, var(--wiki-content-background-color) 75%, transparent 75%, transparent);
 }
 
 .oo-ui-dropdownInputWidget.oo-ui-widget-enabled select {
@@ -637,8 +647,8 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 }
 
 .oo-ui-dropdownInputWidget.oo-ui-widget-enabled select:hover {
-	color:var(--wiki-content-text-mix-color);
-	border-color:var(--wiki-accent-color);
+	color: var(--wiki-content-text-mix-color);
+	border-color: var(--wiki-accent-color);
 }
 
 .oo-ui-dropdownInputWidget.oo-ui-widget-enabled select:active {
@@ -668,24 +678,21 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 }
 
 .oo-ui-radioInputWidget [type="radio"] + span {
-	background-color:var(--wiki-content-dynamic-color--inverted);
+	background-color: var(--wiki-content-dynamic-color--inverted);
 }
 
 .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:checked + span,
-.oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:hover + span{
-
+.oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:hover + span {
 	border-color: color-mix(in srgb, var(--wiki-accent-color) 90%, transparent);
 }
 
 .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:checked:hover + span {
-	border-color:var(--wiki-accent-color);
+	border-color: var(--wiki-accent-color);
 }
 
 .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:active + span,
-.oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:checked:active + span{
-
+.oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:checked:active + span {
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
-
 	border-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 }
 
@@ -694,9 +701,7 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 }
 
 .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:checked:active + span {
-
 	border-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
-
 	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 }
 
@@ -709,14 +714,12 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 .oo-ui-menuOptionWidget.oo-ui-optionWidget.oo-ui-optionWidget-highlighted,
 .oo-ui-menuOptionWidget.oo-ui-optionWidget.oo-ui-optionWidget-highlighted.oo-ui-optionWidget-selected,
 .oo-ui-dropdownWidget.oo-ui-widget-enabled.oo-ui-dropdownWidget-open .oo-ui-dropdownWidget-handle {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 15%, transparent);
 	color: var(--wiki-content-text-color);
 }
 
 .oo-ui-menuOptionWidget.oo-ui-optionWidget-selected.oo-ui-menuOptionWidget.oo-ui-optionWidget-highlighted,
 .oo-ui-menuOptionWidget.oo-ui-optionWidget-pressed.oo-ui-menuOptionWidget.oo-ui-optionWidget-highlighted {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 10%, transparent);
 	color: var(--wiki-accent-color);
 }
@@ -726,9 +729,7 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 }
 
 .mw-prefs-search-highlight {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 7%, transparent) !important;
-
 	outline-color: color-mix(in srgb, var(--wiki-accent-color) 7%, transparent) !important;
 }
 
@@ -773,7 +774,6 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 }
 
 .diff td.diff-context {
-
 	background: color-mix(in srgb, var(--wiki-content-text-mix-color-95) 80%, var(--wiki-content-background-color));
 	border-color: var(--wiki-neutral-color, var(--wiki-content-text-mix-color)); /* fallback for backwards compatibility */
 	color: var(--wiki-content-text-color);
@@ -806,19 +806,20 @@ table.mw-interwikitable.body td.mw-interwikitable-local-yes {
 }
 
 .mw-plusminus-neg {
-	color:var(--wiki-alert-color);
+	color: var(--wiki-alert-color);
 }
-.mw-plusminus-null{
-	color:var(--wiki-neutral-color, var(--wiki-content-text-mix-color)); /* fallback for backwards compatibility */
+
+.mw-plusminus-null {
+	color: var(--wiki-neutral-color, var(--wiki-content-text-mix-color)); /* fallback for backwards compatibility */
 }
+
 .mw-plusminus-pos {
-	color:var(--wiki-success-color);
+	color: var(--wiki-success-color);
 }
 
 .updatedmarker {
-
 	background-color: color-mix(in srgb, var(--wiki-success-color) 25%, transparent);
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
 
 li span.deleted,
@@ -842,7 +843,6 @@ span.mw-history-suppressed {
 .mw-diff-table-prefix .mw-diff-inline-legend .mw-diff-inline-legend-ins,
 .mw-diff-inline-added.mw-diff-empty-line::after,
 .mw-inline-diff-newline::after {
-
 	background: color-mix(in srgb, var(--wiki-success-color) 90%, transparent);
 	color: var(--wiki-success-label-color);
 	display: inline-block;
@@ -859,7 +859,6 @@ span.mw-history-suppressed {
 .mw-diff-inline-moved del,
 .mw-diff-table-prefix .mw-diff-inline-legend .mw-diff-inline-legend-del,
 .mw-diff-inline-deleted.mw-diff-empty-line::after {
-
 	background: color-mix(in srgb, var(--wiki-alert-color) 90%, transparent);
 	color: var(--wiki-alert-label-color);
 	display: inline-block;
@@ -879,39 +878,33 @@ span.mw-history-suppressed {
 }
 
 .ve-ui-diffElement-attributeChange ins {
-
 	background-color: color-mix(in srgb, var(--wiki-success-color) 90%, transparent);
-
 	box-shadow: 0 0 0 1px color-mix(in srgb, var(--wiki-success-color) 90%, transparent);
 	color: var(--wiki-success-label-color);
 }
 
 .ve-ui-diffElement-attributeChange del {
-
 	background-color: color-mix(in srgb, var(--wiki-alert-color) 90%, transparent);
-
 	box-shadow: 0 0 0 1px color-mix(in srgb, var(--wiki-alert-color) 90%, transparent);
 	color: var(--wiki-alert-label-color);
 }
 
 .ve-ui-diffElement-highlight {
-
 	outline-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 }
 
 .ve-ui-changeDescriptionsSelectWidget > .oo-ui-optionWidget-highlighted {
-
 	background: color-mix(in srgb, var(--wiki-accent-color) 15%, transparent);
 }
 
 /* Edit conflict */
 
 .mw-twocolconflict-split-tour-image-dual-column-view-1 {
-	filter:var(--wiki-icon-general-filter);
+	filter: var(--wiki-icon-general-filter);
 }
 
 .mw-twocolconflict-split-tour-image-blue-dot {
-	filter:brightness(0) var(--wiki-icon-to-link-filter);
+	filter: brightness(0) var(--wiki-icon-to-link-filter);
 }
 
 .mw-pulsating-dot::before, .mw-pulsating-dot::after {
@@ -920,13 +913,13 @@ span.mw-history-suppressed {
 
 .mw-twocolconflict-split-current-version-header .mw-twocolconflict-revision-label {
 	background-color: var(--wiki-alert-color);
-	color:var(--wiki-alert-label-color);
+	color: var(--wiki-alert-label-color);
 }
 
 .mw-twocolconflict-special-your-version-header .mw-twocolconflict-revision-label,
 .mw-twocolconflict-split-your-version-header .mw-twocolconflict-revision-label {
 	background-color: var(--wiki-success-color);
-	color:var(--wiki-success-label-color);
+	color: var(--wiki-success-label-color);
 }
 
 .mw-twocolconflict-single-column.mw-twocolconflict-split-copy,
@@ -948,13 +941,11 @@ span.mw-history-suppressed {
 
 .mw-twocolconflict-single-column.mw-twocolconflict-split-unselected,
 .mw-twocolconflict-split-column.mw-twocolconflict-split-unselected {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 80%, transparent);
 }
 
 .mw-twocolconflict-single-column.mw-twocolconflict-split-unselected.mw-twocolconflict-split-delete,
 .mw-twocolconflict-split-column.mw-twocolconflict-split-unselected.mw-twocolconflict-split-delete {
-
 	border-color: color-mix(in srgb, var(--wiki-alert-color) 40%, transparent);
 }
 
@@ -965,7 +956,6 @@ span.mw-history-suppressed {
 
 .mw-twocolconflict-single-column.mw-twocolconflict-split-unselected.mw-twocolconflict-split-add,
 .mw-twocolconflict-split-column.mw-twocolconflict-split-unselected.mw-twocolconflict-split-add {
-
 	border-color: color-mix(in srgb, var(--wiki-success-color) 40%, transparent);
 }
 
@@ -976,7 +966,6 @@ span.mw-history-suppressed {
 
 .mw-twocolconflict-single-column.mw-twocolconflict-split-unselected del.mw-twocolconflict-diffchange,
 .mw-twocolconflict-split-column.mw-twocolconflict-split-unselected del.mw-twocolconflict-diffchange {
-
 	background-color: color-mix(in srgb, var(--wiki-alert-color) 30%, transparent);
 }
 
@@ -993,38 +982,33 @@ span.mw-history-suppressed {
 .mw-twocolconflict-single-column ins.mw-twocolconflict-diffchange,
 .mw-twocolconflict-split-column ins.mw-twocolconflict-diffchange {
 	background-color: var(--wiki-success-color);
-	color:var(--wiki-success-label-color);
+	color: var(--wiki-success-label-color);
 }
 
 .mw-twocolconflict-split-selection > div:nth-child(2) .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:checked + span,
 .mw-twocolconflict-split-selection > div:nth-child(2) .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:active + span,
 .mw-twocolconflict-split-selection > div:nth-child(2) .oo-ui-radioInputWidget [type="radio"] + span {
-
 	border-color: color-mix(in srgb, var(--wiki-success-color) 80%, transparent);
-
 	background: color-mix(in srgb, var(--wiki-success-color) 10%, transparent);
 }
 
 .mw-twocolconflict-split-selection > div:nth-child(2) .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:active + span,
 .mw-twocolconflict-split-selection > div:nth-child(2) .oo-ui-radioInputWidget [type="radio"] + span {
-
 	border-color: color-mix(in srgb, var(--wiki-success-color) 90%, transparent);
-
 	background: color-mix(in srgb, var(--wiki-success-color) 10%, transparent);
 }
 
 .mw-twocolconflict-split-selection > div:nth-child(1) .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:checked + span,
 .mw-twocolconflict-split-selection > div:nth-child(1) .oo-ui-radioInputWidget.oo-ui-widget-enabled [type="radio"]:active + span,
 .mw-twocolconflict-split-selection > div:nth-child(1) .oo-ui-radioInputWidget [type="radio"] + span {
-
 	border-color: color-mix(in srgb, var(--wiki-alert-color) 90%, transparent);
-
 	background: color-mix(in srgb, var(--wiki-alert-color) 10%, transparent);
 }
 
 .mw-twocolconflict-split-editable .mw-twocolconflict-split-editor {
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
+
 /**/
 
 /*******************
@@ -1042,9 +1026,11 @@ span.mw-history-suppressed {
 	border: 1px solid var(--wiki-content-border-color);
 	box-shadow: 0 0.1em 0.2em #000000;
 }
-#mw-toc-heading{
+
+#mw-toc-heading {
 	border: 0;
 }
+
 .toctogglelabel {
 	color: var(--wiki-content-link-color);
 }
@@ -1105,7 +1091,7 @@ ul.mw-gallery-packed-hover li.gallerybox.mw-gallery-focused div.gallerytextwrapp
 /* for non-thumbnail left floaters, increased margin from 0.5em to account for <ul> */
 div.floatleft,
 table.floatleft {
-	margin-right:1.4em;
+	margin-right: 1.4em;
 }
 
 /* Responsive floating thumbnails */
@@ -1129,7 +1115,7 @@ table.floatleft {
 ***************/
 #wpTextbox0 {
 	/* need !important here to override inline styling */
-	background-color:var(--wiki-content-background-color) !important;
+	background-color: var(--wiki-content-background-color) !important;
 }
 
 .wikiEditor-ui {
@@ -1138,7 +1124,7 @@ table.floatleft {
 
 .wikiEditor-ui .wikiEditor-ui-top,
 .wikiEditor-ui .wikiEditor-ui-view {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .wikiEditor-ui-toolbar {
@@ -1147,7 +1133,7 @@ table.floatleft {
 
 .wikiEditor-ui-toolbar .group,
 .wikiEditor-ui-toolbar .section-secondary .group {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .wikiEditor-ui-toolbar .tabs span.tab a,
@@ -1185,7 +1171,7 @@ table.floatleft {
 	color: var(--wiki-content-text-color);
 }
 
-.wikiEditor-ui-toolbar .booklet>.index> :hover {
+.wikiEditor-ui-toolbar .booklet > .index > :hover {
 	background-color: var(--wiki-content-background-color--secondary);
 }
 
@@ -1197,7 +1183,6 @@ table.floatleft {
 .wikiEditor-ui-toolbar .booklet .pages,
 .wikiEditor-ui-toolbar .booklet .index .current,
 .wikiEditor-ui-toolbar .page-characters div span:hover {
-
 	background-color: color-mix(in srgb, var(--wiki-content-dynamic-color) 5%, transparent);
 }
 
@@ -1232,7 +1217,7 @@ table.floatleft {
 }
 
 .wikiEditor-ui-text {
-	background-color:var(--wiki-content-dynamic-color--inverted);
+	background-color: var(--wiki-content-dynamic-color--inverted);
 }
 
 .wikiEditor-preview-contents {
@@ -1258,8 +1243,8 @@ table.floatleft {
 }
 
 .wikiEditor-toolbar-dialog {
-	max-width:100%;
-	box-sizing:border-box;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .wikiEditor-toolbar-dialog .ui-dialog-content input[type='text']::placeholder {
@@ -1297,27 +1282,26 @@ table.floatleft {
 }
 
 .ext-WikiEditor-realtimepreview-button:hover {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 15%, transparent);
 	color: var(--wiki-accent-color);
-	border-color:var(--wiki-accent-color);
-	box-shadow:inset 0 0 3px var(--wiki-accent-color);
+	border-color: var(--wiki-accent-color);
+	box-shadow: inset 0 0 3px var(--wiki-accent-color);
 }
 
 .ext-WikiEditor-realtimepreview-ErrorLayout {
-	background-color:var(--wiki-content-background-color);
+	background-color: var(--wiki-content-background-color);
 }
 
 .ext-WikiEditor-image-realtimepreview-error {
-	filter:var(--wiki-icon-general-filter);
+	filter: var(--wiki-icon-general-filter);
 }
 
 .oo-ui-toggleButtonWidget.oo-ui-widget-enabled.oo-ui-buttonElement-frameless.oo-ui-toggleWidget-on .oo-ui-buttonElement-button {
 	background-color: var(--wiki-content-background-color--secondary);
 }
 
-.ext-WikiEditor-reloadButton.oo-ui-buttonElement-framed.oo-ui-widget-enabled>.oo-ui-buttonElement-button,
-.ext-WikiEditor-reloadButton.oo-ui-buttonElement-framed.oo-ui-widget-enabled>.oo-ui-buttonElement-button:hover {
+.ext-WikiEditor-reloadButton.oo-ui-buttonElement-framed.oo-ui-widget-enabled > .oo-ui-buttonElement-button,
+.ext-WikiEditor-reloadButton.oo-ui-buttonElement-framed.oo-ui-widget-enabled > .oo-ui-buttonElement-button:hover {
 	background-color: var(--wiki-content-background-color);
 }
 
@@ -1349,13 +1333,13 @@ input#wpSummary {
 	--ace-list: #F9EE98;
 	--ace-variable: #7587A6;
 	--ace-string: #8F9D6A;
-	
+
 	--ace-illegal-highlight: rgba(86, 45, 86, 0.75);
 	--ace-step-highlight: #665200;
 	--ace-multiselect-shadow: #141414;
 }
 
-.view-light .ace_editor{
+.view-light .ace_editor {
 	--ace-keywords: #00f;
 	--ace-regexp: #036a07;
 	--ace-constants: #c5060b;
@@ -1366,34 +1350,29 @@ input#wpSummary {
 	--ace-list: #b90690;
 	--ace-variable: #318495;
 	--ace-string: #036a07;
-	
+
 	--ace-illegal-highlight: rgba(255, 0, 0, 0.1);
 	--ace-step-highlight: #fcff00;
 	--ace-multiselect-shadow: #fff;
 }
 
 .ace_editor .ace_gutter {
-
 	background: color-mix(in srgb, var(--wiki-content-dynamic-color--inverted) 85%, transparent);
 }
 
 .ace_gutter-cell {
-
 	color: color-mix(in srgb, var(--wiki-content-dynamic-color) 40%, transparent);
 }
 
 .ace_editor .ace_print-margin {
 	width: 1px;
-
 	background: color-mix(in srgb, var(--wiki-content-dynamic-color--inverted) 75%, transparent);
 }
 
 .ace_editor {
 	/* this image gradient hack effectively lets the element have 2 layers of background */
 	background-image: linear-gradient(var(--wiki-content-dynamic-color), var(--wiki-content-dynamic-color));
-
 	background-color: color-mix(in srgb, var(--wiki-content-dynamic-color--inverted) 93%, transparent);
-
 	color: color-mix(in srgb, var(--wiki-content-dynamic-color) 93%, transparent);
 }
 
@@ -1404,7 +1383,6 @@ input#wpSummary {
 }
 
 .ace_editor .ace_marker-layer .ace_selection {
-
 	background: color-mix(in srgb, var(--wiki-content-dynamic-color) 20%, transparent)
 }
 
@@ -1418,27 +1396,22 @@ input#wpSummary {
 
 .ace_editor .ace_marker-layer .ace_active-line,
 .ace_editor .ace_gutter-active-line {
-
 	background: color-mix(in srgb, var(--wiki-content-dynamic-color) 3.1%, transparent)
 }
 
 .ace-tm .ace_marker-layer .ace_selected-word {
-
 	background: color-mix(in srgb, var(--wiki-content-dynamic-color) 5%, transparent);
 }
 
 .ace_editor .ace_marker-layer .ace_selection {
-
 	background: color-mix(in srgb, var(--wiki-content-dynamic-color) 10%, transparent);
 }
 
 .ace_editor .ace_marker-layer .ace_selected-word {
-
 	border: 1px solid color-mix(in srgb, var(--wiki-content-dynamic-color) 20%, transparent);
 }
 
 .ace_editor .ace_invisible {
-
 	color: color-mix(in srgb, var(--wiki-content-dynamic-color) 25%, transparent);
 }
 
@@ -1475,9 +1448,7 @@ input#wpSummary {
 }
 
 .ace_editor .ace_fold {
-
 	background-color: color-mix(in srgb, var(--wiki-content-dynamic-color) 10%, transparent);
-
 	border-color: color-mix(in srgb, var(--wiki-content-dynamic-color) 10%, transparent);
 }
 
@@ -1507,19 +1478,17 @@ input#wpSummary {
 
 .ace_editor .ace_comment {
 	font-style: italic;
-
 	color: color-mix(in srgb, var(--wiki-content-dynamic-color) 30%, transparent);
 }
 
 .ace_editor .ace_xml-pe {
-
 	color: color-mix(in srgb, var(--wiki-content-dynamic-color) 28%, transparent);
 }
 
 .ace_editor .ace_indent-guide {
-	background:none;
-	border-right:1px solid var(--wiki-content-dynamic-color);
-	border-right:1px solid color-mix(in srgb, var(--wiki-content-dynamic-color) 20%, transparent);
+	background: none;
+	border-right: 1px solid var(--wiki-content-dynamic-color);
+	border-right: 1px solid color-mix(in srgb, var(--wiki-content-dynamic-color) 20%, transparent);
 }
 
 .ace_search {
@@ -1575,7 +1544,6 @@ input#wpSummary {
 }
 
 .mw-editform #wpTextbox1 {
-
 	background: color-mix(in srgb, var(--wiki-content-background-color) 50%, transparent);
 	color: var(--wiki-content-text-color);
 }
@@ -1608,14 +1576,12 @@ input#wpSummary {
 }
 
 .ext-codemirror-wrapper {
-
 	background-color: color-mix(in srgb, var(--wiki-content-background-color) 35%, transparent);
 	color: var(--wiki-content-text-color)
 }
 
 .cm-editor .cm-selectionBackground,
 .cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
-
 	background: color-mix(in srgb, var(--wiki-accent-color) 30%, transparent);
 }
 
@@ -1742,7 +1708,6 @@ input#wpSummary {
 }
 
 .cm-editor .cm-tooltip-autocomplete ul li[aria-selected] {
-
 	background: color-mix(in srgb, var(--wiki-content-link-color) 15%, var(--wiki-content-background-color));
 	color: var(--wiki-content-link-color);
 }
@@ -1751,23 +1716,27 @@ input#wpSummary {
 .oo-ui-toolbar {
 	clear: none;
 }
+
 .ve-init-mw-desktopArticleTarget-toolbar-open > .oo-ui-toolbar-bar > div:nth-child(4) {
 	display: none;
 }
+
 .ve-ui-toolbar-floating > .oo-ui-toolbar-bar {
-	top: var( --wikigg-header-height );
+	top: var(--wikigg-header-height);
 }
+
 .oo-ui-toolbar-bar .oo-ui-toolbar-bar,
 .ve-area-wrapper .oo-ui-toolbar-bar {
 	background-color: var(--wiki-content-background-color--secondary);
 }
+
 .ve-init-mw-desktopArticleTarget-originalContent .content-body {
 	clear: right;
 }
 
 /* fix a lot of empty space from TemplateData when using VE Source */
 .tdg-editscreen-main.mw-body-content::after {
-	display:none;
+	display: none;
 }
 
 /*************
@@ -1783,7 +1752,7 @@ input#wpSummary {
 
 .tabber__tab,
 .tabber__tab:visited {
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
 
 .tabber__tab:hover,
@@ -1801,6 +1770,7 @@ input#wpSummary {
 .tabber__header__next::after {
 	filter: var(--wiki-icon-general-filter);
 }
+
 /********************
 * End Tabber styles *
 *********************/
@@ -1810,11 +1780,11 @@ input#wpSummary {
 ****************************************/
 :focus,
 :focus-visible {
-	outline-color:var(--wiki-accent-color)
+	outline-color: var(--wiki-accent-color)
 }
 
 :focus-visible {
-	outline-style:solid;
+	outline-style: solid;
 }
 
 .oo-ui-iconElement-icon {
@@ -1822,19 +1792,19 @@ input#wpSummary {
 }
 
 .oo-ui-iconElement-icon.oo-ui-icon-reload {
-	filter: brightness(0) var(--wiki-icon-to-link-filter);	
+	filter: brightness(0) var(--wiki-icon-to-link-filter);
 }
 
 fieldset {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 hr {
-	background-color:var(--wiki-content-border-color);
+	background-color: var(--wiki-content-border-color);
 }
 
 .CategoryTreeToggle {
-	color:var(--wiki-content-link-color);
+	color: var(--wiki-content-link-color);
 }
 
 input,
@@ -1860,13 +1830,13 @@ input:focus-visible {
 input::file-selector-button,
 input[type="button"],
 input[type="submit"] {
-	background-color:var(--wiki-accent-color);
+	background-color: var(--wiki-accent-color);
 	border-color: var(--wiki-accent-color);
 	color: var(--wiki-accent-label-color);
 }
 
 .vector-body blockquote {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 /* category bar and filetoc */
@@ -1924,7 +1894,7 @@ body .ui-button:active {
 
 #contentSub,
 #contentSub2 {
-	color:var(--wiki-content-text-mix-color);
+	color: var(--wiki-content-text-mix-color);
 }
 
 /* notifications ("your edit was saved", etc.) */
@@ -1935,32 +1905,30 @@ body .ui-button:active {
 }
 
 .mw-notification .oo-ui-labelElement-label {
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
 
 .mw-notification .oo-ui-iconElement-icon {
-	filter:unset;
+	filter: unset;
 }
-
-
 
 /**/
 
 .mime-type.has-warning {
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
 
 .oo-ui-image-warning.oo-ui-icon-alert,
 .mw-ui-icon-alert-warning::before {
-	filter:drop-shadow(0 0 3px #000);
+	filter: drop-shadow(0 0 3px #000);
 }
 
 .oo-ui-image-invert.oo-ui-icon-subtract,
 .mw-ui-icon-subtract-invert::before,
 .oo-ui-image-invert.oo-ui-icon-add,
 .mw-ui-icon-add-invert::before {
-	filter:brightness(0) var(--wiki-icon-to-link-filter);
-	filter:var(--wiki-icon-general-filter);
+	filter: brightness(0) var(--wiki-icon-to-link-filter);
+	filter: var(--wiki-icon-general-filter);
 }
 
 .mw_metadata td,
@@ -1983,19 +1951,17 @@ body .ui-button:active {
 }
 
 #mw-allmessagestable tbody:hover td,
-.mw-datatable tr:hover>td {
+.mw-datatable tr:hover > td {
 	background-color: var(--wiki-content-background-color--secondary);
 }
 
 #mw-allmessagestable .am_default {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 80%, transparent);
 	color: var(--wiki-accent-label-color);
 }
 
 #mw-allmessagestable .am_actual,
 #mw-allmessagestable tbody:hover .am_default {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 60%, transparent);
 }
 
@@ -2004,7 +1970,6 @@ body .ui-button:active {
 }
 
 #mw-allmessagestable tbody:hover .am_actual {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 }
 
@@ -2015,20 +1980,20 @@ body .ui-button:active {
 	color: inherit;
 }
 
-.mw-datatable>*>tr>th,
-.mw-datatable>tr>th,
-.mw-json>*>tr>th,
-.mw-json>tr>th {
+.mw-datatable > * > tr > th,
+.mw-datatable > tr > th,
+.mw-json > * > tr > th,
+.mw-json > tr > th {
 	background-color: var(--wiki-content-background-color--secondary);
 	border-color: var(--wiki-content-border-color);
 	padding-bottom: 9px;
 	padding-top: 9px;
 }
 
-.mw-datatable>*>tr>td,
-.mw-datatable>tr>td,
-.mw-json>*>tr>td,
-.mw-json>tr>td {
+.mw-datatable > * > tr > td,
+.mw-datatable > tr > td,
+.mw-json > * > tr > td,
+.mw-json > tr > td {
 	border-color: var(--wiki-content-border-color);
 }
 
@@ -2039,8 +2004,7 @@ body .ui-button:active {
 .mw-json .mw-json-single-value,
 .mw-json .mw-json-value,
 .mw-json .value {
-
-	background:  color-mix(in srgb, var(--wiki-success-color) 60%, transparent);
+	background: color-mix(in srgb, var(--wiki-success-color) 60%, transparent);
 }
 
 .mw-json .mw-json-empty {
@@ -2061,7 +2025,6 @@ body .ui-button:active {
 .mw-destfile-warning {
 	border-color: var(--wiki-warning-color);
 	color: var(--wiki-content-text-color);
-
 	background-color: color-mix(in srgb, var(--wiki-warning-color) 25%, transparent);
 }
 
@@ -2104,8 +2067,7 @@ table.cargoTable thead th {
 }
 
 table.cargoTable tr:hover {
-
-	background-color:  color-mix(in srgb, var(--wiki-accent-color) 25%, transparent);
+	background-color: color-mix(in srgb, var(--wiki-accent-color) 25%, transparent);
 }
 
 table.cargoTable thead tr:nth-child(odd),
@@ -2124,36 +2086,37 @@ table.cargoTable.noMerge tbody tr:nth-child(odd) {
 }
 
 table.cargoTable th.headerSort {
-	color:var(--wiki-accent-label-color);
+	color: var(--wiki-accent-label-color);
 }
 
 table.cargoTable th.headerSort:hover {
-	color:var(--wiki-accent-label-color);
-	text-decoration:underline;
+	color: var(--wiki-accent-label-color);
+	text-decoration: underline;
 }
 
 table.cargoTable th.headerSort::after {
-	background-color:var(--wiki-accent-link-color);
+	background-color: var(--wiki-accent-link-color);
 }
 
 #mw-content-text div.cargoReplacementTableInfo {
 	background: var(--wiki-content-background-color--secondary);
 	border: 1px solid var(--wiki-content-border-color);
-}.dataTables_wrapper .dataTables_length,
+}
+
+.dataTables_wrapper .dataTables_length,
 .dataTables_wrapper .dataTables_filter,
 .dataTables_wrapper .dataTables_info,
 .dataTables_wrapper .dataTables_processing,
 .dataTables_wrapper .dataTables_paginate {
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
 
 table.dataTable tbody tr {
-	background-color:var(--wiki-content-background-color);
+	background-color: var(--wiki-content-background-color);
 }
 
 table.dataTable.display tbody tr.odd > .sorting_1,
 table.dataTable.order-column.stripe tbody tr.odd > .sorting_1 {
-
 	background-color: color-mix(in srgb, var(--wiki-content-background-color--secondary) 75%, transparent);
 }
 
@@ -2161,13 +2124,11 @@ table.dataTable.stripe tbody tr.odd,
 table.dataTable.display tbody tr.odd,
 table.dataTable.display tbody tr.even > .sorting_1,
 table.dataTable.order-column.stripe tbody tr.even > .sorting_1 {
-
 	background-color: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
 }
 
 table.dataTable.display tbody tr:hover > .sorting_1,
 table.dataTable.order-column.hover tbody tr:hover > .sorting_1 {
-
 	background-color: color-mix(in srgb, var(--wiki-content-background-color) 75%, transparent);
 }
 
@@ -2196,7 +2157,7 @@ table.dataTable.display tbody td {
 	color: var(--wiki-content-mix-color) !important;
 	border: 1px solid var(--wiki-content-border-color);
 	background-color: var(--wiki-content-background-color);
-	background: linear-gradient(to bottom,var(--wiki-content-background-color) 0%,var(--wiki-content-background-color--secondary) 100%);
+	background: linear-gradient(to bottom, var(--wiki-content-background-color) 0%, var(--wiki-content-background-color--secondary) 100%);
 }
 
 div.drilldown-filters-wrapper {
@@ -2206,12 +2167,10 @@ div.drilldown-filters-wrapper {
 }
 
 .action-pagevalues tr:nth-of-type(2n) {
-
 	background-color: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
 }
 
 .action-pagevalues tr:hover {
-
 	background-image: linear-gradient(color-mix(in srgb, var(--wiki-accent-color) 20%, transparent), color-mix(in srgb, var(--wiki-accent-color) 20%, transparent));
 }
 
@@ -2220,7 +2179,7 @@ div.specialCargoQuery-extraPane {
 }
 
 .oo-ui-panelLayout-framed {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled>.oo-ui-buttonElement-button {
@@ -2228,28 +2187,26 @@ div.specialCargoQuery-extraPane {
 }
 
 .oo-ui-inputWidget-input + .oo-ui-image-invert.oo-ui-icon-check {
-	background-image:none;
+	background-image: none;
 }
 
 .oo-ui-inputWidget-input:checked + .oo-ui-image-invert.oo-ui-icon-check::before {
-	position:absolute;
-	width:100%;
-	height:100%;
-	top:0;
-	left:0;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
 	background-image: url(/load.php?modules=oojs-ui-core.icons&image=check&variant=invert&format=rasterized&skin=vector&version=y9f1k);
-	background-image: linear-gradient(transparent,transparent),url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E check %3C/title%3E%3Cg fill=%22%23fff%22%3E%3Cpath d=%22M7 14.2 2.8 10l-1.4 1.4L7 17 19 5l-1.4-1.4z%22/%3E%3C/g%3E%3C/svg%3E");
-	content:'';
+	background-image: linear-gradient(transparent, transparent), url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E check %3C/title%3E%3Cg fill=%22%23fff%22%3E%3Cpath d=%22M7 14.2 2.8 10l-1.4 1.4L7 17 19 5l-1.4-1.4z%22/%3E%3C/g%3E%3C/svg%3E");
+	content: '';
 	pointer-events: none;
-	filter:var(--wiki-icon-general-filter);
+	filter: var(--wiki-icon-general-filter);
 }
 
 .oo-ui-checkboxInputWidget [type="checkbox"] + span,
 .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked + span {
 	filter: unset;
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 5%, transparent);
-
 	border-color: color-mix(in srgb, var(--wiki-accent-color) 75%, transparent);
 }
 
@@ -2258,76 +2215,74 @@ div.specialCargoQuery-extraPane {
 	border-color: var(--wiki-content-text-mix-color);
 }
 
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:hover+span {
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:hover + span {
 	border-color: var(--wiki-accent-color);
 	filter: unset;
 }
 
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate+span {
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate + span {
 	background-color: var(--wiki-accent-color);
 }
 
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:focus+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate:focus+span {
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:focus + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate:focus + span {
 	box-shadow: none;
 }
 
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:active+span {
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:active + span {
 	border-color: var(--wiki-accent-color);
 	box-shadow: inset 0 0 0 1px var(--wiki-accent-color);
 }
 
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:focus+span {
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:focus + span {
 	border-color: var(--wiki-accent-color);
 	box-shadow: inset 0 0 0 1px var(--wiki-accent-color);
 	outline: 1px solid transparent;
 }
 
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:focus+span {
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:focus + span {
 	background-color: var(--wiki-accent-color);
 	border-color: var(--wiki-accent-color);
 }
 
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:hover+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:active+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:focus+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:hover+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:active+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:focus+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate:hover+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate:active+span,
-.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate:focus+span {
-
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:hover + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:active + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:focus + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:hover + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:active + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:checked:focus + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate:hover + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate:active + span,
+.oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:indeterminate:focus + span {
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 	border-color: var(--wiki-accent-color);
 }
 
 .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type="checkbox"]:active + span {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent)
 }
 
 .oo-ui-image-invert.oo-ui-icon-check {
-	background:none;
-	position:relative;
+	background: none;
+	position: relative;
 }
 
 .oo-ui-inputWidget-input:checked + .oo-ui-image-invert.oo-ui-icon-check::before {
-	position:absolute;
-	width:100%;
-	height:100%;
-	top:0;
-	left:0;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
 	background-image: url(/load.php?modules=oojs-ui-core.icons&image=check&variant=invert&format=rasterized&skin=vector&version=y9f1k);
-	background-image: linear-gradient(transparent,transparent),url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E check %3C/title%3E%3Cg fill=%22%23fff%22%3E%3Cpath d=%22M7 14.2 2.8 10l-1.4 1.4L7 17 19 5l-1.4-1.4z%22/%3E%3C/g%3E%3C/svg%3E");
-	content:'';
+	background-image: linear-gradient(transparent, transparent), url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E check %3C/title%3E%3Cg fill=%22%23fff%22%3E%3Cpath d=%22M7 14.2 2.8 10l-1.4 1.4L7 17 19 5l-1.4-1.4z%22/%3E%3C/g%3E%3C/svg%3E");
+	content: '';
 	pointer-events: none;
-	filter:var(--wiki-icon-general-filter);
+	filter: var(--wiki-icon-general-filter);
 }
 
 .oo-ui-indicatorElement-indicator {
@@ -2369,8 +2324,7 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-rcfilters-ui-savedLinksListWidget-menu .mw-rcfilters-ui-savedLinksListItemWidget:hover {
-
-	background-color:  color-mix(in srgb, var(--wiki-accent-color) 15%, transparent);
+	background-color: color-mix(in srgb, var(--wiki-accent-color) 15%, transparent);
 	color: var(--wiki-accent-color);
 }
 
@@ -2386,7 +2340,7 @@ div.specialCargoQuery-extraPane {
 	border-color: var(--wiki-content-border-color);
 }
 
-.mw-rcfilters-ui-filterTagMultiselectWidget.oo-ui-widget-enabled .oo-ui-tagMultiselectWidget-handle+.mw-rcfilters-ui-table,
+.mw-rcfilters-ui-filterTagMultiselectWidget.oo-ui-widget-enabled .oo-ui-tagMultiselectWidget-handle + .mw-rcfilters-ui-table,
 .mw-rcfilters-ui-filterTagMultiselectWidget.oo-ui-widget-enabled .oo-ui-tagMultiselectWidget-handle.mw-rcfilters-ui-filterTagMultiselectWidget-emphasize {
 	background-color: var(--wiki-content-background-color--secondary);
 }
@@ -2404,11 +2358,11 @@ div.specialCargoQuery-extraPane {
 	color: var(--wiki-content-text-color);
 }
 
-.mw-rcfilters-ui-filterTagMultiselectWidget-hideshowButton .oo-ui-buttonElement-button>.oo-ui-labelElement-label {
+.mw-rcfilters-ui-filterTagMultiselectWidget-hideshowButton .oo-ui-buttonElement-button > .oo-ui-labelElement-label {
 	color: var(--wiki-content-link-color);
 }
 
-.mw-rcfilters-ui-filterTagMultiselectWidget-hideshowButton .oo-ui-buttonElement-button>.oo-ui-labelElement-label:hover {
+.mw-rcfilters-ui-filterTagMultiselectWidget-hideshowButton .oo-ui-buttonElement-button > .oo-ui-labelElement-label:hover {
 	color: var(--wiki-content-link-color--hover);
 }
 
@@ -2420,7 +2374,7 @@ div.specialCargoQuery-extraPane {
 	content: "]";
 }
 
-.oo-ui-buttonElement-frameless.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive>.oo-ui-buttonElement-button {
+.oo-ui-buttonElement-frameless.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive > .oo-ui-buttonElement-button {
 	color: var(--wiki-content-text-color);
 }
 
@@ -2429,8 +2383,7 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-rcfilters-ui-filterTagMultiselectWidget-emptyFilters {
-
-	color:  color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
+	color: color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
 }
 
 .mw-rcfilters-ui-filterMenuSectionOptionWidget {
@@ -2470,15 +2423,14 @@ div.specialCargoQuery-extraPane {
 	color: var(--wiki-content-text-color);
 }
 
-.mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-optionWidget-selected .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type=checkbox]+span,
-.mw-rcfilters-ui-itemMenuOptionWidget:hover .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type=checkbox]+span {
+.mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-optionWidget-selected .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type=checkbox] + span,
+.mw-rcfilters-ui-itemMenuOptionWidget:hover .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type=checkbox] + span {
 	border-color: var(--wiki-accent-color);
 }
 
 .mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-optionWidget-selected,
 .mw-rcfilters-ui-itemMenuOptionWidget:hover {
-
-	background-color:  color-mix(in srgb, var(--wiki-accent-color) 15%, transparent)
+	background-color: color-mix(in srgb, var(--wiki-accent-color) 15%, transparent)
 }
 
 .mw-rcfilters-ui-itemMenuOptionWidget-excludeLabel,
@@ -2487,14 +2439,12 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-rcfilters-ui-itemMenuOptionWidget-label-desc {
-
-	color:  color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
+	color: color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
 }
 
 .mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted.oo-ui-optionWidget-selected:hover,
 .mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted:not(.oo-ui-optionWidget-selected):hover {
-
-	background-color:  color-mix(in srgb, var(--wiki-accent-color) 15%, transparent);
+	background-color: color-mix(in srgb, var(--wiki-accent-color) 15%, transparent);
 }
 
 .mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted.oo-ui-optionWidget-selected .mw-rcfilters-ui-itemMenuOptionWidget-label-title,
@@ -2503,37 +2453,32 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted.oo-ui-optionWidget-selected .mw-rcfilters-ui-itemMenuOptionWidget-label-desc {
-
-	color:  color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
+	color: color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
 }
 
 .mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-optionWidget-selected .mw-rcfilters-ui-itemMenuOptionWidget-label-desc,
 .mw-rcfilters-ui-itemMenuOptionWidget:hover .mw-rcfilters-ui-itemMenuOptionWidget-label-desc,
 .mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted:not(.oo-ui-optionWidget-selected) .mw-rcfilters-ui-itemMenuOptionWidget-label-desc {
-
-	color:  color-mix(in srgb, var(--wiki-content-text-color) 80%, transparent);
+	color: color-mix(in srgb, var(--wiki-content-text-color) 80%, transparent);
 }
 
-.mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted.oo-ui-optionWidget-selected .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type=checkbox]+span,
-.mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted:not(.oo-ui-optionWidget-selected) .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type=checkbox]+span {
+.mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted.oo-ui-optionWidget-selected .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type=checkbox] + span,
+.mw-rcfilters-ui-itemMenuOptionWidget.oo-ui-flaggedElement-muted:not(.oo-ui-optionWidget-selected) .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [type=checkbox] + span {
 	border-color: var(--wiki-content-text-color);
 }
 
 .mw-rcfilters-ui-viewSwitchWidget label.oo-ui-labelWidget {
-
-	color:  color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
+	color: color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
 }
 
 .oo-ui-tagItemWidget.oo-ui-widget-enabled,
 .oo-ui-tagMultiselectWidget.oo-ui-widget-enabled.oo-ui-tagMultiselectWidget-outlined .oo-ui-tagItemWidget.oo-ui-widget-enabled {
 	background-color: transparent;
 	color: var(--wiki-content-text-color);
-
 	border-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 }
 
 .oo-ui-tagMultiselectWidget.oo-ui-widget-enabled.oo-ui-tagMultiselectWidget-outlined .oo-ui-tagItemWidget.oo-ui-widget-enabled.selected {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 10%, transparent);
 	border-color: var(--wiki-accent-color);
 }
@@ -2543,7 +2488,6 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-rcfilters-ui-datePopupWidget .mw-rcfilters-ui-valuePickerWidget-title {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 80%, transparent);
 }
 
@@ -2555,10 +2499,10 @@ div.specialCargoQuery-extraPane {
 
 @keyframes fadeBlue {
 	60% {
-	border-top-color:var(--wiki-accent-color);
+		border-top-color: var(--wiki-accent-color);
 	}
 	100% {
-	border-top-color:var(--wiki-content-border-color);
+		border-top-color: var(--wiki-content-border-color);
 	}
 }
 
@@ -2571,38 +2515,35 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-rcfilters-ui-filterMenuOptionWidget.oo-ui-flaggedElement-muted:not(.oo-ui-optionWidget-selected) {
-
 	background-color: color-mix(in srgb, var(--wiki-content-text-color) 10%, transparent);
 }
 
 .oo-ui-iconElement-icon.mw-rcfilters-ui-filterItemHighlightButton-circle {
-	filter:unset;
+	filter: unset;
 }
 
 .oo-ui-tagMultiselectWidget.oo-ui-widget-enabled.oo-ui-tagMultiselectWidget-outlined .mw-rcfilters-ui-tagItemWidget-selected.oo-ui-tagItemWidget.oo-ui-widget-enabled {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
-	border-color:var(--wiki-accent-color);
+	border-color: var(--wiki-accent-color);
 }
 
 .mw-rcfilters-ui-tagItemWidget.oo-ui-flaggedElement-muted.oo-ui-tagItemWidget.oo-ui-widget-enabled .oo-ui-labelElement-label {
-
-	color:  color-mix(in srgb, var(--wiki-content-text-color) 76%, transparent);
+	color: color-mix(in srgb, var(--wiki-content-text-color) 76%, transparent);
 }
 
 .mw-rcfilters-ui-tagItemWidget-popup-content {
-
-	color:  color-mix(in srgb, var(--wiki-content-text-color) 75%, transparent);
+	color: color-mix(in srgb, var(--wiki-content-text-color) 75%, transparent);
 }
 
 /* fix for weird focus box on recentchanges arrows when clicking, but keep it for tab navigation */
 .mw-enhancedchanges-checkbox:focus + * .mw-enhancedchanges-arrow {
-	outline:none;
+	outline: none;
 }
 
 .mw-enhancedchanges-checkbox:focus-visible + * .mw-enhancedchanges-arrow {
-	outline:1px solid var(--wiki-accent-color);
+	outline: 1px solid var(--wiki-accent-color);
 }
+
 /**/
 
 .oo-ui-popupWidget-anchored-bottom .oo-ui-popupWidget-anchor:before {
@@ -2616,7 +2557,7 @@ div.specialCargoQuery-extraPane {
 .unpatrolled {
 	color: var(--wiki-alert-color);
 }
-	
+
 .autocomment, .autocomment a, .autocomment a:visited {
 	color: var(--wiki-content-text-mix-color);
 }
@@ -2710,7 +2651,7 @@ div.specialCargoQuery-extraPane {
 }
 
 .oo-ui-tagMultiselectWidget-handle .oo-ui-tagMultiselectWidget-group > input {
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
 
 .oo-ui-tagMultiselectWidget .oo-ui-inputWidget-input {
@@ -2723,23 +2664,22 @@ div.specialCargoQuery-extraPane {
 .oo-ui-textInputWidget.oo-ui-widget-disabled .oo-ui-inputWidget-input,
 .oo-ui-dropdownWidget.oo-ui-widget-disabled .oo-ui-dropdownWidget-handle {
 	background: var(--wiki-content-text-mix-color-95);
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 25%, transparent);
-	text-shadow:none;
-	border-color:var(--wiki-content-text-mix-color);
+	text-shadow: none;
+	border-color: var(--wiki-content-text-mix-color);
 }
 
 .oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input::placeholder {
-	color:var(--wiki-content-text-mix-color);
+	color: var(--wiki-content-text-mix-color);
 }
 
 .oo-ui-dropdownInputWidget select {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .oo-ui-dropdownInputWidget.oo-ui-widget-enabled select:focus {
-	border-color:var(--wiki-accent-color);
-	box-shadow:inset 0 0 0 1px var(--wiki-accent-color);
+	border-color: var(--wiki-accent-color);
+	box-shadow: inset 0 0 0 1px var(--wiki-accent-color);
 }
 
 .oo-ui-toggleSwitchWidget {
@@ -2755,7 +2695,6 @@ div.specialCargoQuery-extraPane {
 }
 
 .oo-ui-toggleSwitchWidget.oo-ui-widget-enabled .oo-ui-toggleSwitchWidget-grip {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 	border-color: #0006;
 }
@@ -2836,19 +2775,17 @@ div.specialCargoQuery-extraPane {
 }
 
 .oo-ui-labelWidget.oo-ui-inline-help {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 80%, transparent);
 }
 
-.oo-ui-progressBarWidget:not(.oo-ui-pendingElement-pending){
+.oo-ui-progressBarWidget:not(.oo-ui-pendingElement-pending) {
 	background-color: var(--wiki-content-background-color);
 	border-color: var(--wiki-accent-color);
-
 	box-shadow: 0 1px 1px color-mix(in srgb, var(--wiki-content-dynamic-color) 15%, transparent);
 }
 
 .oo-ui-progressBarWidget.oo-ui-widget-enabled .oo-ui-progressBarWidget-bar {
-	background-color:var(--wiki-accent-color);
+	background-color: var(--wiki-accent-color);
 }
 
 .oo-ui-bookletLayout-outlinePanel {
@@ -2875,6 +2812,7 @@ div.specialCargoQuery-extraPane {
 	color: var(--wiki-heading-color);
 }
 
+
 /* OAuth authorisation dialog */
 #mw-mwoauth-authorize-form {
 	color: inherit;
@@ -2883,16 +2821,16 @@ div.specialCargoQuery-extraPane {
 .oo-ui-toolbar-bar,
 .oo-ui-popupToolGroup-tools,
 .oo-ui-listToolGroup-tools .oo-ui-tool.oo-ui-widget-enabled:hover {
-	background-color:var(--wiki-content-background-color--secondary);
-	color:var(--wiki-content-text-color);
+	background-color: var(--wiki-content-background-color--secondary);
+	color: var(--wiki-content-text-color);
 }
 
 .oo-ui-popupToolGroup-tools {
-	max-width:100%;
+	max-width: 100%;
 }
 
 .oo-ui-toolbar-actions .oo-ui-popupToolGroup.oo-ui-widget-enabled > .oo-ui-popupToolGroup-handle:hover {
-	border-right-color:var(--wiki-content-border-color);
+	border-right-color: var(--wiki-content-border-color);
 }
 
 .oo-ui-menuToolGroup-tools .oo-ui-tool.oo-ui-tool-active,
@@ -2906,47 +2844,44 @@ div.specialCargoQuery-extraPane {
 
 .oo-ui-tool.oo-ui-widget-enabled .oo-ui-tool-link {
 	/* we remove the transition here because it causes the hard-coded color to flash briefly */
-	transition:none;
+	transition: none;
 }
 
 .oo-ui-popupToolGroup.oo-ui-popupToolGroup-active > .oo-ui-popupToolGroup-handle:hover {
-	color:var(--wiki-accent-color);
+	color: var(--wiki-accent-color);
 }
 
 .oo-ui-popupToolGroup-tools .oo-ui-tool-active.oo-ui-widget-enabled .oo-ui-tool-link .oo-ui-tool-title {
-	color:var(--wiki-accent-color);
+	color: var(--wiki-accent-color);
 }
 
 .oo-ui-popupToolGroup.oo-ui-widget-enabled > .oo-ui-popupToolGroup-handle:hover,
 .oo-ui-tool.oo-ui-widget-enabled > .oo-ui-tool-link:hover {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 10%, transparent);
 }
 
 .oo-ui-popupToolGroup.oo-ui-widget-enabled > .oo-ui-popupToolGroup-handle:active {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 15%, transparent);
 }
 
 .oo-ui-popupToolGroup-tools .oo-ui-tool.oo-ui-widget-enabled .oo-ui-tool-link:focus {
-	box-shadow:inset 0 0 0 2px var(--wiki-accent-color);
+	box-shadow: inset 0 0 0 2px var(--wiki-accent-color);
 }
 
 .oo-ui-popupToolGroup.oo-ui-widget-enabled > .oo-ui-popupToolGroup-handle:focus,
 .oo-ui-tool.oo-ui-widget-enabled .oo-ui-tool-link:focus,
 .oo-ui-tool.oo-ui-widget-enabled > .oo-ui-tool-link:focus {
-	outline:1px solid var(--wiki-accent-color);
-	box-shadow:inset 0 0 0 1px var(--wiki-accent-color);
+	outline: 1px solid var(--wiki-accent-color);
+	box-shadow: inset 0 0 0 1px var(--wiki-accent-color);
 }
 
 .oo-ui-menuToolGroup,
 .oo-ui-popupToolGroup-tools {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .oo-ui-toolbar-position-top > .oo-ui-toolbar-bar {
 	border-color: var(--wiki-content-border-color);
-
 	box-shadow: 0 1px 1px 0 color-mix(in srgb, var(--wiki-content-dynamic-color) 10%, transparent);
 }
 
@@ -2957,16 +2892,16 @@ div.specialCargoQuery-extraPane {
 }
 
 .oo-ui-tool.oo-ui-widget-enabled.oo-ui-flaggedElement-primary.oo-ui-flaggedElement-progressive > .oo-ui-tool-link {
-	background-color:var(--wiki-accent-color);
-	color:var(--wiki-accent-label-color);
-}
-
-.oo-ui-tool.oo-ui-widget-enabled.oo-ui-flaggedElement-primary.oo-ui-flaggedElement-progressive > .oo-ui-tool-link:hover {
-	background-color:var(--wiki-accent-color--hover);
+	background-color: var(--wiki-accent-color);
 	color: var(--wiki-accent-label-color);
 }
 
-.oo-ui-buttonElement-frameless>.oo-ui-buttonElement-button,
+.oo-ui-tool.oo-ui-widget-enabled.oo-ui-flaggedElement-primary.oo-ui-flaggedElement-progressive > .oo-ui-tool-link:hover {
+	background-color: var(--wiki-accent-color--hover);
+	color: var(--wiki-accent-label-color);
+}
+
+.oo-ui-buttonElement-frameless > .oo-ui-buttonElement-button,
 .oo-ui-buttonElement-frameless.oo-ui-widget-enabled > .oo-ui-buttonElement-button {
 	color: var(--wiki-content-text-color);
 }
@@ -2992,14 +2927,14 @@ div.specialCargoQuery-extraPane {
 	color: var(--wiki-content-text-color--hover);
 }
 
-.oo-ui-buttonElement-frameless.oo-ui-flaggedElement-destructive>.oo-ui-buttonElement-button,
+.oo-ui-buttonElement-frameless.oo-ui-flaggedElement-destructive > .oo-ui-buttonElement-button,
 .oo-ui-buttonElement-frameless.oo-ui-widget-enabled.oo-ui-flaggedElement-destructive > .oo-ui-buttonElement-button{
 	color: var(--wiki-alert-color);
 }
 
-.oo-ui-buttonElement-frameless.oo-ui-flaggedElement-destructive.oo-ui-widget-enabled>.oo-ui-buttonElement-button:hover,
-.oo-ui-buttonElement-frameless.oo-ui-flaggedElement-destructive.oo-ui-widget-enabled>.oo-ui-buttonElement-button:active,
-.oo-ui-buttonElement-frameless.oo-ui-flaggedElement-destructive.oo-ui-widget-enabled>.oo-ui-buttonElement-button:focus {
+.oo-ui-buttonElement-frameless.oo-ui-flaggedElement-destructive.oo-ui-widget-enabled > .oo-ui-buttonElement-button:hover,
+.oo-ui-buttonElement-frameless.oo-ui-flaggedElement-destructive.oo-ui-widget-enabled > .oo-ui-buttonElement-button:active,
+.oo-ui-buttonElement-frameless.oo-ui-flaggedElement-destructive.oo-ui-widget-enabled > .oo-ui-buttonElement-button:focus {
 	color: var(--wiki-alert-color--hover);
 }
 
@@ -3007,7 +2942,7 @@ div.specialCargoQuery-extraPane {
 	border: 1px solid transparent;
 }
 
-.oo-ui-buttonElement-frameless>button.oo-ui-buttonElement-button {
+.oo-ui-buttonElement-frameless > button.oo-ui-buttonElement-button {
 	color: inherit;
 }
 
@@ -3020,7 +2955,7 @@ div.specialCargoQuery-extraPane {
 
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-primary.oo-ui-flaggedElement-progressive > .oo-ui-buttonElement-button:focus {
 	border-color: var(--wiki-accent-color);
-	box-shadow: inset 0 0 0 1px var(--wiki-accent-color),inset 0 0 0 2px var(--wiki-accent-label-color);
+	box-shadow: inset 0 0 0 1px var(--wiki-accent-color), inset 0 0 0 2px var(--wiki-accent-label-color);
 }
 
 .oo-ui-buttonElement-framed.oo-ui-flaggedElement-primary.oo-ui-flaggedElement-progressive.oo-ui-widget-enabled > .oo-ui-buttonElement-button:focus,
@@ -3058,7 +2993,7 @@ div.specialCargoQuery-extraPane {
 }
 
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-buttonElement-active > .oo-ui-buttonElement-button:focus {
-	box-shadow: inset 0 0 0 1px var(--wiki-accent-color--hover),inset 0 0 0 2px var(--wiki-accent-label-color);
+	box-shadow: inset 0 0 0 1px var(--wiki-accent-color--hover), inset 0 0 0 2px var(--wiki-accent-label-color);
 }
 
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-buttonElement-active.oo-ui-widget-enabled > .oo-ui-buttonElement-button:focus,
@@ -3086,7 +3021,7 @@ div.specialCargoQuery-extraPane {
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive > .oo-ui-buttonElement-button:active,
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive.oo-ui-buttonElement-pressed > .oo-ui-buttonElement-button,
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive.oo-ui-buttonElement-active > .oo-ui-buttonElement-button,
-.oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive.oo-ui-popupToolGroup-active > .oo-ui-buttonElement-button{
+.oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive.oo-ui-popupToolGroup-active > .oo-ui-buttonElement-button {
 	background-color: var(--wiki-content-background-color--secondary);
 	border-color: var(--wiki-content-link-color);
 }
@@ -3100,7 +3035,6 @@ div.specialCargoQuery-extraPane {
 
 .oo-ui-buttonElement-frameless.oo-ui-widget-enabled.oo-ui-buttonElement-pressed > input.oo-ui-buttonElement-button,
 .oo-ui-buttonElement-frameless.oo-ui-widget-enabled > .oo-ui-buttonElement-button:active {
-
 	background-color: color-mix(in srgb, var(--wiki-content-link-color) 8%, transparent);
 	color: var(--wiki-content-text-color);
 	border-color: var(--wiki-content-text-mix-color);
@@ -3108,9 +3042,7 @@ div.specialCargoQuery-extraPane {
 
 .oo-ui-buttonElement-frameless.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive > .oo-ui-buttonElement-button:active,
 .oo-ui-buttonElement-frameless.oo-ui-widget-enabled.oo-ui-flaggedElement-progressive.oo-ui-buttonElement-pressed > .oo-ui-buttonElement-button {
-
 	color: color-mix(in srgb, var(--wiki-content-link-color) 90%, transparent);
-
 	border-color: color-mix(in srgb, var(--wiki-content-link-color) 90%, transparent);
 }
 
@@ -3124,7 +3056,7 @@ div.specialCargoQuery-extraPane {
 
 .oo-ui-buttonSelectWidget.oo-ui-widget-enabled:focus .oo-ui-buttonOptionWidget.oo-ui-optionWidget-selected .oo-ui-buttonElement-button {
 	border-color: var(--wiki-accent-color--hover);
-	box-shadow: inset 0 0 0 1px var(--wiki-accent-color--hover),inset 0 0 0 2px var(--wiki-accent-label-color);
+	box-shadow: inset 0 0 0 1px var(--wiki-accent-color--hover), inset 0 0 0 2px var(--wiki-accent-label-color);
 }
 
 .mw-htmlform-ooui .mw-htmlform-matrix tbody tr:nth-child(2n) td,
@@ -3135,7 +3067,7 @@ div.specialCargoQuery-extraPane {
 .oo-ui-popupWidget-popup {
 	background-color: var(--wiki-content-background-color--secondary);
 	border-color: var(--wiki-content-border-color);
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
 
 .mw-advancedSearch-namespace-selection {
@@ -3195,13 +3127,12 @@ div.specialCargoQuery-extraPane {
 	border-color: var(--wiki-content-border-color);
 }
 
-.oo-ui-windowManager-modal>.oo-ui-dialog {
-
+.oo-ui-windowManager-modal > .oo-ui-dialog {
 	background-color: color-mix(in srgb, var(--wiki-content-dynamic-color--inverted) 50%, transparent);
 }
 
 .oo-ui-windowManager-modal.oo-ui-windowManager-floating > .oo-ui-dialog > .oo-ui-window-frame {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .oo-ui-messageDialog-message {
@@ -3218,7 +3149,6 @@ div.specialCargoQuery-extraPane {
 
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled > .oo-ui-buttonElement-button {
 	color: var(--wiki-accent-color);
-
 	border-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 }
 
@@ -3228,7 +3158,7 @@ div.specialCargoQuery-extraPane {
 	box-shadow: inset 0 0 3px var(--wiki-accent-color);
 }
 
-.oo-ui-buttonElement-framed.oo-ui-widget-enabled>.oo-ui-buttonElement-button:active,
+.oo-ui-buttonElement-framed.oo-ui-widget-enabled > .oo-ui-buttonElement-button:active,
 .oo-ui-buttonElement-framed.oo-ui-widget-enabled.oo-ui-buttonElement-pressed > .oo-ui-buttonElement-button {
 	background-color: var(--wiki-content-background-color--secondary);
 	color: var(--wiki-content-link-color--hover);
@@ -3300,14 +3230,17 @@ div.specialCargoQuery-extraPane {
 	background-color: var(--wiki-content-background-color--secondary);
 	border-color: var(--wiki-content-border-color);
 }
+
 .mw-widget-dateInputWidget.oo-ui-widget-enabled .mw-widget-dateInputWidget-handle:hover {
 	border-color: var(--wiki-accent-color);
 	box-shadow: none;
 }
+
 .mw-widget-dateInputWidget.oo-ui-widget-enabled .mw-widget-dateInputWidget-handle:focus {
 	border-color: var(--wiki-accent-color);
 	box-shadow: inset 0 0 0 1px var(--wiki-accent-color);
 }
+
 .mw-widget-dateInputWidget.oo-ui-widget-enabled .mw-widget-dateInputWidget-handle > .oo-ui-labelElement-label {
 	color: var(--wiki-content-text-color);
 }
@@ -3326,7 +3259,7 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-widget-dateInputWidget-calendar:focus {
-	box-shadow: inset 0 0 0 1px var(--wiki-accent-color),0 2px 2px 0 rgba(0,0,0,0.2);
+	box-shadow: inset 0 0 0 1px var(--wiki-accent-color), 0 2px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .mw-widget-calendarWidget-header .oo-ui-labelElement-label,
@@ -3338,7 +3271,6 @@ div.specialCargoQuery-extraPane {
 
 .mw-widget-calendarWidget-day-heading,
 .mw-widget-calendarWidget-day-additional {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 55%, transparent);
 }
 
@@ -3347,7 +3279,6 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-widget-calendarWidget-item-selected {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 90%, transparent);
 	color: var(--wiki-accent-label-color);
 }
@@ -3371,6 +3302,7 @@ div.specialCargoQuery-extraPane {
 	border-color: var(--wiki-content-border-color);
 	color: var(--wiki-content-text-color);
 }
+
 .mw-widgets-datetime-dateTimeInputWidget.oo-ui-widget-enabled .mw-widgets-datetime-dateTimeInputWidget-handle:hover {
 	border-color: var(--wiki-content-border-color);
 }
@@ -3385,18 +3317,16 @@ div.specialCargoQuery-extraPane {
 }
 
 .mw-widgets-datetime-calendarWidget-grid .mw-widgets-datetime-calendarWidget-cell.mw-widgets-datetime-calendarWidget-extra .oo-ui-buttonElement-button .oo-ui-labelElement-label {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 55%, transparent);
 }
 
 /* Unpatrolled page creations on Special:NewPages */
 .not-patrolled {
-
 	background-color: color-mix(in srgb, var(--wiki-warning-color) 16%, transparent);
 }
 
 .mw-spinner-container > div::after {
-	background-color:var(--wiki-content-text-color);
+	background-color: var(--wiki-content-text-color);
 }
 
 pre,
@@ -3408,12 +3338,11 @@ code,
 }
 
 .mw-templatedata-doc-param-alias {
-	color:var(--wiki-content-text-mix-color);
+	color: var(--wiki-content-text-mix-color);
 }
 
 .mw-highlight,
 .view-light .mw-highlight {
-
 	--pygments-background: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
 	--pygments-err: #db0000;
 	--pygments-c: #3a7575;
@@ -3483,7 +3412,6 @@ code,
 }
 
 .view-dark .mw-highlight {
-
 	--pygments-background: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
 	--pygments-err: #fe4242;
 	--pygments-c: #4b9797;
@@ -3558,71 +3486,265 @@ div.mw-highlight,
 	margin: 0.5em 0;
 }
 
-.mw-highlight .err {border-color: var(--pygments-err);}
-.mw-highlight .c   {color: var(--pygments-c);}
-.mw-highlight .k   {color: var(--pygments-k);}
-.mw-highlight .o   {color: var(--pygments-o);}
-.mw-highlight .ch  {color: var(--pygments-ch);}
-.mw-highlight .cm  {color: var(--pygments-cm);}
-.mw-highlight .cp  {color: var(--pygments-cp);}
-.mw-highlight .cpf {color: var(--pygments-cpf);}
-.mw-highlight .c1  {color: var(--pygments-c1);}
-.mw-highlight .cs  {color: var(--pygments-cs);}
-.mw-highlight .gd  {color: var(--pygments-gd);}
-.mw-highlight .gr  {color: var(--pygments-gr);}
-.mw-highlight .gh  {color: var(--pygments-gh);}
-.mw-highlight .gi  {color: var(--pygments-gi);}
-.mw-highlight .go  {color: var(--pygments-go);}
-.mw-highlight .gp  {color: var(--pygments-gp);}
-.mw-highlight .gu  {color: var(--pygments-gu);}
-.mw-highlight .gt  {color: var(--pygments-gt);}
-.mw-highlight .kc  {color: var(--pygments-kc);}
-.mw-highlight .kd  {color: var(--pygments-kd);}
-.mw-highlight .kn  {color: var(--pygments-kn);}
-.mw-highlight .kp  {color: var(--pygments-kp);}
-.mw-highlight .kr  {color: var(--pygments-kr);}
-.mw-highlight .kt  {color: var(--pygments-kt);}
-.mw-highlight .m   {color: var(--pygments-m);}
-.mw-highlight .s   {color: var(--pygments-s);}
-.mw-highlight .na  {color: var(--pygments-na);}
-.mw-highlight .nb  {color: var(--pygments-nb);}
-.mw-highlight .nc  {color: var(--pygments-nc);}
-.mw-highlight .no  {color: var(--pygments-no);}
-.mw-highlight .nd  {color: var(--pygments-nd);}
-.mw-highlight .ni  {color: var(--pygments-ni);}
-.mw-highlight .ne  {color: var(--pygments-ne);}
-.mw-highlight .nf  {color: var(--pygments-nf);}
-.mw-highlight .nl  {color: var(--pygments-nl);}
-.mw-highlight .nn  {color: var(--pygments-nn);}
-.mw-highlight .nt  {color: var(--pygments-nt);}
-.mw-highlight .nv  {color: var(--pygments-nv);}
-.mw-highlight .ow  {color: var(--pygments-ow);}
-.mw-highlight .w   {color: var(--pygments-w);}
-.mw-highlight .mb  {color: var(--pygments-mb);}
-.mw-highlight .mf  {color: var(--pygments-mf);}
-.mw-highlight .mh  {color: var(--pygments-mh);}
-.mw-highlight .mi  {color: var(--pygments-mi);}
-.mw-highlight .mo  {color: var(--pygments-mo);}
-.mw-highlight .sa  {color: var(--pygments-sa);}
-.mw-highlight .sb  {color: var(--pygments-sb);}
-.mw-highlight .sc  {color: var(--pygments-sc);}
-.mw-highlight .dl  {color: var(--pygments-dl);}
-.mw-highlight .sd  {color: var(--pygments-sd);}
-.mw-highlight .s2  {color: var(--pygments-s2);}
-.mw-highlight .se  {color: var(--pygments-se);}
-.mw-highlight .sh  {color: var(--pygments-sh);}
-.mw-highlight .si  {color: var(--pygments-si);}
-.mw-highlight .sx  {color: var(--pygments-sx);}
-.mw-highlight .sr  {color: var(--pygments-sr);}
-.mw-highlight .s1  {color: var(--pygments-s1);}
-.mw-highlight .ss  {color: var(--pygments-ss);}
-.mw-highlight .bp  {color: var(--pygments-bp);}
-.mw-highlight .fm  {color: var(--pygments-fm);}
-.mw-highlight .vc  {color: var(--pygments-vc);}
-.mw-highlight .vg  {color: var(--pygments-vg);}
-.mw-highlight .vi  {color: var(--pygments-vi);}
-.mw-highlight .vm  {color: var(--pygments-vm);}
-.mw-highlight .il  {color: var(--pygments-il);}
+.mw-highlight .err {
+	border-color: var(--pygments-err);
+}
+
+.mw-highlight .c {
+	color: var(--pygments-c);
+}
+
+.mw-highlight .k {
+	color: var(--pygments-k);
+}
+
+.mw-highlight .o {
+	color: var(--pygments-o);
+}
+
+.mw-highlight .ch {
+	color: var(--pygments-ch);
+}
+
+.mw-highlight .cm {
+	color: var(--pygments-cm);
+}
+
+.mw-highlight .cp {
+	color: var(--pygments-cp);
+}
+
+.mw-highlight .cpf {
+	color: var(--pygments-cpf);
+}
+
+.mw-highlight .c1 {
+	color: var(--pygments-c1);
+}
+
+.mw-highlight .cs {
+	color: var(--pygments-cs);
+}
+
+.mw-highlight .gd {
+	color: var(--pygments-gd);
+}
+
+.mw-highlight .gr {
+	color: var(--pygments-gr);
+}
+
+.mw-highlight .gh {
+	color: var(--pygments-gh);
+}
+
+.mw-highlight .gi {
+	color: var(--pygments-gi);
+}
+
+.mw-highlight .go {
+	color: var(--pygments-go);
+}
+
+.mw-highlight .gp {
+	color: var(--pygments-gp);
+}
+
+.mw-highlight .gu {
+	color: var(--pygments-gu);
+}
+
+.mw-highlight .gt {
+	color: var(--pygments-gt);
+}
+
+.mw-highlight .kc {
+	color: var(--pygments-kc);
+}
+
+.mw-highlight .kd {
+	color: var(--pygments-kd);
+}
+
+.mw-highlight .kn {
+	color: var(--pygments-kn);
+}
+
+.mw-highlight .kp {
+	color: var(--pygments-kp);
+}
+
+.mw-highlight .kr {
+	color: var(--pygments-kr);
+}
+
+.mw-highlight .kt {
+	color: var(--pygments-kt);
+}
+
+.mw-highlight .m {
+	color: var(--pygments-m);
+}
+
+.mw-highlight .s {
+	color: var(--pygments-s);
+}
+
+.mw-highlight .na {
+	color: var(--pygments-na);
+}
+
+.mw-highlight .nb {
+	color: var(--pygments-nb);
+}
+
+.mw-highlight .nc {
+	color: var(--pygments-nc);
+}
+
+.mw-highlight .no {
+	color: var(--pygments-no);
+}
+
+.mw-highlight .nd {
+	color: var(--pygments-nd);
+}
+
+.mw-highlight .ni {
+	color: var(--pygments-ni);
+}
+
+.mw-highlight .ne {
+	color: var(--pygments-ne);
+}
+
+.mw-highlight .nf {
+	color: var(--pygments-nf);
+}
+
+.mw-highlight .nl {
+	color: var(--pygments-nl);
+}
+
+.mw-highlight .nn {
+	color: var(--pygments-nn);
+}
+
+.mw-highlight .nt {
+	color: var(--pygments-nt);
+}
+
+.mw-highlight .nv {
+	color: var(--pygments-nv);
+}
+
+.mw-highlight .ow {
+	color: var(--pygments-ow);
+}
+
+.mw-highlight .w {
+	color: var(--pygments-w);
+}
+
+.mw-highlight .mb {
+	color: var(--pygments-mb);
+}
+
+.mw-highlight .mf {
+	color: var(--pygments-mf);
+}
+
+.mw-highlight .mh {
+	color: var(--pygments-mh);
+}
+
+.mw-highlight .mi {
+	color: var(--pygments-mi);
+}
+
+.mw-highlight .mo {
+	color: var(--pygments-mo);
+}
+
+.mw-highlight .sa {
+	color: var(--pygments-sa);
+}
+
+.mw-highlight .sb {
+	color: var(--pygments-sb);
+}
+
+.mw-highlight .sc {
+	color: var(--pygments-sc);
+}
+
+.mw-highlight .dl {
+	color: var(--pygments-dl);
+}
+
+.mw-highlight .sd {
+	color: var(--pygments-sd);
+}
+
+.mw-highlight .s2 {
+	color: var(--pygments-s2);
+}
+
+.mw-highlight .se {
+	color: var(--pygments-se);
+}
+
+.mw-highlight .sh {
+	color: var(--pygments-sh);
+}
+
+.mw-highlight .si {
+	color: var(--pygments-si);
+}
+
+.mw-highlight .sx {
+	color: var(--pygments-sx);
+}
+
+.mw-highlight .sr {
+	color: var(--pygments-sr);
+}
+
+.mw-highlight .s1 {
+	color: var(--pygments-s1);
+}
+
+.mw-highlight .ss {
+	color: var(--pygments-ss);
+}
+
+.mw-highlight .bp {
+	color: var(--pygments-bp);
+}
+
+.mw-highlight .fm {
+	color: var(--pygments-fm);
+}
+
+.mw-highlight .vc {
+	color: var(--pygments-vc);
+}
+
+.mw-highlight .vg {
+	color: var(--pygments-vg);
+}
+
+.mw-highlight .vi {
+	color: var(--pygments-vi);
+}
+
+.mw-highlight .vm {
+	color: var(--pygments-vm);
+}
+
+.mw-highlight .il {
+	color: var(--pygments-il);
+}
 
 .mw-highlight pre {
 	background: var(--pygments-background);
@@ -3636,13 +3758,12 @@ div.mw-highlight,
 }
 
 .mw-highlight .hll {
-
-	background-color:  color-mix(in srgb, var(--wiki-accent-color) 20%, transparent)
+	background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent)
 }
 
 .mw-apisandbox-toolbar {
 	background: var(--wiki-content-background-color--secondary);
-	top: var( --wikigg-header-height );
+	top: var(--wikigg-header-height);
 }
 
 /* special:replacetext */
@@ -3699,7 +3820,7 @@ div.mw-highlight,
 }
 
 .vector-search-box-input::placeholder {
-	color:var(--wiki-content-text-mix-color);
+	color: var(--wiki-content-text-mix-color);
 }
 
 /* Search suggestions */
@@ -3730,7 +3851,7 @@ div.mw-highlight,
 }
 
 .suggestions-special.suggestions-result-current .special-label {
-	color:var(--wiki-accent-label-color);
+	color: var(--wiki-accent-label-color);
 }
 
 .suggestions-special .special-query {
@@ -3740,7 +3861,6 @@ div.mw-highlight,
 
 /* search page */
 fieldset#mw-searchoptions {
-
 	background-color: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
 	border-color: var(--wiki-content-border-color);
 }
@@ -3750,7 +3870,6 @@ fieldset#mw-searchoptions {
 }
 
 .mw-search-profile-tabs {
-
 	background-color: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
 	border: 1px solid var(--wiki-content-border-color);
 	margin-top: 1em;
@@ -3764,47 +3883,49 @@ fieldset#mw-searchoptions {
 .mw-search-result-data {
 	color: var(--wiki-content-text-mix-color);
 }
+
 /**/
 
 /* Login/register page */
 .mw-number-text {
-	color:var(--wiki-content-text-mix-color);
+	color: var(--wiki-content-text-mix-color);
 }
 
 .mw-body-content .mw-number-text h3 {
-	color:var(--wiki-heading-color);
+	color: var(--wiki-heading-color);
 }
 
 .mw-number-text.icon-edits,
 .mw-number-text.icon-pages,
 .mw-number-text.icon-contributors {
-	position:relative;
-	background:none;  
+	position: relative;
+	background: none;
 }
 
 .mw-number-text.icon-edits::before,
 .mw-number-text.icon-pages::before,
 .mw-number-text.icon-contributors::before {
-	position:absolute;
-	width:95px;
-	height:100%;
-	left:0;
-	top:0;
-	content:'';
-	filter:brightness(0) var(--wiki-icon-general-filter);
+	position: absolute;
+	width: 95px;
+	height: 100%;
+	left: 0;
+	top: 0;
+	content: '';
+	filter: brightness(0) var(--wiki-icon-general-filter);
 }
 
 .mw-number-text.icon-edits::before {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABLCAYAAADnAAD1AAACrUlEQVR4AWL4//8/oH170LEsiKIwXGPbtm0EY9s2g7bdjzh4oVnjyslKVZ3hSu+d5L/c0Xdx/Bt5jjCyAR3QAd9/+DhSW4oeoYmJGQdM4HWjYfQKTXTA8pZFeIgjOmA5Hkd0wDwe6TWa6IAcr4eA5RAdEC0neKWIDoieFcMRRPOAaDJ6+4uITxzwJ+KbmnjdaKkDliISPIv/gcvRxsT7kzgix7MGuBz1ooFyRIq3xOJ64ArUG0EMoMV5RI5nAJDjRV1Go1DIIL7meJKAAngc8Qn/tgoACuCNRtfRJhQyGQLkeJcI3u3oP3GzA5bjjYnwEEE0Acjx+urgEcRNVgFX1sUjdaHF9gA53sW/jScFKIC3SH8hIo5nDXAVwbtA8O6U4+kD6uPpA2rhWQNcXYh3N4HXSfAMAHK8838BTwBQF28hCpKAAnj3SvCsAa4heOdU8NQB5fGUAfXxhAEZ3lmCdz+B18Hx9ABN46kBrv1DeAtQsAZYivdAB08AMMLrJ3hBHU8BkOGdqcyMLcCbj4I1QH08YUCGd0kbTwCQ4MW1oFkR3kM5PAHAdVU8gjhPEk8AkOKRBjN481AwAxjhDRCM4Rq1EzwTgAzvGtoqiicAmMcbjRZI4wkATiP/eVe/4QU0DvXJ4gkAHq9gNEV4cdPRRtQjgycAOA51VkAOoECaiF5J4QkA7iVnuI+vgTcXBauAo1BjBeU0mZuCXlfm2gieOcCN5KzPadH7s9EF1CeJJwD4lKy2BLQM3UFDaFgSTwBwKcE5il6Q1wmeA95KQLGafuI54Ay+I4D2Fm1HY2QwBADPZdCG0EO0Wg5CAHAi6k1ce3E1fdDHAQ8TuG50Ml6F4TngGNQawTWjg2iCPoAG4I5vcG/QVrLDIJMDnvyNBYMDeg7ogA7ogJ4DOqBmnwD4A/itR9A4HwAAAABJRU5ErkJggg==) no-repeat left center;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABLCAYAAADnAAD1AAACrUlEQVR4AWL4//8/oH170LEsiKIwXGPbtm0EY9s2g7bdjzh4oVnjyslKVZ3hSu+d5L/c0Xdx/Bt5jjCyAR3QAd9/+DhSW4oeoYmJGQdM4HWjYfQKTXTA8pZFeIgjOmA5Hkd0wDwe6TWa6IAcr4eA5RAdEC0neKWIDoieFcMRRPOAaDJ6+4uITxzwJ+KbmnjdaKkDliISPIv/gcvRxsT7kzgix7MGuBz1ooFyRIq3xOJ64ArUG0EMoMV5RI5nAJDjRV1Go1DIIL7meJKAAngc8Qn/tgoACuCNRtfRJhQyGQLkeJcI3u3oP3GzA5bjjYnwEEE0Acjx+urgEcRNVgFX1sUjdaHF9gA53sW/jScFKIC3SH8hIo5nDXAVwbtA8O6U4+kD6uPpA2rhWQNcXYh3N4HXSfAMAHK8838BTwBQF28hCpKAAnj3SvCsAa4heOdU8NQB5fGUAfXxhAEZ3lmCdz+B18Hx9ABN46kBrv1DeAtQsAZYivdAB08AMMLrJ3hBHU8BkOGdqcyMLcCbj4I1QH08YUCGd0kbTwCQ4MW1oFkR3kM5PAHAdVU8gjhPEk8AkOKRBjN481AwAxjhDRCM4Rq1EzwTgAzvGtoqiicAmMcbjRZI4wkATiP/eVe/4QU0DvXJ4gkAHq9gNEV4cdPRRtQjgycAOA51VkAOoECaiF5J4QkA7iVnuI+vgTcXBauAo1BjBeU0mZuCXlfm2gieOcCN5KzPadH7s9EF1CeJJwD4lKy2BLQM3UFDaFgSTwBwKcE5il6Q1wmeA95KQLGafuI54Ay+I4D2Fm1HY2QwBADPZdCG0EO0Wg5CAHAi6k1ce3E1fdDHAQ8TuG50Ml6F4TngGNQawTWjg2iCPoAG4I5vcG/QVrLDIJMDnvyNBYMDeg7ogA7ogJ4DOqBmnwD4A/itR9A4HwAAAABJRU5ErkJggg==) no-repeat left center;
 }
 
 .mw-number-text.icon-pages::before {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABLCAYAAADnAAD1AAAByUlEQVR4Ae3XQ6JcQRhH8Rs7mYWT2LZt25rEtpNvicGCOid51lWhX3X/B78F1ClnjUZDHChCDgVUQAVUwF+//zTbaEzwJKuqFQJOwVOYB0fSDege8RnMg8OxA47HhMhGho4YM+BHWGTXMApZP1NxAqdKuIS3DhETC5gT0cEonM+LmH7A8BHHF4zhUMyAr3DKswt4ARvCVQ8RL8FyHIoV8DqyAEbidMCIu2AFDqUbEBiLd4EiroOVcDDdgMBJWI4rNSOugpV0MOWAa2EBIq6HVXAw1YDzYQEiboVVdCDFgLNhASIegtWwP7WAM2AVXC4Z8SKsho+pBZwDCxDxIZ7hGo5iN7ZgG/bjOj61QsB5sAARxyArMA7nUw+4GuYQcaSHv/PrlAPuhDnYh8zR9ZQDnoF1+ooXuI87uIvH+JoT8ES7B1yJxZiGETnbbAHuKqCbkbiqgG5mK6Cb8QqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogG0acAwmVHRLAXschDlQQAVUwKYGXIZTDo7qFnakgAqogP4ooAK+waVh5GpSAROggAqogFKOAiqgAiqg/AUjJ7hc1MT1egAAAABJRU5ErkJggg==) no-repeat left center
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABLCAYAAADnAAD1AAAByUlEQVR4Ae3XQ6JcQRhH8Rs7mYWT2LZt25rEtpNvicGCOid51lWhX3X/B78F1ClnjUZDHChCDgVUQAVUwF+//zTbaEzwJKuqFQJOwVOYB0fSDege8RnMg8OxA47HhMhGho4YM+BHWGTXMApZP1NxAqdKuIS3DhETC5gT0cEonM+LmH7A8BHHF4zhUMyAr3DKswt4ARvCVQ8RL8FyHIoV8DqyAEbidMCIu2AFDqUbEBiLd4EiroOVcDDdgMBJWI4rNSOugpV0MOWAa2EBIq6HVXAw1YDzYQEiboVVdCDFgLNhASIegtWwP7WAM2AVXC4Z8SKsho+pBZwDCxDxIZ7hGo5iN7ZgG/bjOj61QsB5sAARxyArMA7nUw+4GuYQcaSHv/PrlAPuhDnYh8zR9ZQDnoF1+ooXuI87uIvH+JoT8ES7B1yJxZiGETnbbAHuKqCbkbiqgG5mK6Cb8QqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogAqogG0acAwmVHRLAXschDlQQAVUwKYGXIZTDo7qFnakgAqogP4ooAK+waVh5GpSAROggAqogFKOAiqgAiqg/AUjJ7hc1MT1egAAAABJRU5ErkJggg==) no-repeat left center
 }
 
 .mw-number-text.icon-contributors::before {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAtCAYAAAA5reyyAAAEMElEQVR4AWJ4/uLFYMJsgHbtIVhzLQqg8G7btm3bfLZt2/abtG3btm3btt19tXuNU5UbnV9VPfj2PCtODh7DaOzHDdzEIQxFG6SERItoilcPq6EOpqNsrAdMiWb4CQPQEx+jMsSH13Ad6tJRtIf4UBkfoyf642c0Q8pwBSyOEYiDWpzHP8gIcelZ3IV6dBENIS5lxD84D7WIwwgUD3XActjk8jTLDnFQAiegPm1FFoiD7JgKdbAJ5UIVMA0WQ10aCnEwHBrQ/xAHQ6EuLULqUAT8EurRkxAbtXEWGtBu5IPYeBLq0RemA6bDUqhHwyE2/oIa8qHho3wp0pkM2AS3oR4dRCmIFWZADRkEsUIpHIR6dBtNTAZ8DepDEhpDLIphL9Q9X0dMYyRBfXjNZMD3oT61hFjUwHmoITtQAGLREurT+yYDvgn1IQ4NwhBwP0pALBogDurDmyYDPgL14QjKQCzK43gYjsAyOAL14RGTAcvhKNSjWUgLsciDzVBDliG9zceJWT53fFlzAYGJUI/+g9iYCjVkBMTGv1CPJkJMB/wM6sEdtILY6Aw15A+IjVa4A/Xgs1C9ym2AujQVkoznkQgN6CpaQAwd7euQynxA4EMkuTz6noAkIxu2QQNaAXHwhMujMAkfhvpz1gSogwEQF/pAA/oV4sIAqIPxkFAHLIwVUBuLkQ/iQkNchPp0BHkhLuTDYocjuVDoAwLNobCKx7MQZ0buxn9CPHgO8VBYNYOEI2AxTIPaWI3SEJdq47rPz1jZIC6VxmqHm17RUAYsjm+wB+rgDH5FZYgL/0M9egjiQmX8hjNQB3vwDYqZClgRn2I8TkM9uoxp+BY1IDayYAnUpd8hyaiBbzEdl6EencZ4fIoKXgPWQ0eswTmoIRexCz9DYFUWh6AOeiEFBFYfYYv7aK6cxRp0RL3kAjbBSsRBQ+gwykBg1SrAF+5qOAUNoTisRBNrwHeQAA2D7hAbLQL+qOoBDYMEvA0RRm3cg4bQIYxBO4iNnFgOdfAoJBntMAaHoSF0D7WtbwOmJGIHBuFtFHJxhx8HdeEEnoI4KIS3MQg7kAg1rI8w9kMN2YQ/8RByQRwUxE844GPvj0B9iAu58BD+NPwdcp8wrkEDOoG3kR3iIC0exhAcgQZwHQvwOfJDXMiOt3ECGtA1EwH3oDLERgoUxisYhv24AzUoEWexCD+iJtJBklEF+yId8A7aQywyoCK+xCJcRSI0TO5iL7qjDXIjBcTiIdwNGnAetmKjR8fQHdYL93tYiSRolDiJzqgLseiOYz62fyvmCcOUJ3EAGuV6oUi0rVD9BBpDtqJstARsj3hojFmBdNEQcDw0Rn0V6YAVcBIao2YjXSQDtoDGsDOoFMmAD0FjXLMHAYN5KJIBW+FBwADq4x40hrWLZMCKOIhEXIsxd3EdDSF+3QeCfPkMAgchOAAAAABJRU5ErkJggg==) no-repeat left center
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAtCAYAAAA5reyyAAAEMElEQVR4AWJ4/uLFYMJsgHbtIVhzLQqg8G7btm3bfLZt2/abtG3btm3btt19tXuNU5UbnV9VPfj2PCtODh7DaOzHDdzEIQxFG6SERItoilcPq6EOpqNsrAdMiWb4CQPQEx+jMsSH13Ad6tJRtIf4UBkfoyf642c0Q8pwBSyOEYiDWpzHP8gIcelZ3IV6dBENIS5lxD84D7WIwwgUD3XActjk8jTLDnFQAiegPm1FFoiD7JgKdbAJ5UIVMA0WQ10aCnEwHBrQ/xAHQ6EuLULqUAT8EurRkxAbtXEWGtBu5IPYeBLq0RemA6bDUqhHwyE2/oIa8qHho3wp0pkM2AS3oR4dRCmIFWZADRkEsUIpHIR6dBtNTAZ8DepDEhpDLIphL9Q9X0dMYyRBfXjNZMD3oT61hFjUwHmoITtQAGLREurT+yYDvgn1IQ4NwhBwP0pALBogDurDmyYDPgL14QjKQCzK43gYjsAyOAL14RGTAcvhKNSjWUgLsciDzVBDliG9zceJWT53fFlzAYGJUI/+g9iYCjVkBMTGv1CPJkJMB/wM6sEdtILY6Aw15A+IjVa4A/Xgs1C9ym2AujQVkoznkQgN6CpaQAwd7euQynxA4EMkuTz6noAkIxu2QQNaAXHwhMujMAkfhvpz1gSogwEQF/pAA/oV4sIAqIPxkFAHLIwVUBuLkQ/iQkNchPp0BHkhLuTDYocjuVDoAwLNobCKx7MQZ0buxn9CPHgO8VBYNYOEI2AxTIPaWI3SEJdq47rPz1jZIC6VxmqHm17RUAYsjm+wB+rgDH5FZYgL/0M9egjiQmX8hjNQB3vwDYqZClgRn2I8TkM9uoxp+BY1IDayYAnUpd8hyaiBbzEdl6EencZ4fIoKXgPWQ0eswTmoIRexCz9DYFUWh6AOeiEFBFYfYYv7aK6cxRp0RL3kAjbBSsRBQ+gwykBg1SrAF+5qOAUNoTisRBNrwHeQAA2D7hAbLQL+qOoBDYMEvA0RRm3cg4bQIYxBO4iNnFgOdfAoJBntMAaHoSF0D7WtbwOmJGIHBuFtFHJxhx8HdeEEnoI4KIS3MQg7kAg1rI8w9kMN2YQ/8RByQRwUxE844GPvj0B9iAu58BD+NPwdcp8wrkEDOoG3kR3iIC0exhAcgQZwHQvwOfJDXMiOt3ECGtA1EwH3oDLERgoUxisYhv24AzUoEWexCD+iJtJBklEF+yId8A7aQywyoCK+xCJcRSI0TO5iL7qjDXIjBcTiIdwNGnAetmKjR8fQHdYL93tYiSRolDiJzqgLseiOYz62fyvmCcOUJ3EAGuV6oUi0rVD9BBpDtqJstARsj3hojFmBdNEQcDw0Rn0V6YAVcBIao2YjXSQDtoDGsDOoFMmAD0FjXLMHAYN5KJIBW+FBwADq4x40hrWLZMCKOIhEXIsxd3EdDSF+3QeCfPkMAgchOAAAAABJRU5ErkJggg==) no-repeat left center
 }
+
 /**/
 
 /* Multimedia viewer */
@@ -3878,11 +3999,10 @@ fieldset#mw-searchoptions {
 }
 
 .mw-ui-input::placeholder {
-	color:var(--wiki-content-text-mix-color);
+	color: var(--wiki-content-text-mix-color);
 }
 
 /* end possibly deprecated */
-
 
 
 .mw-mmv-dialog {
@@ -3912,10 +4032,10 @@ fieldset#mw-searchoptions {
 }
 
 .mw-mmv-download-pane .mw-mmv-download-area .mw-mmv-download-select-menu::after {
-	display:inline-block;
-	width:8px;
-	height:100%;
-	content:'';
+	display: inline-block;
+	width: 8px;
+	height: 100%;
+	content: '';
 	--mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22%3E %3Cpath fill=%22%23000%22 fill-rule=%22evenodd%22 d=%22m2.023 3 3.49 5.953L9 3z%22 clip-rule=%22evenodd%22/%3E %3C/svg%3E") no-repeat;
 	--mask-size: 12px;
 	--mask-position: center;
@@ -3929,12 +4049,10 @@ fieldset#mw-searchoptions {
 }
 
 .mw-mmv-embed-dimensions {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 76%, transparent);
 }
 
 .oo-ui-optionWidget-selected .mw-mmv-embed-dimensions {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 82%, transparent);
 }
 
@@ -3963,15 +4081,15 @@ fieldset#mw-searchoptions {
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 1), inset 0 0 0 2px var(--wiki-accent-color);
 }
 
-input[type="checkbox"]:active+.mw-ui-button.mw-ui-quiet,
-input[type="checkbox"]:active+.mw-ui-button.mw-ui-quiet.mw-ui-progressive,
-input[type="checkbox"]:active+.mw-ui-button.mw-ui-quiet.mw-ui-destructive,
+input[type="checkbox"]:active + .mw-ui-button.mw-ui-quiet,
+input[type="checkbox"]:active + .mw-ui-button.mw-ui-quiet.mw-ui-progressive,
+input[type="checkbox"]:active + .mw-ui-button.mw-ui-quiet.mw-ui-destructive,
 .mw-ui-button.mw-ui-quiet:active,
 .mw-ui-button.mw-ui-quiet.mw-ui-progressive:active,
 .mw-ui-button.mw-ui-quiet.mw-ui-destructive:active,
-input[type="checkbox"]:focus+.mw-ui-button.mw-ui-quiet,
-input[type="checkbox"]:focus+.mw-ui-button.mw-ui-quiet.mw-ui-progressive,
-input[type="checkbox"]:focus+.mw-ui-button.mw-ui-quiet.mw-ui-destructive,
+input[type="checkbox"]:focus + .mw-ui-button.mw-ui-quiet,
+input[type="checkbox"]:focus + .mw-ui-button.mw-ui-quiet.mw-ui-progressive,
+input[type="checkbox"]:focus + .mw-ui-button.mw-ui-quiet.mw-ui-destructive,
 .mw-ui-button.mw-ui-quiet:focus,
 .mw-ui-button.mw-ui-quiet.mw-ui-progressive:focus,
 .mw-ui-button.mw-ui-quiet.mw-ui-destructive:focus {
@@ -3991,38 +4109,37 @@ input[type="checkbox"]:focus+.mw-ui-button.mw-ui-quiet.mw-ui-destructive,
 
 @-webkit-keyframes unseen-fadeout-to-unread {
 	from {
-
-	background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
+		background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
 	}
 	to {
-	background-color:var(--wiki-content-background-color--secondary);
+		background-color: var(--wiki-content-background-color--secondary);
 	}
 }
+
 @keyframes unseen-fadeout-to-unread {
 	from {
-
-	background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
+		background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
 	}
 	to {
-	background-color:var(--wiki-content-background-color--secondary);
+		background-color: var(--wiki-content-background-color--secondary);
 	}
 }
+
 @-webkit-keyframes unseen-fadeout-to-read {
 	from {
-
-	background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
+		background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
 	}
 	to {
-	background-color:var(--wiki-content-background-color);
+		background-color: var(--wiki-content-background-color);
 	}
 }
+
 @keyframes unseen-fadeout-to-read {
 	from {
-
-	background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
+		background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
 	}
 	to {
-	background-color:var(--wiki-content-background-color);
+		background-color: var(--wiki-content-background-color);
 	}
 }
 
@@ -4035,8 +4152,9 @@ input[type="checkbox"]:focus+.mw-ui-button.mw-ui-quiet.mw-ui-destructive,
 }
 
 .client-js .mw-echo-special-nojs {
-	filter:var(--wiki-icon-general-filter)
+	filter: var(--wiki-icon-general-filter)
 }
+
 /**/
 
 /* codex fixes */
@@ -4100,19 +4218,17 @@ input[type="checkbox"]:focus+.mw-ui-button.mw-ui-quiet.mw-ui-destructive,
 * Theme-based VisualEditor *
 ****************************/
 .ve-activated .vector-menu-tabs .selected {
-
 	box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--wiki-content-border-color) 50%, transparent);
 }
 
 .ve-init-mw-progressBarWidget {
 	background-color: var(--wiki-content-background-color);
 	border-color: var(--wiki-accent-color);
-
 	box-shadow: 0 1px 1px color-mix(in srgb, var(--wiki-content-dynamic-color) 15%, transparent);
 }
 
 .ve-init-mw-progressBarWidget-bar {
-	background-color:var(--wiki-accent-color);
+	background-color: var(--wiki-accent-color);
 }
 
 .ve-init-mw-desktopArticleTarget-toolbarPlaceholder-bar {
@@ -4125,7 +4241,7 @@ input[type="checkbox"]:focus+.mw-ui-button.mw-ui-quiet.mw-ui-destructive,
 }
 
 div.ve-ce-branchNode {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .ve-ce-focusableNode-highlight {
@@ -4139,7 +4255,6 @@ div.ve-ce-branchNode {
 
 .ve-ce-branchNode-blockSlug, .ve-ce-branchNode-newSlug:not(.ve-ce-branchNode-newSlug-open) {
 	outline-color: var(--wiki-accent-color);
-
 	background-color: color-mix(in srgb, var(--wiki-content-dynamic-color--inverted) 75%, transparent);
 }
 
@@ -4192,11 +4307,11 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 .oo-ui-bookletLayout > .oo-ui-menuLayout-menu,
 .ve-ui-mwTwoPaneTransclusionDialogLayout > .oo-ui-menuLayout-menu,
 .ve-ui-specialCharacterPage-character:hover {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .ve-ui-specialCharacterPage-character:hover {
-	box-shadow:inset 0 0 1px 1px var(--wiki-accent-color);
+	box-shadow: inset 0 0 1px 1px var(--wiki-accent-color);
 }
 
 .oo-ui-listToolGroup-tools .oo-ui-tool.oo-ui-widget-disabled .oo-ui-tool-title,
@@ -4206,12 +4321,10 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 
 .oo-ui-barToolGroup-tools.oo-ui-toolGroup-enabled-tools .oo-ui-tool.oo-ui-widget-disabled.oo-ui-flaggedElement-primary > .oo-ui-tool-link .oo-ui-tool-title,
 .oo-ui-barToolGroup-tools.oo-ui-toolGroup-disabled-tools .oo-ui-tool.oo-ui-flaggedElement-primary > .oo-ui-tool-link .oo-ui-tool-title {
-
 	color: color-mix(in srgb, var(--wiki-content-dynamic-color--inverted) 78%, transparent);
 }
 
 .ve-activated .ve-init-mw-desktopArticleTarget-originalContent #catlinks:hover {
-
 	background: color-mix(in srgb, var(--wiki-content-link-color) 10%, transparent);
 }
 
@@ -4243,9 +4356,7 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 }
 
 .ve-ce-linkAnnotation.ve-ce-annotation-active {
-
 	box-shadow: 0 0 0 1px color-mix(in srgb, var(--wiki-content-link-color) 20%, transparent);
-
 	background-color: color-mix(in srgb, var(--wiki-content-link-color) 10%, transparent);
 }
 
@@ -4262,7 +4373,6 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 }
 
 .mw-widget-titleWidget-menu-withImages .mw-widget-titleOptionWidget.oo-ui-iconElement > .oo-ui-iconElement-icon:not(.mw-widget-titleOptionWidget-hasImage) {
-
 	background-color: color-mix(in srgb, var(--wiki-content-text-mix-color-95) 90%, var(--wiki-content-dynamic-color));
 	filter: unset;
 }
@@ -4272,12 +4382,10 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 }
 
 .ve-ui-toolbarDialog {
-
 	background-color: color-mix(in srgb, var(--wiki-content-dynamic-color) 5%, transparent);
 }
 
 .ve-ce-languageAnnotation {
-
 	background-color: color-mix(in srgb, var(--wiki-content-dynamic-color) 20%, transparent);
 	border-color: var(--wiki-content-link-color);
 }
@@ -4292,7 +4400,6 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 
 .oo-ui-processDialog-actions-safe .oo-ui-widget-enabled.oo-ui-iconElement:not(.oo-ui-labelElement) > .oo-ui-buttonElement-button {
 	background-color: transparent;
-
 	border-right-color: color-mix(in srgb, var(--wiki-accent-color) 50%, transparent);
 }
 
@@ -4311,7 +4418,6 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 
 .oo-ui-selectFileWidget.oo-ui-widget-enabled.oo-ui-selectFileWidget-canDrop.oo-ui-selectFileWidget-dropTarget,
 .oo-ui-selectFileWidget.oo-ui-widget-enabled.oo-ui-selectFileWidget-canDrop .oo-ui-selectFileInputWidget-info > .oo-ui-inputWidget-input {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 10%, transparent);
 	color: var(--wiki-accent-color);
 }
@@ -4331,7 +4437,6 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 }
 
 .oo-ui-textInputWidget.oo-ui-widget-disabled .oo-ui-inputWidget-input {
-
 	-webkit-text-fill-color: color-mix(in srgb, var(--wiki-content-text-color) 50%, transparent);
 }
 
@@ -4349,7 +4454,6 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 }
 
 .ve-ui-mwLanguagesPage-languages-table tr:nth-child(odd) td {
-
 	background: color-mix(in srgb, var(--wiki-content-dynamic-color--secondary) 5%, transparent);
 }
 
@@ -4471,13 +4575,11 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 }
 
 .ve-ui-debugBar-dump th {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 80%, transparent);
 	text-shadow: 0 1px 1px var(--wiki-content-dynamic-color--inverted);
 }
 
 .ve-ui-debugBar-dump ol {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 60%, transparent);
 }
 
@@ -4490,17 +4592,14 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 }
 
 .ve-ui-debugBar-dump li .ve-ui-debugBar-dump-element {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 20%, transparent);
 }
 
 .ve-ui-debugBar-dump li .ve-ui-debugBar-dump-char {
-
 	background-color: color-mix(in srgb, var(--wiki-success-color) 20%, transparent);
 }
 
 .ve-ui-debugBar-dump li .ve-ui-debugBar-dump-achar {
-
 	background-color: color-mix(in srgb, var(--wiki-warning-color) 20%, transparent);
 }
 
@@ -4516,6 +4615,7 @@ figure[typeof~='mw:Audio/Frame'] > figcaption {
 .ve-ui-debugBar-transactions > ol > li {
 	border-color: var(--wiki-content-border-color);
 }
+
 /*******************
 * End VisualEditor *
 ********************/
@@ -4539,9 +4639,9 @@ table.mw-abuselog-details th {
 }
 
 body td.mw-abusefilter-history-changed {
-
 	background-color: color-mix(in srgb, var(--wiki-alert-color) 20%, transparent);
 }
+
 /******************
 * End AbuseFilter *
 *******************/
@@ -4550,14 +4650,14 @@ body td.mw-abusefilter-history-changed {
 * Theme-based Special:MultiPageEdit *
 *************************************/
 :root {
-	--jexcel-border-color:var(--wiki-content-border-color); /* this is defined by the extension but does not seem to be used anywhere. We override it just in case *shrug* */
+	--jexcel-border-color: var(--wiki-content-border-color); /* this is defined by the extension but does not seem to be used anywhere. We override it just in case *shrug* */
 }
 
 .jexcel,
-.jexcel_container.fullscreen .jexcel_content{
-	background-color:var(--wiki-content-background-color);
-	border-bottom-color:var(--wiki-content-border-color);
-	border-right-color:var(--wiki-content-border-color);
+.jexcel_container.fullscreen .jexcel_content {
+	background-color: var(--wiki-content-background-color);
+	border-bottom-color: var(--wiki-content-border-color);
+	border-right-color: var(--wiki-content-border-color);
 }
 
 table.jexcel > tbody > tr > td:first-child,
@@ -4565,120 +4665,118 @@ table.jexcel > thead,
 table.jexcel > thead > tr > td,
 table.jexcel > tbody > tr.selected > td:first-child,
 table.jexcel > thead > tr > td.selected {
-	background-color:var(--wiki-content-background-color--secondary);
+	background-color: var(--wiki-content-background-color--secondary);
 }
 
 table.jexcel > tbody > tr.selected > td:first-child,
 table.jexcel > thead > tr > td.selected {
-
 	background-color: color-mix(in srgb, var(--wiki-accent-color) 10%, transparent);
 }
 
-table.jexcel > thead > tr > td{
-	border-bottom-color:var(--wiki-content-border-color);
+table.jexcel > thead > tr > td {
+	border-bottom-color: var(--wiki-content-border-color);
 }
 
 .jexcel > thead > tr > td.arrow-up,
 .jexcel > thead > tr > td.arrow-down {
-	background:none;
+	background: none;
 }
 
 .jexcel > thead > tr > td.arrow-up::after,
 .jexcel > thead > tr > td.arrow-down::after {
-	display:inline-block;
-	position:absolute;
-	right:0;
-	top:0;
-	background-repeat:no-repeat;
-	background-position:center right 5px;
-	width:22px;
-	height:100%;
-	content:'';
-	filter:brightness(50%) var(--wiki-icon-general-filter);
+	display: inline-block;
+	position: absolute;
+	right: 0;
+	top: 0;
+	background-repeat: no-repeat;
+	background-position: center right 5px;
+	width: 22px;
+	height: 100%;
+	content: '';
+	filter: brightness(50%) var(--wiki-icon-general-filter);
 }
 
 .jexcel > thead > tr > td.arrow-up::after {
-	background-image:url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='none' d='M0 0h24v24H0V0z'/%3E%3Cpath d='M7 14l5-5 5 5H7z' fill='gray'/%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='none' d='M0 0h24v24H0V0z'/%3E%3Cpath d='M7 14l5-5 5 5H7z' fill='gray'/%3E%3C/svg%3E");
 }
 
 .jexcel > thead > tr > td.arrow-down::after {
-	background-image:url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='none' d='M0 0h24v24H0V0z'/%3E%3Cpath d='M7 10l5 5 5-5H7z' fill='gray'/%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='none' d='M0 0h24v24H0V0z'/%3E%3Cpath d='M7 10l5 5 5-5H7z' fill='gray'/%3E%3C/svg%3E");
 }
 
 .jexcel > thead > tr:nth-child(2) > td {
-	z-index:1; /* prevents overlapping the headings after scrolling on tall tables */
+	z-index: 1; /* prevents overlapping the headings after scrolling on tall tables */
 }
 
 .jexcel > tbody > tr > td {
-	border-top-color:var(--wiki-content-text-mix-color-95);
-	border-bottom-color:var(--wiki-content-text-mix-color-95);
+	border-top-color: var(--wiki-content-text-mix-color-95);
+	border-bottom-color: var(--wiki-content-text-mix-color-95);
 }
 
 .jexcel > tbody > tr > td.readonly {
-	color:var(--wiki-content-text-mix-color);
+	color: var(--wiki-content-text-mix-color);
 }
 
 .jexcel_content {
-	scrollbar-color:var(--wiki-content-text-mix-color) transparent;
+	scrollbar-color: var(--wiki-content-text-mix-color) transparent;
 	/* we need this important to override inline styling */
-	box-shadow:var(--wiki-content-dynamic-color--secondary--inverted) 2px 2px 5px 0.1px !important;
+	box-shadow: var(--wiki-content-dynamic-color--secondary--inverted) 2px 2px 5px 0.1px !important;
 }
 
 .jexcel .highlight {
-
 	background-color: color-mix(in srgb, var(--wiki-content-dynamic-color) 5%, transparent);
 }
 
 .jexcel .highlight-top {
-	border-top-color:var(--wiki-content-text-mix-color);
-	box-shadow:0px -1px var(--wiki-content-dynamic-color--secondary--inverted);
+	border-top-color: var(--wiki-content-text-mix-color);
+	box-shadow: 0px -1px var(--wiki-content-dynamic-color--secondary--inverted);
 }
 
 .jexcel .highlight-left {
-	border-left-color:var(--wiki-content-text-mix-color);
-	box-shadow:-1px 0px var(--wiki-content-dynamic-color--secondary--inverted);
+	border-left-color: var(--wiki-content-text-mix-color);
+	box-shadow: -1px 0px var(--wiki-content-dynamic-color--secondary--inverted);
 }
 
 .jexcel .highlight-top.highlight-left {
-	box-shadow:-1px -1px var(--wiki-content-dynamic-color--secondary--inverted);
+	box-shadow: -1px -1px var(--wiki-content-dynamic-color--secondary--inverted);
 }
 
 .jexcel .highlight-right {
-	border-right-color:var(--wiki-content-text-mix-color);
+	border-right-color: var(--wiki-content-text-mix-color);
 }
 
 .jexcel .highlight-bottom {
-	border-bottom-color:var(--wiki-content-text-mix-color);
+	border-bottom-color: var(--wiki-content-text-mix-color);
 }
 
 .jexcel .jexcel_column_filter {
-	background:none;
+	background: none;
 }
 
 .jexcel .jexcel_column_filter::after {
-	display:inline-block;
-	position:absolute;
-	right:0;
-	top:0;
-	background-repeat:no-repeat;
-	background-position:top 50% right 5px;
-	background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='gray' width='18px' height='18px'%3E%3Cpath d='M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
-	width:20px;
-	height:100%;
-	content:'';
-	filter:brightness(50%) var(--wiki-icon-general-filter);
+	display: inline-block;
+	position: absolute;
+	right: 0;
+	top: 0;
+	background-repeat: no-repeat;
+	background-position: top 50% right 5px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='gray' width='18px' height='18px'%3E%3Cpath d='M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+	width: 20px;
+	height: 100%;
+	content: '';
+	filter: brightness(50%) var(--wiki-icon-general-filter);
 }
 
 .jexcel_pagination > div > div {
-	background-color:var(--wiki-accent-color);
+	background-color: var(--wiki-accent-color);
 	/* we need this important to override a built-in one */
-	color:var(--wiki-accent-label-color) !important;
+	color: var(--wiki-accent-label-color) !important;
 }
 
 .jexcel_page_selected {
-	background:linear-gradient(to bottom,var(--wiki-accent-color) 0%,var(--wiki-accent-color--hover) 100%);
+	background: linear-gradient(to bottom, var(--wiki-accent-color) 0%, var(--wiki-accent-color--hover) 100%);
 	/* we need this important to override a built-in one */
-	border:1px solid var(--wiki-content-border-color) !important;
+	border: 1px solid var(--wiki-content-border-color) !important;
 }
 
 /****************************
@@ -4690,42 +4788,42 @@ table.jexcel > thead > tr > td{
 ************************/
 #msupload-div,
 #msupload-list .file {
-	background-color:var(--wiki-content-background-color);
-	border-color:var(--wiki-content-border-color);
+	background-color: var(--wiki-content-background-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 #msupload-select {
-	filter:brightness(0) var(--wiki-icon-to-link-filter);
+	filter: brightness(0) var(--wiki-icon-to-link-filter);
 }
 
 #msupload-dropzone {
-	border-color:var(--wiki-content-border-color);
-	color:var(--wiki-content-text-color);
+	border-color: var(--wiki-content-border-color);
+	color: var(--wiki-content-text-color);
 }
 
 .drop-over {
-	background-color:var(--wiki-accent-color);
-	color:var(--wiki-accent-label-color) !important;
+	background-color: var(--wiki-accent-color);
+	color: var(--wiki-accent-label-color) !important;
 }
 
 #msupload-bottom {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 #msupload-bottom #msupload-files {
-	padding-left:0;
+	padding-left: 0;
 	background: none;
 }
 
 #msupload-bottom #msupload-files::before {
-	display:inline-block;
+	display: inline-block;
 	background: url(/extensions/MsUpload/resources/images/msu-upload-icon.png?bdd61) no-repeat 0 0;
-	background-position:left center;
-	height:22px;
-	width:25px;
-	content:'';
+	background-position: left center;
+	height: 22px;
+	width: 25px;
+	content: '';
 	vertical-align: top;
-	filter:var(--wiki-icon-general-filter);
+	filter: var(--wiki-icon-general-filter);
 }
 
 #msupload-list .file .file-size {
@@ -4747,6 +4845,7 @@ table.jexcel > thead > tr > td{
 #msupload-list .file .file-warning {
 	color: var(--wiki-warning-color);
 }
+
 /***************************
 * End theme-based msupload *
 ****************************/
@@ -4755,7 +4854,7 @@ table.jexcel > thead > tr > td{
 * Theme-based commentstreams *
 ******************************/
 .cs-title-edit-field {
-	border-color:var(--wiki-accent-color);
+	border-color: var(--wiki-accent-color);
 }
 
 .cs-title-edit-field::placeholder,
@@ -4763,14 +4862,14 @@ table.jexcel > thead > tr > td{
 	color: var(--wiki-content-text-mix-color);
 }
 
-.cs-edit-box ,
+.cs-edit-box,
 .cs-expanded .cs-comment-header {
 	background-color: var(--wiki-content-background-color--secondary);
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .cs-target-comment .cs-comment-header {
-	border-color:var(--wiki-accent-color);
+	border-color: var(--wiki-accent-color);
 }
 
 .cs-comment-author a {
@@ -4778,22 +4877,21 @@ table.jexcel > thead > tr > td{
 }
 
 .cs-comment-details {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 95%, transparent);
 }
 
 .cs-comment-author-anonymous {
-
-	color:color-mix(in srgb, var(--wiki-content-text-color) 95%, transparent);
+	color: color-mix(in srgb, var(--wiki-content-text-color) 95%, transparent);
 }
 
 .cs-comment {
-	border:1px solid var(--wiki-content-border-color);
+	border: 1px solid var(--wiki-content-border-color);
 }
 
 .cs-comment-body {
-	padding:0 5px;
+	padding: 0 5px;
 }
+
 /*********************************
 * End theme-based commentstreams *
 **********************************/
@@ -4802,18 +4900,17 @@ table.jexcel > thead > tr > td{
 * Theme-based checkuser *
 *************************/
 .mw-datatable.ext-checkuser-investigate-table tr:hover td {
-	background-color:var(--wiki-content-background-color);
+	background-color: var(--wiki-content-background-color);
 }
 
 .mw-datatable.ext-checkuser-investigate-table th {
-	background-color:var(--wiki-content-background-color--secondary);
+	background-color: var(--wiki-content-background-color--secondary);
 }
 
 .ext-checkuser-investigate-table.mw-datatable.ext-checkuser-investigate-table-pinned .ext-checkuser-investigate-table-row-pinned td,
 .ext-checkuser-investigate-table.mw-datatable.ext-checkuser-investigate-table-pinned .ext-checkuser-investigate-table-row-pinned-data-match td,
 .ext-checkuser-investigate-table.mw-datatable:not(.ext-checkuser-investigate-table-pinned) .ext-checkuser-investigate-table-row-hover-data-match td,
-.ext-checkuser-investigate-table.mw-datatable:not(.ext-checkuser-investigate-table-pinned) tr:hover td{
-
+.ext-checkuser-investigate-table.mw-datatable:not(.ext-checkuser-investigate-table-pinned) tr:hover td {
 	background-color: color-mix(in srgb, var(--wiki-warning-color) 10%, transparent);
 }
 
@@ -4823,18 +4920,18 @@ table.jexcel > thead > tr > td{
 .ext-checkuser-investigate-table.mw-datatable.ext-checkuser-investigate-table-pinned .ext-checkuser-investigate-table-row-pinned-data-match td.ext-checkuser-investigate-table-cell-pinned-data-match,
 .ext-checkuser-investigate-table.mw-datatable:not(.ext-checkuser-investigate-table-pinned) tr td.ext-checkuser-investigate-table-cell-hover-data-match,
 .ext-checkuser-investigate-table.mw-datatable:not(.ext-checkuser-investigate-table-pinned) tr td:hover.ext-checkuser-investigate-table-cell-pinnable {
-
 	background-color: color-mix(in srgb, var(--wiki-warning-color) 40%, transparent);
 }
 
 .ext-checkuser-investigate-copy-message.oo-ui-messageWidget.oo-ui-messageWidget-block.oo-ui-flaggedElement-notice {
-	background-color:var(--wiki-content-background-color--secondary);
-	border-color:var(--wiki-content-border-color);
+	background-color: var(--wiki-content-background-color--secondary);
+	border-color: var(--wiki-content-border-color);
 }
 
 .mw-special-Investigate .ext-checkuser-investigate-subtitle-fieldset {
-	background-color:var(--wiki-content-background-color--secondary);
+	background-color: var(--wiki-content-background-color--secondary);
 }
+
 /****************
 * End checkuser *
 *****************/
@@ -4861,6 +4958,7 @@ table.jexcel > thead > tr > td{
 .searchdigest-stats-table thead tr {
 	background: var(--wiki-content-background-color--secondary);
 }
+
 /*******************
 * End SearchDigest *
 ********************/
@@ -4869,68 +4967,66 @@ table.jexcel > thead > tr > td{
 * Extension:RelatedArticles *
 *****************************/
 .client-js .read-more-container {
-	min-height:unset;
+	min-height: unset;
 }
 
 @media (min-width: 1000px) {
 	.client-js .read-more-container {
-		min-height:calc(
-			80px /*card height*/
-			+ 10px /*card margin*/
-			+ 1em /*container padding*/
-			+ 0.3em /*card-list margin*/
-			+ 0.8em /*h2 font-size*/
-			+ 1em /*h2 padding*/
-			+ 0.6em /*h2 margin*/
-			+ 1px /*container border*/
+		min-height: calc(
+				80px/*card height*/
+				+ 10px/*card margin*/
+				+ 1em/*container padding*/
+				+ 0.3em/*card-list margin*/
+				+ 0.8em/*h2 font-size*/
+				+ 1em/*h2 padding*/
+				+ 0.6em/*h2 margin*/
+				+ 1px /*container border*/
 		);
 	}
 }
 
 .ext-related-articles-card-list .ext-related-articles-card {
-	background-color:var(--wiki-content-background-color);
+	background-color: var(--wiki-content-background-color);
 }
 
 .ext-related-articles-card-list .ext-related-articles-card,
 .ext-related-articles-card-list .ext-related-articles-card + .ext-related-articles-card { /* your guess is as good as mine for why they did this */
-
 	border-color: color-mix(in srgb, var(--wiki-content-border-color) 20%, transparent);
 }
 
 .ext-related-articles-card-list .ext-related-articles-card-thumb {
-	background-color:var(--wiki-content-background-color--secondary);
+	background-color: var(--wiki-content-background-color--secondary);
 }
 
 .ra-read-more h2 {
-	color:var(--wiki-body-dynamic-color--secondary);
+	color: var(--wiki-body-dynamic-color--secondary);
 }
 
 .ext-related-articles-card-list h3 a {
-	color:var(--wiki-content-heading-color);
+	color: var(--wiki-content-heading-color);
 }
 
 .ext-related-articles-card-list h3::after {
-	background-image: linear-gradient(to right,transparent,var(--wiki-content-background-color) 50%);
+	background-image: linear-gradient(to right, transparent, var(--wiki-content-background-color) 50%);
 }
 
 .ext-related-articles-card-list .ext-related-articles-card-extract {
-
 	color: color-mix(in srgb, var(--wiki-content-text-color) 50%, transparent);
 }
 
 /* removed background image and use a mask image instead */
 .ext-related-articles-card-list .ext-related-articles-card-thumb-placeholder {
-	position:relative;
-	background-image:none;
+	position: relative;
+	background-image: none;
 }
 
 .ext-related-articles-card-list .ext-related-articles-card-thumb-placeholder::after {
-	position:absolute;
-	width:100%;
-	height:100%;
-	top:0;
-	left:0;
-	content:'';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	content: '';
 	--mask-image: url("/extensions/RelatedArticles/resources/ext.relatedArticles.readMore/article.svg?3c572");
 	--mask-size: 40px;
 	--mask-repeat: no-repeat;
@@ -4943,9 +5039,9 @@ table.jexcel > thead > tr > td{
 	mask-repeat: var(--mask-repeat);
 	-webkit-mask-position: var(--mask-position);
 	mask-position: var(--mask-position);
-
 	background-color: color-mix(in srgb, var(--wiki-content-text-color) 75%, transparent);
 }
+
 /**/
 
 /* this simulates mw-footer having a top border */
@@ -4955,7 +5051,7 @@ table.jexcel > thead > tr > td{
 
 @media screen and (min-width: 720px) {
 	.read-more-container {
-		margin-right:1em;
+		margin-right: 1em;
 	}
 }
 
@@ -4967,22 +5063,21 @@ table.jexcel > thead > tr > td{
 * Extension:Popups *
 ********************/
 .mwe-popups {
-
-	box-shadow: 0 30px 90px -20px rgba(0,0,0,0.3),0 0 1px 1px color-mix(in srgb, var(--wiki-content-border-color) 5%, transparent);
+	box-shadow: 0 30px 90px -20px rgba(0, 0, 0, 0.3), 0 0 1px 1px color-mix(in srgb, var(--wiki-content-border-color) 5%, transparent);
 }
 
 .mwe-popups,
 .mwe-popups .mwe-popups-container {
-	background-color:var(--wiki-content-background-color);
-	color:var(--wiki-content-text-color);
+	background-color: var(--wiki-content-background-color);
+	color: var(--wiki-content-text-color);
 }
 
 .mwe-popups .mwe-popups-extract {
-	color:var(--wiki-content-text-color);
+	color: var(--wiki-content-text-color);
 }
 
 .mwe-popups .mwe-popups-extract[dir="ltr"]::after {
-	background-image: linear-gradient(to right,transparent,var(--wiki-content-background-color) 50%);
+	background-image: linear-gradient(to right, transparent, var(--wiki-content-background-color) 50%);
 }
 
 .mwe-popups.flipped-y::before,
@@ -4992,7 +5087,7 @@ table.jexcel > thead > tr > td{
 .mwe-popups.mwe-popups-no-image-pointer::before,
 .mwe-popups.flipped-x.mwe-popups-is-tall::before,
 .mwe-popups.flipped-x-y.mwe-popups-is-tall::before {
-	border-color:var(--wiki-content-border-color);
+	border-color: var(--wiki-content-border-color);
 }
 
 .mwe-popups.flipped-y::after,
@@ -5001,14 +5096,14 @@ table.jexcel > thead > tr > td{
 .mwe-popups.mwe-popups-image-pointer.flipped-x::after,
 .mwe-popups.mwe-popups-no-image-pointer::after,
 .mwe-popups.flipped-x-y.mwe-popups-is-tall::after {
-	border-color:var(--wiki-content-background-color);
+	border-color: var(--wiki-content-background-color);
 }
 
 .popups-icon {
-	position:relative;
+	position: relative;
 	background-position: center;
 	background-repeat: no-repeat;
-	background-size: calc(max(1.4285714em,20px));
+	background-size: calc(max(1.4285714em, 20px));
 	min-width: 20px;
 	min-height: 20px;
 	width: 1.4285714em;
@@ -5025,26 +5120,26 @@ table.jexcel > thead > tr > td{
 .popups-icon--reference-generic,
 .popups-icon--reference-book,
 .popups-icon--preview-disambiguation {
-	background-image:none;
+	background-image: none;
 }
 
 .popups-icon::after {
-	position:absolute;
-	width:100%;
-	height:100%;
-	top:0;
-	left:0;
-	content:'';
-	-webkit-mask-image:var(--mask-image, none);
-	mask-image:var(--mask-image, none);
-	-webkit-mask-repeat:var(--mask-repeat, no-repeat);
-	mask-repeat:var(--mask-repeat, no-repeat);
-	-webkit-mask-size:var(--mask-size, calc(max(1.4285714em,20px)));
-	mask-size:var(--mask-size, calc(max(1.4285714em,20px)));
-	-webkit-mask-position:var(--mask-position, center);
-	mask-position:var(--mask-position, center);
-	background-color:var(--mask-color, currentColor);
-	background-color:var(--mask-color, currentColor);
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	content: '';
+	-webkit-mask-image: var(--mask-image, none);
+	mask-image: var(--mask-image, none);
+	-webkit-mask-repeat: var(--mask-repeat, no-repeat);
+	mask-repeat: var(--mask-repeat, no-repeat);
+	-webkit-mask-size: var(--mask-size, calc(max(1.4285714em, 20px)));
+	mask-size: var(--mask-size, calc(max(1.4285714em, 20px)));
+	-webkit-mask-position: var(--mask-position, center);
+	mask-position: var(--mask-position, center);
+	background-color: var(--mask-color, currentColor);
+	background-color: var(--mask-color, currentColor);
 }
 
 .popups-icon--preview-generic::after {
@@ -5100,21 +5195,21 @@ table.jexcel > thead > tr > td{
 **********************/
 /* Responsive Special:UserRights */
 #mw-userrights-table-outer input#wpReason {
-	width:100%;
-	max-width:33.5em;
+	width: 100%;
+	max-width: 33.5em;
 }
 
-@media screen and (max-width:720px) {
+@media screen and (max-width: 720px) {
 	:root {
 		--wiki-content-right-margin: 0px;
-		--wiki-content-padding:0.5rem;
+		--wiki-content-padding: 0.5rem;
 		--wiki-navigation-right-margin: 1px;
 		--wiki-navigation-left-margin: 0px;
 		--wiki-navigation-top-padding: 5px;
-		--wiki-navigation-bottom-padding:0px;
-		--wiki-navigation-height:2rem;
-		--wiki-navigation-search-height:2.15rem;
-		--wiki-navigation-search-margin:0.5rem;
+		--wiki-navigation-bottom-padding: 0px;
+		--wiki-navigation-tab-height: 2rem;
+		--wiki-navigation-search-height: 2.15rem;
+		--wiki-navigation-search-margin: 0.5rem;
 		--wiki-logo-height: 80px;
 		--wiki-logo-width: 100%;
 		--wiki-logo-margin: 10px;
@@ -5123,21 +5218,21 @@ table.jexcel > thead > tr > td{
 		--wiki-head-icon-size: calc(var(--wiki-navigation-height) - var(--wiki-head-icon-padding) * 2);
 		--wiki-sidebar-background-opacity: var(--wiki-content-background-opacity);
 		--wiki-menu-margin: 0.2rem;
-		--wiki-menu-top-offset: calc(var(--wiki-head-height) + var( --wikigg-header-height ) + var(--wiki-navigation-bottom-padding) + var(--wiki-navigation-search-margin));
-		--wiki-sidebar-portal-spacing:0px;
+		--wiki-menu-top-offset: calc(var(--wiki-head-height) + var(--wikigg-header-height) + var(--wiki-navigation-bottom-padding) + var(--wiki-navigation-search-margin));
+		--wiki-sidebar-portal-spacing: 0px;
 	}
 
 	#mw-page-base,
 	#mw-head-base {
-		height:var(--wiki-head-height);
+		height: var(--wiki-head-height);
 	}
-	
+
 	#mw-page-base {
-		padding-top: var( --wikigg-header-height );
+		padding-top: var(--wikigg-header-height);
 	}
-	
+
 	#mw-head-base {
-		margin-top:calc(var(--wiki-head-height) * -1);
+		margin-top: calc(var(--wiki-head-height) * -1);
 	}
 
 	#p-logo,
@@ -5145,7 +5240,7 @@ table.jexcel > thead > tr > td{
 		height: var(--wiki-logo-height);
 		width: var(--wiki-logo-width);
 	}
-	
+
 	#p-logo {
 		position:absolute;
 		background:none;
@@ -5155,21 +5250,21 @@ table.jexcel > thead > tr > td{
 		transform:none;
 		top:calc(var(--wikigg-header-height));
 	}
-	
+
 	.mw-wiki-logo {
 		background-size:contain;
 	}
-	
+
 	#mw-head {
-		left:0;
-		width:100%;
-		top:calc(var(--wiki-head-height) + var( --wikigg-header-height ) - var(--wiki-navigation-height));
+		left: 0;
+		width: 100%;
+		top: calc(var(--wiki-head-height) + var(--wikigg-header-height) - var(--wiki-navigation-height));
 	}
-	
+
 	#left-navigation,
 	#right-navigation {
 		margin-top: 0;
-		height:var(--wiki-navigation-height);
+		height: var(--wiki-navigation-height);
 	}
 
 	#right-navigation {
@@ -5183,16 +5278,16 @@ table.jexcel > thead > tr > td{
 	div#right-navigation div#p-search {
 		margin-right: 0;
 	}
-	
+
 	.vector-menu-tabs-legacy,
 	.vector-menu-dropdown {
 		height:var(--wiki-navigation-height);
 	}
-	
+
 	.vector-menu-tabs-legacy li a {
 		height:var(--wiki-navigation-height);
 	}
-	
+
 	#p-cactions {
 		padding-bottom: 0px;
 	}
@@ -5200,24 +5295,24 @@ table.jexcel > thead > tr > td{
 	#p-search {
 		position: absolute;
 		left: 50%;
-		transform:translateX(-50%);
+		transform: translateX(-50%);
 		top: calc(var(--wiki-navigation-height) + var(--wiki-navigation-bottom-padding));
-		margin-left:0px;
+		margin-left: 0px;
 		z-index: 4 /** above #mw-panel **/;
 	}
 
 	#simpleSearch {
 		width: calc(100vw - var(--wiki-navigation-right-margin) - var(--wiki-navigation-left-margin));
 	}
-	
+
 	.vector-search-box-input {
-		height:var(--wiki-navigation-search-height);
+		height: var(--wiki-navigation-search-height);
 	}
-	
+
 	.vector-search-box form {
-		margin:var(--wiki-navigation-search-margin) 0px;
+		margin: var(--wiki-navigation-search-margin) 0px;
 	}
-	
+
 	.mw-body,
 	.mw-footer {
 		border-left-width: 0;
@@ -5226,22 +5321,22 @@ table.jexcel > thead > tr > td{
 
 	.mw-body {
 		margin-top: 0;
-		padding-top:calc(var(--wiki-content-padding) + var(--wiki-navigation-search-height) + var(--wiki-navigation-bottom-padding) + (var(--wiki-navigation-search-margin) * 2));
+		padding-top: calc(var(--wiki-content-padding) + var(--wiki-navigation-search-height) + var(--wiki-navigation-bottom-padding) + (var(--wiki-navigation-search-margin) * 2));
 	}
-	
+
 	#mw-data-after-content {
-		margin-left:0;
+		margin-left: 0;
 	}
 
 	#mw-panel {
 		position: unset;
-		width:100%;
+		width: 100%;
 		margin: 0px auto;
 		padding: 0;
 		top: 0;
-		background-position:bottom right, top center;
-		background-size:100% 0.5em, 100% 100%;
-		float:unset;
+		background-position: bottom right, top center;
+		background-size: 100% 0.5em, 100% 100%;
+		float: unset;
 	}
 
 	.vector-menu-dropdown .vector-menu-content {
@@ -5250,27 +5345,27 @@ table.jexcel > thead > tr > td{
 	}
 
 	#mw-panel .vector-menu-portal {
-		box-sizing:border-box;
-		border-left-width:0;
-		border-right-width:0;
+		box-sizing: border-box;
+		border-left-width: 0;
+		border-right-width: 0;
 		background-color: var(--wiki-sidebar-background-color);
 	}
-	
+
 	table.wikitable,
 	table.responsive-table {
 		display: block;
 		overflow-x: auto;
 		border: 0;
 	}
-	
+
 	.mw-installed-software {
 		word-break: unset;
 	}
-	
+
 	.gallerybox,
 	.gallerybox > div,
 	.gallerybox .thumb {
-		max-width:100%;
+		max-width: 100%;
 	}
 
 	/* disable float on RecentChanges legend */
@@ -5364,20 +5459,20 @@ table.jexcel > thead > tr > td{
 	body.has-vector-mobile-menu #mw-panel #p-navigation-label {
 		display: block;
 	}
-	
+
 	body.has-vector-mobile-menu #p-logo {
 		/* Logo's a part of the sidebar panel, which uses relative positioning for the expandable button. Offset the logo appropriately. */
-		top: calc( -1 * var( --wiki-menu-top-offset ) + var( --wikigg-header-height ) );
+		top: calc(-1 * var(--wiki-menu-top-offset) + var(--wikigg-header-height));
 	}
 
 	.mobile-nav-toggle {
 		--icon: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M1 3v2h18V3zm0 8h18V9H1zm0 6h18v-2H1z'/%3E%3C/svg%3E%0A");
 	}
-	
+
 	body.has-vector-mobile-menu #p-tb .mw-list-item > a {
 		display: inline-flex;
 	}
-	
+
 	body.has-vector-mobile-menu #p-tb .vector-menu-content-list {
 		flex-direction: row;
 	}
@@ -5403,7 +5498,7 @@ table.jexcel > thead > tr > td{
 	#mw-head .vector-menu-tabs .mw-list-item a,
 	#mw-head .vector-menu-dropdown .vector-menu-heading,
 	#mw-panel .mobile-nav-toggle {
-		line-height:var(--wiki-head-icon-size);
+		line-height: var(--wiki-head-icon-size);
 		width: var(--wiki-head-icon-size); /* same as line height */
 		height: var(--wiki-head-icon-size);
 		box-sizing: content-box;
@@ -5437,7 +5532,7 @@ table.jexcel > thead > tr > td{
 	#mw-panel .mobile-nav-toggle.nav--expanded::before {
 		background-color: var(--wiki-navigation-text-color--hover, var(--wiki-content-link-color--hover)); /* fallback for backwards compatibility */
 	}
-	
+
 	#mw-head .vector-menu-tabs .mw-list-item.selected a::before {
 		background-color: var(--wiki-navigation-selected-text-color);
 	}
@@ -5455,7 +5550,7 @@ table.jexcel > thead > tr > td{
 	#ca-edit {
 		--icon: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='m16.77 8 1.94-2a1 1 0 0 0 0-1.41l-3.34-3.3a1 1 0 0 0-1.41 0L12 3.23zM1 14.25V19h4.75l9.96-9.96-4.75-4.75z'/%3E%3C/svg%3E%0A");
 	}
-	
+
 	#ca-ve-edit + #ca-edit {
 		--icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='20' height='20' viewBox='0 0 20 20' aria-hidden='true'%3E%3C!----%3E%3Cg%3E%3Cpath d='M1 3v14h3v-2H3V5h1V3zm4 0v14h4v-2H7V5h2V3zm11 0v2h1v10h-1v2h3V3zm-5 0v2h2v10h-2v2h4V3z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
 	}
@@ -5496,33 +5591,33 @@ table.jexcel > thead > tr > td{
 	#p-cactions {
 		--icon: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='3' cy='10' r='2'/%3E%3Ccircle cx='17' cy='10' r='2'/%3E%3C/svg%3E%0A");
 	}
-	
+
 	#ca-watch {
 		--icon: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M20 7h-7L10 .5 7 7H0l5.46 5.47-1.64 7 6.18-3.7 6.18 3.73-1.63-7zm-10 6.9-3.76 2.27 1-4.28L3.5 8.5h4.61L10 4.6l1.9 3.9h4.6l-3.73 3.4 1 4.28z'/%3E%3C/svg%3E%0A");
 	}
-	
+
 	#ca-unwatch {
 		--icon: url("data:image/svg+xml,%3C%3Fxml version='1.0'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' id='Outlined'%3E%3Cg style='fill:%23000000;fill-opacity:1' id='Fill'%3E%3Cpath style='fill:%23000000;fill-opacity:1' id='path1380' d='M 28.61,11.67 H 20 L 17.34,3.47 C 16.920093,2.1973942 15.119907,2.1973942 14.7,3.47 L 12,11.67 H 3.39 c -1.3409796,0.0031 -1.900508,1.71581 -0.82,2.51 l 7,5.07 -2.68,8.21 C 6.5980433,28.35747 7.2662365,29.278767 8.21,29.28 8.4953889,29.267666 8.7705436,29.170143 9,29 l 7,-5.07 7,5.07 c 0.236205,0.170386 0.518805,0.264586 0.81,0.27 0.943763,-0.0012 1.611957,-0.92253 1.32,-1.82 l -2.66,-8.21 7,-5.07 c 1.075277,-0.810084 0.486081,-2.522863 -0.86,-2.5 z' /%3E%3C/g%3E%3C/svg%3E");
 	}
-	
+
 	.vector-menu-tabs #ca-watch.icon a:hover::before,
 	.vector-menu-tabs #ca-unwatch.icon a:hover::before {
-		background-image:none;
+		background-image: none;
 	}
 
 	/* RecentChanges - prevent overflow on long summaries */
 	.client-js .mw-changeslist ul,
 	.client-js .mw-changeslist table.mw-enhanced-rc {
-		margin-left:0;
+		margin-left: 0;
 	}
 
 	.mw-changeslist-line-inner-comment,
 	.mw-changeslist-line .comment {
-		font-size:0.9em;
+		font-size: 0.9em;
 	}
 
 	.mw-userlink {
-		overflow-wrap:anywhere;
+		overflow-wrap: anywhere;
 	}
 }
 
@@ -5535,7 +5630,14 @@ table.jexcel > thead > tr > td{
 * End mobile *
 **************/
 
-/* All local skin customizations should go below this line */
+
+/******************************************************/
+/*                                                    */
+/* [END] OF WIKI.GG DEFAULT LOADOUT                   */
+/* ALL LOCAL SKIN CUSTOMIZATIONS SHOULD GO BELOW HERE */
+/* DO NOT EDIT OR DELETE THIS COMMENT BLOCK           */
+/*                                                    */
+/******************************************************/
 
 #p-logo,
 main {
