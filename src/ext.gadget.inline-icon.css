@@ -1,0 +1,10 @@
+/* override [[MediaWiki:Gadget-inline-icon-hide.css]] */
+
+body .inline-icon {
+	display: initial;
+	margin-right: .25em;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	image-rendering: pixelated;
+}

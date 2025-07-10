@@ -1,14 +1,33 @@
-#tooltip-wrapper {
-	position    : fixed;
-	z-index     : 1;
-	margin      : 20px 0 0 10px;
-	border      : 24px solid;
-	border-image: url( /images/2/2b/CSS_Border_Tooltip.png ) 24 fill round stretch;
+:root {
+	--tb-tooltip-margin-left : 10px;
+	--tb-tooltip-margin-top  : 20px;
+	--tb-tooltip-margin-right: .5rem;
+	--tb-tooltip-min-width   : 20em;
 }
 
-.tooltip-content {
-	position: relative;
-	margin  : -12px;
+@media screen {
+
+#tooltip-wrapper {
+	position  : fixed;
+	z-index   : 1;
+	background: var( --wiki-content-background-color--secondary );
+}
+
+@media ( min-width: 720px ) {
+	#tooltip-wrapper {
+		/* TODO: remove !important once cache updated */
+		margin-right: var( --tb-tooltip-margin-right );
+		left        : calc( min( var( --tb-cursor-left ) + var( --tb-tooltip-margin-left ), 100vw - var( --tb-tooltip-min-width ) - var( --tb-tooltip-margin-right ) ) ) !important;
+		top         : calc( var( --tb-cursor-top ) + var( --tb-tooltip-margin-top ) ) !important;
+	}
+}
+
+@media ( max-width: 719px ) {
+	#tooltip-wrapper {
+		margin: var( --wiki-content-padding );
+		left  : 0;
+		bottom: 0;
+	}
 }
 
 #tooltip-wrapper:not( .tooltip-wrapper-active ),
@@ -16,10 +35,13 @@
 	display: none;
 }
 
-.tooltip-content *,
-.tooltip-content a,
-.tooltip-content a:visited {
-	color      : #473a3c;
+.tooltip-content {
+	--wiki-content-link-color: var( --wiki-content-text-color );
+	position: relative;
+	padding : .2em .5em;
+}
+
+.tooltip-content * {
 	margin     : auto;
 	white-space: normal;
 	line-height: normal;
@@ -29,4 +51,6 @@
 /* Temporary fix for older versions */
 .tooltip-block {
 	display: none;
+}
+
 }

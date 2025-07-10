@@ -1,11 +1,14 @@
-@media screen and ( min-width: 721px ) {
+@media screen and ( min-width: 720px ) {
 
 :root {
 	--icon-category: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-category-2' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M14 4h6v6h-6z'%3E%3C/path%3E%3Cpath d='M4 14h6v6h-6z'%3E%3C/path%3E%3Cpath d='M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0'%3E%3C/path%3E%3Cpath d='M7 7m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0'%3E%3C/path%3E%3C/svg%3E" );
 	--icon-chevron-down: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-chevron-down' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M6 9l6 6l6 -6'%3E%3C/path%3E%3C/svg%3E" );
 	--icon-edit: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-edit' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1'%3E%3C/path%3E%3Cpath d='M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z'%3E%3C/path%3E%3Cpath d='M16 5l3 3'%3E%3C/path%3E%3C/svg%3E" );
 	--icon-eye: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-eye' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0'%3E%3C/path%3E%3Cpath d='M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7'%3E%3C/path%3E%3C/svg%3E" );
+	--icon-history: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' aria-hidden='true'%3E%3Cpath d='M9 6v5h.06l2.48 2.47 1.41-1.41L11 10.11V6z'%3E%3C/path%3E%3Cpath d='M10 1a9 9 0 00-7.85 13.35L.5 16H6v-5.5l-2.38 2.38A7 7 0 1110 17v2a9 9 0 000-18'%3E%3C/path%3E%3C/svg%3E" );
+	--icon-language: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' aria-hidden='true'%3E%3Cpath d='M20 18h-1.44a.6.6 0 01-.4-.12.8.8 0 01-.23-.31L17 15h-5l-1 2.54a.8.8 0 01-.22.3.6.6 0 01-.4.14H9l4.55-11.47h1.89zm-3.53-4.31L14.89 9.5a12 12 0 01-.39-1.24q-.09.37-.19.69l-.19.56-1.58 4.19zm-6.3-1.58a13.4 13.4 0 01-2.91-1.41 11.46 11.46 0 002.81-5.37H12V4H7.31a4 4 0 00-.2-.56C6.87 2.79 6.6 2 6.6 2l-1.47.5s.4.89.6 1.5H0v1.33h2.15A11.23 11.23 0 005 10.7a17.2 17.2 0 01-5 2.1q.56.82.87 1.38a23.3 23.3 0 005.22-2.51 15.6 15.6 0 003.56 1.77zM3.63 5.33h4.91a8.1 8.1 0 01-2.45 4.45 9.1 9.1 0 01-2.46-4.45'%3E%3C/path%3E%3C/svg%3E" );
 	--icon-more: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-dots-vertical' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0'%3E%3C/path%3E%3Cpath d='M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0'%3E%3C/path%3E%3Cpath d='M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0'%3E%3C/path%3E%3C/svg%3E" );
+	--icon-reload: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ctitle%3E reload %3C/title%3E%3Cpath d='M15.65 4.35A8 8 0 1 0 17.4 13h-2.22a6 6 0 1 1-1-7.22L11 9h7V2z'/%3E%3C/svg%3E" );
 	--icon-talk: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-messages' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10'%3E%3C/path%3E%3Cpath d='M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2'%3E%3C/path%3E%3C/svg%3E" );
 }
 
@@ -13,13 +16,9 @@
 /* Base placeholders *
 /*********************/
 
-#mw-page-base {
-	height: var( --wikigg-header-height );
-}
-
+#mw-page-base,
 #mw-head-base {
-	margin-top: calc( 0px - var( --wikigg-header-height ) );
-	height: var( --wikigg-header-height );
+	display: none;
 }
 
 /**************
@@ -31,73 +30,52 @@
 #mw-head,
 #footer {
 	box-sizing: border-box;
-	max-width: 95%;
 	margin: 0 auto;
-	width: 100%
+	width: 100%;
 }
 
 #mw-navigation {
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	margin-top: 10px;
 }
 
 #content {
-	margin-top: -87px;
+	margin-top: calc( 0px
+		- 45px /* #content: 37px border-width + 8px padding */
+		- 1.8 * 1.375 * 1em /* #firstHeading: 1.8em font-size * 1.375em line-height */
+	);
 }
 
-#mw-head {
-	display: flex;
-	justify-content: flex-end;
+body #mw-head {
 	order: 2;
 	position: static;
-	width: 90%;
 	margin-top: 37px;
+	margin-left: auto;
 	margin-right: 49px;
-	max-width: 6em;
-	align-self: flex-end;
-	z-index: 2;
+	z-index: 100;
 }
 
 #firstHeading {
-	position: relative;
 	padding-right: 6em;
-	z-index: 1;
-}
-
-#mw-panel,
-#left-navigation,
-#right-navigation,
-.vector-menu-tabs-legacy,
-.vector-menu-tabs-legacy ul,
-.vector-menu-tabs-legacy li,
-.vector-menu-tabs-legacy li a,
-.vector-search-box {
-	float: none;
 }
 
 .content-wrapper {
 	position: relative;
 }
 
-.vector-menu-tabs-legacy ul {
-	display: flex;
-}
-
-#left-navigation,
-#right-navigation {
-	margin-left: 0;
-	margin-right: 0;
+body #left-navigation,
+body #right-navigation {
 	margin-bottom: 0;
-	margin-top: 0;
 }
 
 #left-navigation {
 	order: 2;
+	border-left: 1px solid var( --wiki-content-border-color );
 }
 
 #right-navigation {
+	order: 1;
 	display: flex;
 }
 
@@ -105,16 +83,7 @@
 	display: none;
 }
 
-.mw-list-item[id^="ca-nstab-"],
-#ca-view,
-#p-NAVIGATION,
-#p-views > .body > .menu > #ca-history,
-#p-views > .body > .menu > #ca-watch,
-#p-views > .body > .menu > #ca-unwatch {
-	display: none;
-}
-
-#mw-panel {
+body #mw-panel {
 	display: flex;
 	align-items: center;
 	flex-flow: row wrap;
@@ -124,19 +93,15 @@
 	margin-right: calc( clamp( 5em, 20vw, 20em ) + 76px - 2em );
 	margin-bottom: 15px;
 	margin-left: 250px;
+	padding-top: 0;
+	z-index: 101;
 }
 
-#p-logo {
-	position: absolute;
-	left: 0;
-	height: 65px;
-	width: 250px;
-	margin-bottom: 0;
-}
-
-#p-logo a {
-	height: 65px;
-	width: 250px;
+body #p-logo {
+	left: auto;
+	right: 100%;
+	height: var( --wiki-logo-height );
+	width: var( --wiki-logo-width );
 }
 
 .portal:has( .vector-menu-content-list:empty ) {
@@ -199,7 +164,7 @@
 	box-shadow: 0px 0px 15px 0px rgba( 10, 10, 10, 0.7 );
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	z-index: 101;
+	z-index: 1;
 }
 
 #mw-panel .portal .body::before {
@@ -226,7 +191,6 @@
 	font-size: 14px;
 	text-decoration: none;
 	padding: 0.625em;
-	z-index: 100;
 }
 
 #mw-panel .portal .body li a:hover {
@@ -264,145 +228,294 @@
 /* Header buttons *
 /******************/
 
-.mw-list-item[id^="ca-nstab-"],
-#ca-view,
-#p-NAVIGATION,
-#p-views > .body > .menu > #ca-history,
-#p-views > .body > .menu > #ca-watch,
-#p-views > .body > .menu > #ca-unwatch {
+#ca-view {
+	--icon: var( --icon-eye );
+}
+
+#ca-ve-edit {
+	--icon: var( --icon-edit );
+}
+
+#ca-edit {
+	--icon: var( --icon-edit );
+}
+
+#ca-addsection {
+	--icon: var( --icon-edit );
+}
+
+#ca-viewsource {
+	--icon: var( --icon-eye );
+}
+
+#ca-history {
+	--icon: var( --icon-history );
+}
+
+#ca-recreatedata {
+	--icon: var( --icon-reload );
+}
+
+#ca-watch {
+	--icon: var( --icon-star-empty );
+}
+
+#ca-unwatch {
+	--icon: var( --icon-star-filled );
+}
+
+#ca-talk {
+	--icon: var( --icon-talk );
+}
+
+#p-cactions {
+	--icon: var( --icon-more );
+}
+
+#p-lang {
+	--icon: var( --icon-language );
+}
+
+body .vector-menu-tabs .mw-list-item.selected::before {
 	display: none;
 }
 
-.vector-menu-tabs-legacy #ca-edit.selected,
-.vector-menu-tabs-legacy #ca-ve-edit.selected,
-.vector-menu-tabs-legacy #ca-addsection.selected,
-.vector-menu-tabs-legacy #ca-viewsource.selected,
-.vector-menu-tabs-legacy #ca-view.selected{
+.mw-list-item[id^="ca-nstab-"],
+#p-NAVIGATION {
+	display: none;
+}
+
+.vector-menu-tabs-legacy #ca-view.selected {
 	/* Sometimes display: block'd inline. */
 	display: none !important;
 }
 
-#mw-head .vector-menu-tabs-legacy li,
-#mw-head .vector-menu-tabs,
-#mw-head .vector-menu-tabs a,
-#mw-head .vector-menu.vector-menu-dropdown .vector-menu-heading {
-	background-image: none
+#mw-head .vector-menu-tabs .mw-list-item,
+#mw-head .vector-menu-dropdown,
+#mw-head .vector-menu-portal {
+	position: relative;
+	margin: 0;
+	border: none;
+	padding: 0;
 }
 
-#ca-edit,
-#ca-ve-edit,
-#ca-addsection,
-#ca-viewsource,
-#p-cactions-label {
-	align-items: center;
-	border-right: 1px solid var( --wiki-content-border-color );
-	display: flex;
-}
-
-#ca-edit a,
-#ca-ve-edit a,
-#ca-addsection a,
-#ca-viewsource a,
-#ca-talk a,
-#p-cactions-label {
-	align-items: center;
+/* Medium-sized screen: Hide all labels ... */
+#mw-head .vector-menu-tabs .mw-list-item a,
+#mw-head .vector-menu-tabs #ca-watch.icon a,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a,
+body #mw-head .vector-menu-dropdown .vector-menu-heading,
+body #mw-head .vector-menu-portal .vector-menu-heading {
+	display: block;
+	box-sizing: content-box;
+	width: 2em;
+	height: 2em;
+	padding: .375em;
 	border-radius: 2px;
-	color: var( --wiki-content-link-color );
-	display: flex;
-	font-size: 0.75em;
+	margin: 0;
+	background: none;
+	align-items: center;
+	justify-content: center;
+	font-size: .8em;
 	font-weight: 700;
-	padding-bottom: 10px;
 	text-transform: uppercase;
+	line-height: 1.6em;
+	cursor: pointer;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
 }
 
-#p-cactions-label {
-	box-sizing: border-box;
-	height: 3.07692308em;
+#mw-head .vector-menu-tabs .mw-list-item a,
+#mw-head .vector-menu-tabs .mw-list-item a:hover,
+#mw-head .vector-menu-tabs #ca-watch.icon a,
+#mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+body #mw-head .vector-menu-dropdown .vector-menu-heading,
+body #mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+body #mw-head .vector-menu-portal .vector-menu-heading,
+body #mw-head .vector-menu-portal:hover .vector-menu-heading {
+	color: transparent;
 }
 
-#ca-edit a:hover,
-#ca-ve-edit a:hover,
-#ca-addsection a:hover,
-#ca-viewsource a:hover,
-#ca-talk a:hover,
-#p-cactions:hover #p-cactions-label {
+#mw-head .vector-menu-tabs .mw-list-item a:hover,
+#mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+body #mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+body #mw-head .vector-menu-portal:hover .vector-menu-heading {
 	background: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
+}
+
+#mw-head .vector-menu-tabs .mw-list-item a:hover,
+#mw-head .vector-menu-tabs .mw-list-item a:focus,
+#mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+#mw-head .vector-menu-tabs #ca-watch.icon a:focus,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a:focus,
+body #mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+body #mw-head .vector-menu-dropdown:focus .vector-menu-heading,
+body #mw-head .vector-menu-portal:hover .vector-menu-heading,
+body #mw-head .vector-menu-portal:focus .vector-menu-heading {
 	text-decoration: none;
 }
 
-#ca-talk a::before,
-#ca-edit a::before,
-#ca-ve-edit a::before,
-#ca-addsection a::before,
-#ca-viewsource a::before,
-#p-cactions-label::before {
-	background-color: var( --wiki-content-link-color );
+/* ... but show the ones below */
+#mw-head #ca-view a,
+#mw-head #ca-ve-edit a,
+#mw-head #ca-edit a,
+#mw-head #ca-addsection a,
+#mw-head #ca-viewsource a {
+	display: flex;
+	width: auto;
+	padding-right: .75em;
+	gap: .375em;
+	color: var( --wiki-content-link-color );
+}
+
+@media ( min-width: 1400px ) {
+	/* Large-sized screen: Show all labels ... */
+	#mw-head .vector-menu-tabs .mw-list-item a,
+	#mw-head .vector-menu-tabs #ca-watch.icon a,
+	#mw-head .vector-menu-tabs #ca-unwatch.icon a,
+	body #mw-head .vector-menu-dropdown .vector-menu-heading,
+	body #mw-head .vector-menu-portal .vector-menu-heading {
+		display: flex;
+		width: auto;
+		padding-right: .75em;
+		gap: .375em;
+	}
+
+	#mw-head .vector-menu-tabs .mw-list-item a,
+	#mw-head .vector-menu-tabs .mw-list-item a:hover {
+		color: var( --wiki-content-link-color );
+	}
+
+	#mw-head .vector-menu-tabs #ca-watch.icon a,
+	#mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+	#mw-head .vector-menu-tabs #ca-unwatch.icon a,
+	#mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+	body #mw-head .vector-menu-dropdown .vector-menu-heading,
+	body #mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+	body #mw-head .vector-menu-portal .vector-menu-heading,
+	body #mw-head .vector-menu-portal:hover .vector-menu-heading {
+		color: var( --wiki-accent-color );
+	}
+
+	/* ... but hide the ones below */
+	#mw-head #p-cactions .vector-menu-heading,
+	#mw-head #p-cactions:hover .vector-menu-heading {
+		display: block;
+		width: 2em;
+		padding-right: .375em;
+		color: transparent;
+	}
+}
+
+#mw-head .vector-menu-tabs .mw-list-item a::before,
+#mw-head .vector-menu-tabs #ca-watch.icon a::before,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a::before,
+#mw-head .vector-menu-dropdown .vector-menu-heading::before,
+#mw-head .vector-menu-portal .vector-menu-heading::before {
 	content: "";
 	display: inline-block;
-	height: 24px;
-	-webkit-mask-size: auto 100%;
-	mask-size: auto 100%;
-	-webkit-mask-position: center center;
-    mask-position: center center;
-	width: 24px;
+	position: initial;
+	width: 1.6em;
+	height: 1.6em;
+	margin: 0;
+	-webkit-mask: var( --icon ) center center / auto 100%;
+	mask: var( --icon ) center center / auto 100%;
+	font-size: 1.25em;
 }
 
-#ca-edit a::before,
-#ca-ve-edit a::before,
-#ca-addsection a::before,
-#ca-viewsource a::before {
-	margin-right: 5px;
+#mw-head .vector-menu-tabs .mw-list-item a::before {
+	background-color: var( --wiki-content-link-color );
 }
 
-#ca-talk a::before {
-	-webkit-mask-image: var( --icon-talk );
-	mask-image: var( --icon-talk );
-}
-
-#ca-ve-edit a::before {
-	-webkit-mask-image: var( --icon-edit );
-	mask-image: var( --icon-edit );
-}
-
-#ca-edit a::before {
-	-webkit-mask-image: var( --icon-edit );
-	mask-image: var( --icon-edit );
-}
-
-#ca-addsection a::before {
-	-webkit-mask-image: var( --icon-edit );
-	mask-image: var( --icon-edit );
-}
-
-#ca-viewsource a::before {
-	-webkit-mask-image: var( --icon-eye );
-	mask-image: var( --icon-eye );
-}
-
-#p-cactions-label::before {
+#mw-head .vector-menu-tabs #ca-watch.icon a::before,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a::before,
+#mw-head .vector-menu-dropdown .vector-menu-heading::before,
+#mw-head .vector-menu-portal .vector-menu-heading::before {
 	background-color: var( --wiki-accent-color );
-	-webkit-mask-image: var( --icon-more );
-	mask-image: var( --icon-more );
-	width: 18px;
 }
 
-#p-cactions-label::after {
+#mw-head .vector-menu-dropdown .vector-menu-heading::after,
+#mw-head .vector-menu-portal .vector-menu-heading::after {
 	display: none;
 }
 
-#ca-talk a span,
-#p-cactions-label span {
-	visibility: hidden;
-	width: 0;
+#mw-head .vector-menu-tabs #ca-watch.icon a span,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a span {
+	display: initial;
 }
 
 @supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
-	#ca-edit a:hover,
-	#ca-ve-edit a:hover,
-	#ca-addsection a:hover,
-	#ca-viewsource a:hover,
-	#ca-talk a:hover,
-	#p-cactions:hover #p-cactions-label {
+	#mw-head .vector-menu-tabs .mw-list-item a:hover,
+	#mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+	#mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+	#mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+	#mw-head .vector-menu-portal:hover .vector-menu-heading {
+		background: var( --wiki-accent-color );
+	}
+}
+
+/********************
+/* Header dropdowns *
+/********************/
+
+#mw-head .vector-menu-dropdown .vector-menu-content,
+#mw-head .vector-menu-portal .vector-menu-content {
+	position: absolute;
+	left: initial;
+	right: -1px;
+	border-style: none;
+	padding: .4em;
+	background-color: var( --wiki-content-background-color--secondary );
+	cursor: default;
+	opacity: 0;
+	height: 0;
+	visibility: hidden;
+}
+
+
+#mw-head .vector-menu-dropdown:hover .vector-menu-content,
+#mw-head .vector-menu-portal:hover .vector-menu-content {
+	opacity: 1;
+	visibility: visible;
+	height: auto;
+}
+
+#mw-head .vector-menu-dropdown .vector-menu-content-list,
+#mw-head .vector-menu-portal .vector-menu-content-list {
+	background-color: transparent;
+	border-width: 0;
+}
+
+#mw-head .vector-menu-dropdown .mw-list-item,
+#mw-head .vector-menu-portal .mw-list-item {
+	font-size: 1em;
+}
+
+#mw-head .vector-menu-dropdown .mw-list-item a,
+#mw-head .vector-menu-portal .mw-list-item a {
+	padding: var( --wiki-navigation-dropdown-item-padding );
+	color: var( --wiki-content-text-color );
+	font-size: 0.875em;
+	text-decoration: none;
+}
+
+#mw-head .vector-menu-dropdown .mw-list-item:hover,
+#mw-head .vector-menu-portal .mw-list-item:hover {
+	background: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
+}
+
+#mw-head .vector-menu-dropdown .mw-list-item a:hover,
+#mw-head .vector-menu-portal .mw-list-item a:hover {
+	color: var( --wiki-content-link-color );
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	#mw-head .vector-menu-dropdown .mw-list-item:hover,
+	#mw-head .vector-menu-portal .mw-list-item:hover {
 		background: var( --wiki-accent-color );
 	}
 }
@@ -411,62 +524,37 @@
 /* Search *
 /**********/
 
-#p-search {
+body #p-search {
 	position: absolute;
 	right: 0;
 	top: 0;
 	height: 65px;
+	padding-bottom: 0;
 	display: flex;
 	align-items: center;
+	font-size: initial;
+}
+
+body #p-search::before,
+body #p-search::after {
+	display: none;
 }
 
 #searchform {
 	margin-top: 0;
 }
 
-body:not( .ns--1 ) #mw-indicator-mw-helplink {
-	display: none;
+body #p-search .searchButton {
+	min-height: auto;
 }
 
-/*******************
-/* Header dropdown *
-/*******************/
-
-#p-cactions .vector-menu-content {
-	background-color: var( --wiki-content-background-color--secondary );
-	border-color: var( --wiki-content-border-color );
-	left: initial;
-	padding: 11px;
-	right: -1px;
+.vector-search-box-inner {
+	min-width: 5rem;
+	max-width: 20rem;
 }
 
-#mw-head .vector-menu-dropdown .vector-menu-content-list {
-	background-color: transparent;
-	border-width: 0;
-}
-
-#p-cactions .mw-list-item a {
-	color: var( --wiki-content-text-color );
-	font-size: 0.875em;
-	text-decoration: none;
-}
-
-#p-cactions .mw-list-item:hover {
-	background: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
-}
-
-#p-cactions .mw-list-item a:hover {
-	color: var( --wiki-content-link-color );
-}
-
-#mw-head #p-cactions {
-	background-image: none;
-}
-
-@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
-	#p-cactions .mw-list-item:hover {
-		background: var( --wiki-accent-color );
-	}
+body .mw-indicators {
+	z-index: 1;
 }
 
 }

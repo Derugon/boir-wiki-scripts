@@ -1,0 +1,33 @@
+/* Original gadget from Krinkle and Nikerabbit (https://translatewiki.net/wiki/MediaWiki:Gadget-HoverPopTools.css) */
+
+@media screen and ( hover: hover ) {
+
+.mw-userlink + .mw-usertoollinks,
+.mw-userlink + span > .mw-usertoollinks,
+.mw-changeslist-line-inner-userLink + .mw-changeslist-line-inner-userTalkLink .mw-usertoollinks {
+	position: absolute;
+	overflow: hidden;
+	width: 0;
+	opacity: 0;
+}
+
+.mw-userlink:hover + .mw-usertoollinks,
+.mw-userlink:focus-within + .mw-usertoollinks,
+.mw-userlink:hover + span > .mw-usertoollinks,
+.mw-userlink:focus-within + span > .mw-usertoollinks,
+.mw-changeslist-line-inner-userLink:hover + .mw-changeslist-line-inner-userTalkLink .mw-usertoollinks,
+.mw-changeslist-line-inner-userLink:focus-within + .mw-changeslist-line-inner-userTalkLink .mw-usertoollinks,
+.mw-changeslist-line-inner-userTalkLink:hover .mw-usertoollinks,
+.mw-changeslist-line-inner-userTalkLink:focus-within .mw-usertoollinks,
+.mw-usertoollinks:hover,
+.mw-usertoollinks:focus-within {
+	margin: -0.2em 0 0 -5px;
+	border-left: 5px solid transparent;
+	padding: .2em .5em;
+	width: auto;
+	opacity: 1;
+	background: var( --wiki-content-background-color--secondary );
+	background-clip: padding-box;
+}
+
+}

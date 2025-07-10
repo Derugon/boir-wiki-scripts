@@ -7,7 +7,7 @@
 
 @font-face {
 	font-family: "tboi";
-	src: url( https://commons.wiki.gg/images/0/05/Upheaval.ttf ) format( "truetype" );
+	src: url( filepath://Upheaval.ttf ) format( "truetype" );
 }
 
 :root {
@@ -15,12 +15,14 @@
 	--wiki-is-navigation-inside-content: 0; /* 0 = default navigation tabs layout; 1 = navigation tabs inside content box */
 
 	/* Probably edit these */
-	--wiki-logo-file-width: 160; /* Width of the image file in px. Put a number without the letters `px`. */
-	--wiki-logo-file-height: 160; /* Height of the image file in px. Put a number without the letters `px`. */	
+	--wiki-logo-file-width: 250; /* Width of the image file in px. Put a number without the letters `px`. */
+	--wiki-logo-file-height: 65; /* Height of the image file in px. Put a number without the letters `px`. */
 	--wiki-logo-height: calc( var( --wiki-logo-file-height ) * 1px ); /* Valid only when --wiki-is-top-logo is 1. The height the logo should be shown */
 	--wiki-logo-margin: 15px; /* the width of margin below the logo. When --wiki-is-top-logo is 1, this is also the default value of --wiki-top-spacing */
 	/* Maybe edit these */
 	--wiki-logo-filter: none;
+	/* Wiki-specific */
+	--wiki-logo-width: calc( var( --wiki-logo-file-width ) * 1px );
 
 	/* Probably edit these */
 	--wiki-body-font-family: sans-serif;
@@ -71,7 +73,7 @@
 	--wiki-navigation-box-backdrop-filter: none; /* usually only needed when --wiki-is-navigation-inside-content is 1 */
 
 	/* Maybe edit these */
-	--wiki-navigation-tab-spacing: -1px; /* width of the space between tabs, can be a negative number, in which case adjacent tabs will overlap  */
+	--wiki-navigation-tab-spacing: 0px; /* width of the space between tabs, can be a negative number, in which case adjacent tabs will overlap  */
 	--wiki-navigation-tab-padding-top: 1.25em;
 	--wiki-navigation-tab-padding-x: 0.75em;
 	--wiki-navigation-tab-padding-bottom: 4px;
@@ -108,12 +110,18 @@
 	--wiki-navigation-dropdown-shadow: none;
 
 	--wiki-top-spacing: calc( var( --wiki-is-top-logo ) * var( --wiki-logo-margin ) + ( 1 - var( --wiki-is-top-logo ) ) * 1em ); /* extra spacing below wiki.gg netbar */
-	--wiki-left-spacing: 0.5em;
-	--wiki-right-spacing: 1em;
+	--wiki-left-spacing: 2.5vw;
+	--wiki-right-spacing: 2.5vw;
 	--wiki-bottom-spacing: 2em;
 
 	/* Wiki-specific */
 	--tb-title-font: tboi, sans-serif;
+}
+
+@media screen and ( min-width: 720px ) {
+	:root {
+		--wiki-content-border-width: 37px;
+	}
 }
 
 /********************
@@ -124,7 +132,7 @@
 .view-dark {
 	/* Probably edit these */
 	--wiki-body-background-color: #150c0a;
-	--wiki-body-background-image: url( /images/8/80/Site-background.jpg ); /* [[File:Site-background.jpg]] */
+	--wiki-body-background-image: url( filepath://Site-background.jpg ); /* [[File:Site-background.jpg]] */
 	/* Maybe edit these */
 	--wiki-body-background-position: top center;
 	--wiki-body-background-size: cover;
@@ -157,7 +165,7 @@
 	--wiki-content-dynamic-color--secondary: #dddddd;
 	--wiki-content-dynamic-color--secondary--inverted: #333333;
 	/* Wiki-specific */
-	--wiki-content-border-image: url( /images/1/17/CSS_border.png ) 48; /* [[File:CSS border.png]] */
+	--wiki-content-border-image: url( filepath://CSS_border.png ) 48; /* [[File:CSS border.png]] */
 	--wiki-content-text-shadow: #261c1c;
 
 	/* Probably edit these */
@@ -166,7 +174,8 @@
 	--wiki-accent-link-color: #051d4f;
 
 	/* Wiki-specific */
-	--wiki-search-border-image: url( /images/c/c0/CSS_border_search.png ) 24; /* [[File:CSS border search.png]] */;
+	--wiki-search-background-color: #683a2c;
+	--wiki-search-border-image: url( filepath://CSS_border_search.png ) 24; /* [[File:CSS border search.png]] */;
 
 	/* Maybe edit these */
 	--wiki-navigation-background-color: var( --wiki-content-background-color--secondary );
@@ -220,7 +229,7 @@
 .view-light {
 	/* Probably edit these */
 	--wiki-body-background-color: #ccbebb;
-	--wiki-body-background-image: url( /images/f/f7/Site-background-light.jpg ); /* [[File:Site-background-light.jpg]] */
+	--wiki-body-background-image: url( filepath://Site-background-light.jpg ); /* [[File:Site-background-light.jpg]] */
 	/* Maybe edit these */
 	--wiki-body-background-position: top center;
 	--wiki-body-background-size: cover;
@@ -253,7 +262,7 @@
 	--wiki-content-dynamic-color--secondary: #333333;
 	--wiki-content-dynamic-color--secondary--inverted: #dddddd;
 	/* Wiki-specific */
-	--wiki-content-border-image: url( /images/8/88/CSS_border_light.png ) 48; /* [[File:CSS border light.png]] */
+	--wiki-content-border-image: url( filepath://CSS_border_light.png ) 48; /* [[File:CSS border light.png]] */
 	--wiki-content-text-shadow: #aca598;
 
 	/* Probably edit these */
@@ -262,7 +271,8 @@
 	--wiki-accent-link-color: #CED694;
 
 	/* Wiki-specific */
-	--wiki-search-border-image: url( /images/3/38/CSS_border_search_light.png ) 24; /* [[File:CSS border search light.png]] */;
+	--wiki-search-background-color: #e7dfc9;
+	--wiki-search-border-image: url( filepath://CSS_border_search_light.png ) 24; /* [[File:CSS border search light.png]] */;
 
 	/* Maybe edit these */
 	--wiki-navigation-background-color: var( --wiki-content-background-color--secondary );
@@ -532,7 +542,7 @@
 	gap: 10px;
 }
 
-@media screen and ( max-width: 990px ) {
+@media screen and ( max-width: 999px ) {
 	#mp-container{
 		grid-template-areas: var( --main-page-layout--mobile );
 		grid-template-columns: var( --main-page-layout-columns--mobile,100% );
@@ -543,7 +553,7 @@
 	}
 }
 
-@media screen and ( min-width: 990px ) and ( max-width: 1350px ) {
+@media screen and ( min-width: 1000px ) and ( max-width: 1349px ) {
 	#mp-container {
 		grid-template-areas: var( --main-page-layout--tablet );
 		grid-template-columns: var( --main-page-layout-columns--tablet, 1fr 1fr );
@@ -648,7 +658,7 @@
 	height: 100%;
 	filter: blur( 5px );
 	z-index: -1;
-	background: url( /images/e/e0/MP_banner.jpg );
+	background: url( filepath://MP_banner.jpg );
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: top center;
@@ -762,6 +772,12 @@
 	margin: auto;
 }
 
+@media screen and ( min-width: 720px ) {
+	#mp-welcome {
+		margin-top: 3em;
+	}
+}
+
 #mp-links {
 	bottom: 0;
 	width: 100%;
@@ -777,7 +793,7 @@
 	pointer-events: all;
 }
 
-@media screen and ( min-width: 960px ) {
+@media screen and ( min-width: 1000px ) {
 	#mp-intro {
 		margin: 0 25%;
 	}
@@ -796,12 +812,12 @@
 
 	#mp-intro::before {
 		left: 0;
-		background-image: url( /images/c/c8/MainPageLeftWel.png ); /* [[File:MainPageLeftWel.png]] */
+		background-image: url( filepath://MainPageLeftWel.png ); /* [[File:MainPageLeftWel.png]] */
 	}
 
 	#mp-intro::after {
 		right: 0;
-		background-image: url( /images/8/88/MainPageRightWel.png ); /* [[File:MainPageRightWel.png]] */
+		background-image: url( filepath://MainPageRightWel.png ); /* [[File:MainPageRightWel.png]] */
 	}
 
 	#mp-links {
@@ -1020,7 +1036,7 @@
 	text-align   : center;
 }
 
-@media screen and ( min-width: 721px ) {
+@media screen and ( min-width: 720px ) {
 	body .context-box {
 		position  : relative;
 		z-index   : 1;
@@ -1065,14 +1081,6 @@
 .documentation-heading-sub {
 	font-size : 90%;
 	font-style: italic;
-}
-
-/**********************
-/* [[Template:Error]] *
-/**********************/
-
-.error {
-	display: none;
 }
 
 /**********************
@@ -1347,6 +1355,42 @@ div.nav-header {
 	font-weight: bold;
 }
 
+.plat-3DS {
+	color: #fa182a;
+}
+
+.plat-iOS {
+	color: #999999;
+}
+
+.plat-PC {
+	color: #f09020;
+}
+
+.plat-PS4 {
+	color: #4090f0;
+}
+
+.plat-PS5 {
+	color: #4090f0;
+}
+
+.plat-Switch {
+	color: #f20000;
+}
+
+.plat-Vita {
+	color: #40f450;
+}
+
+.plat-WiiU {
+	color: #498ceb;
+}
+
+.plat-XboxOne {
+	color: #42db4f;
+}
+
 /**********************
 /* [[Template:Quote]] *
 /**********************/
@@ -1444,6 +1488,24 @@ div.nav-header {
 	}
 }
 
+/*****************************
+/* [[Template:Storage page]] *
+/*****************************/
+
+.infobox-grid {
+	clear: both;
+}
+
+.infobox-grid > .portable-infobox {
+	display       : inline-block;
+	float         : none;
+	vertical-align: top;
+}
+
+.infobox-grid > .context-box {
+	display: none;
+}
+
 /************************************
 /* [[Template:Transformation rows]] *
 /************************************/
@@ -1476,12 +1538,13 @@ div.nav-header {
 	image-rendering: pixelated;
 }
 
-@media screen and ( min-width:720px ) {
+@media screen and ( min-width: 720px ) {
 	.mobileonly {
 		display: none;
 	}
 }
-@media screen and ( max-width:720px ) {
+
+@media screen and ( max-width: 719px ) {
 	.nomobile {
 		display: none;
 	}
@@ -1505,7 +1568,7 @@ div.nav-header {
 	margin-bottom: 5px;
 	margin-left: 25px;
 	padding-left: 20px;
-	background-image: url( /images/6/69/Disambig.png ); /* [[File:Disambig.png]] */
+	background-image: url( filepath://Disambig.png ); /* [[File:Disambig.png]] */
 	background-repeat: no-repeat;
 	background-position: left center;
 	font-style: italic;
@@ -1571,11 +1634,4 @@ span.multicolumn-list {
 	content     : "\2022"; /* bullet */
 	margin-left : 0.5em;
 	margin-right: 0.5em;
-}
-
-/* Used primarily by [[Template:E/query]], [[Template:I/query]], etc. */
-.inline-icon {
-	margin-right: 0.25em;
-	user-select: none;
-	image-rendering: pixelated;
 }

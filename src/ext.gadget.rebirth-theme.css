@@ -16,7 +16,7 @@
 	content     : "";
 	display     : block;
 	border      : 30px solid;
-	border-image: url( /images/4/4a/CSS_Border_Infobox.png ) 30 fill round; /* [[File:CSS Border Infobox.png]] */
+	border-image: url( filepath://CSS_Border_Infobox.png ) 30 fill round; /* [[File:CSS Border Infobox.png]] */
 	bottom      : 0;
 	top         : 0;
 	left        : 0;
@@ -61,13 +61,30 @@
 /* [[Template:Context box]] *
 /****************************/
 
-.context-box {
+.mw-body .context-box {
 	width          : 36px;
 	height         : 30px;
 	border-radius  : 0;
 	padding-top    : 8px;
-	background     : url( /images/1/19/TableDlc.png ) no-repeat scroll center border-box; /* [[File:TableDlc.png]] */
+	background     : url( filepath://TableDlc.png ) no-repeat scroll center border-box; /* [[File:TableDlc.png]] */
 	background-size: 100%;
+}
+
+/**************************************
+/* With [[MediaWiki:Gadget-tooltips]] *
+/**************************************/
+
+#tooltip-wrapper {
+	border      : 24px solid;
+	border-image: url( filepath://CSS_Border_Tooltip.png ) 24 fill round stretch; /* [[File:CSS Border Tooltip.png]] */
+	background  : none;
+}
+
+.tooltip-content {
+	--wiki-content-text-color: #473a3c;
+	margin : -12px;
+	padding: 0;
+	color  : var( --wiki-content-text-color );
 }
 
 }
