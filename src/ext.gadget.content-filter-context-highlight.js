@@ -34,10 +34,6 @@ const setTagEventsInContent = ( content ) => {
  */
 const onTagEnter = function() {
 	const context = cf.getContext( this );
-	if ( context === null ) {
-		return;
-	}
-
 	for ( const contextElement of context ) {
 		contextElement.classList.add( css.contextHoverClass );
 	}
@@ -49,16 +45,12 @@ const onTagEnter = function() {
  */
 const onTagLeave = function () {
 	const context = cf.getContext( this );
-	if ( context === null ) {
-		return;
-	}
-
 	for ( const contextElement of context ) {
 		contextElement.classList.remove( css.contextHoverClass );
 	}
 };
 
-for ( const container of cf.containers ) {
+for ( const container of cf.getContainers() ) {
 	setTagEventsInContent( container );
 }
 mw.hook( 'contentFilter.content.registered' ).add( setTagEventsInContent );

@@ -103,6 +103,27 @@ $(function() {
 // [START: module]
 ( ( $, mw ) => {
 
+    /*************
+    /* Polyfills *
+    /*************/
+
+    if ( !( 'WeakRef' in window ) ) {
+        /**
+         * @template {{}} T
+         * @param {T} target
+         */
+        const WeakRef = function ( target ) {
+            this.target = target;
+        };
+
+        WeakRef.prototype.deref = function () {
+            return this.target;
+        };
+
+        // @ts-ignore
+        window.WeakRef = WeakRef;
+    }
+
 	/********************
 	/* queryElementsBy_ *
 	/********************/

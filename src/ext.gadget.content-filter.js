@@ -8,7 +8,7 @@
 
 // <nowiki>
 ( ( mw, document ) => mw.loader.using( [
-	'mediawiki.Uri', 'ext.gadget.content-filter-view', 'ext.gadget.logger'
+	'mediawiki.api', 'mediawiki.Uri', 'ext.gadget.content-filter-view', 'ext.gadget.logger'
 ], ( require ) => {
 
 const cf = require( 'ext.gadget.content-filter-core' );
@@ -34,10 +34,11 @@ const css = {
 	 */
 	infoId: 'cf-info',
 
-	menuClass: 'cf-menu',
-	menuToggleClass: 'cf-toggle',
-	menuContentClass: 'cf-menu-content',
-	menuListClass: 'cf-menu-list',
+	menuId: 'cf-menu',
+	menuHeadingId: 'cf-menu-heading',
+	menuCheckboxId: 'cf-menu-checkbox',
+	menuContentId: 'cf-menu-content',
+	menuListId: 'cf-menu-list',
 
 	buttonClass: 'cf-button',
 	buttonClassPrefix: 'cf-button-',
@@ -47,6 +48,13 @@ const css = {
 	activeButtonClass: 'cf-button-active',
 
 	activeViewClass: 'cf-view-active'
+};
+
+const messages = {
+	base: 'content-filter-list',
+	toggle: 'content-filter-list-toggle',
+	title: 'content-filter-list-title',
+	name: 'content-filter-list-name'
 };
 
 /**
@@ -67,250 +75,264 @@ if ( config.wgAction !== 'view' ) {
 }
 
 /**
- * Gets the value of the URL parameter used to store the selected filter from an URL.
- * @param {string} [url] The URL, the current page one otherwise.
- * @returns {number?} The selected filter index, null if none has been specified.
+ * @constructor
  */
-const getFilterParamValue = ( url ) => {
-	const value = mw.util.getParamValue( urlParam, url );
-	return value ? parseInt( value, 10 ) : null;
-};
+function FilterParameter() {
+	/**
+	 * @type {number?}
+	 */
+	this.index = null;
 
-/**
- * Either sets the value of, or removes, the URL parameter used to store the
- * selected filter from an URL.
- * @param {number?} value The selected filter index, null if none has been specified.
- * @param {URL}  [url] The URL, the current page one otherwise.
- * @returns {URL} The updated URL.
- */
-const setFilterParamValue = ( value, url ) => {
-	url = new URL( url || document.location.href );
+	this.update( this.getURL() );
+}
 
-	if ( value === null ) {
-		url.searchParams.delete( urlParam );
-	} else {
-		url.searchParams.set( urlParam, `${value}` );
-	}
+FilterParameter.prototype = {
+	constructor: FilterParameter,
 
-	return url;
-};
+	/**
+	 * Get the value of the URL parameter used to store the selected filter from an URL.
+	 *
+	 * @param {string} [url] URL, the current page one otherwise.
+	 * @returns {number?} The selected filter index, null if none has been specified.
+	 */
+	getURL: ( url ) => {
+		const rawValue = mw.util.getParamValue( urlParam, url );
+		return rawValue ? parseInt( rawValue, 10 ) : null;
+	},
 
-/**
- * Updates the index of the currently selected filter.
- *
- * @param {number?} index
- */
-const setSelectedIndex = ( index ) => {
-	if ( index === null ) {
-		log.info( 'No filter used.' );
-	} else {
-		log.info( `Using ${Math.pow( 2, index )} as active filter.` );
-		lastSelectedIndex = index;
-	}
-	selectedIndex = index;
-};
+	/**
+	 * Either set the value of, or remove, the URL parameter used to store the
+	 * selected filter from an URL.
+	 *
+	 * @param {number?} index Selected filter index, null if none has been specified.
+	 * @param {URL} [url] URL, the current page one otherwise.
+	 * @returns {URL} The updated URL.
+	 */
+	setURL: ( index, url ) => {
+		url = new URL( url || document.location.href );
 
-/**
- * Inserts the filter menu on the page, if it isn't already there.
- */
-const insertMenu = () => {
-	if ( buttons.filter( isButtonActivated ).length < 2 ) {
-		menu.remove();
-		return;
-	}
-
-	const info = document.getElementById( css.infoId );
-	if ( info === null ) {
-		insertMenuInInterface();
-		mw.hook( 'contentFilter.filter.menuPlaced' ).fire( menu );
-	} else if ( !info.isSameNode( menu.parentElement ) ) {
-		insertMenuInContent( info );
-		mw.hook( 'contentFilter.filter.menuPlaced' ).fire( menu );
-	}
-};
-
-/**
- * Inserts the filter menu at the end of an element.
- *
- * @param {HTMLElement} parent
- */
-const insertMenuInContent = ( parent ) => {
-	parent.appendChild( menu );
-	parent.style.removeProperty( 'display' );
-};
-
-/**
- * Inserts the filter menu in the page interface.
- * Currently puts it next to the page title.
- */
-const insertMenuInInterface = () => {
-	const pageTitle = document.getElementsByClassName( 'mw-page-title-main' )[ 0 ];
-	if ( !pageTitle ) {
-		// Panicking here simply means that we couldn't place the buttons on the page.
-		// If this happens, we should either add a fallback location,
-		// or place the buttons somewhere other than in the page title.
-		log.panic( 'Page title not found.' );
-	}
-
-	pageTitle.insertAdjacentElement( 'afterend', menu );
-};
-
-/**
- * Updates the button element in case the global page filter has been changed.
- *
- * @param {number?} pageFilter The new page filter.
- */
-const updateButtonsForPageContext = ( pageFilter ) => {
-	for ( const button of buttons ) {
-		const filterIndex = getButtonFilterIndex( button );
-		if ( filterIndex === null ) {
-			continue;
-		}
-
-		if ( pageFilter === null || pageFilter & Math.pow( 2, filterIndex ) ) {
-			button.classList.remove( css.deactivatedButtonClass );
+		if ( index === null ) {
+			url.searchParams.delete( urlParam );
 		} else {
-			button.classList.add( css.deactivatedButtonClass );
+			url.searchParams.set( urlParam, `${index}` );
+		}
+
+		return url;
+	},
+
+	/**
+	 * Update the index of the currently selected filter.
+	 *
+	 * @param {number?} index Selected filter index, null if none has been specified.
+	 */
+	update( index ) {
+		this.index = index;
+		if ( this.getURL() !== index ) {
+			window.history.replaceState( {}, '', this.setURL( index ) );
+		}
+
+		if ( index === null ) {
+			log.info( 'No filter used.' );
+		} else {
+			log.info( `Using ${Math.pow( 2, index )} as active filter.` );
+		}
+
+		mw.hook( 'contentFilter.filter' ).fire( index );
+	}
+};
+
+/**
+ * 
+ * @param {DocumentFragment} title Dropdown title.
+ * @param {DocumentFragment[]} buttonTitles Button titles.
+ */
+function Navigation( title, buttonTitles ) {
+	const menu = document.createElement( 'ul' );
+	menu.id = css.menuListId;
+	menu.classList.add( 'menu', 'vector-menu-content-list' );
+	this.menu = menu;
+
+	/**
+	 * @type {NavigationButton[]}
+	 */
+	this.buttons = [];
+	let index = null;
+	for ( const buttonTitle of buttonTitles ) {
+		const button = new NavigationButton( buttonTitle, index );
+		this.buttons.push( button );
+		menu.append( button.item );
+		if ( index === null ) {
+			index = 0;
+		} else {
+			++index;
 		}
 	}
-};
 
-/**
- * TODO
- * @param {HTMLLIElement} button
- * @returns {boolean}
- */
-const isButtonActivated = ( button ) => {
-	return !button.classList.contains( css.deactivatedButtonClass );
-};
+	const body = document.createElement( 'div' );
+	body.id = css.menuContentId;
+	body.classList.add( 'body', 'vector-menu-content' );
+	body.append( menu );
 
-/**
- * TODO
- */
-const createMenu = () => {
-	const ul = document.createElement( 'ul' );
-	ul.classList.add( css.menuListClass );
-	for ( const button of buttons ) {
-		ul.appendChild( button );
-	}
+	const label = document.createElement( 'span' );
+	label.classList.add( 'vector-menu-heading-label' );
+	label.append( title );
 
-	const content = document.createElement( 'div' );
-	content.classList.add( css.menuContentClass );
-	content.appendChild( ul );
+	const heading = document.createElement( 'h3' );
+	heading.id = 'cf-label';
+	heading.classList.add( 'vector-menu-heading' );
+	heading.append( label );
+
+	const checkbox = document.createElement( 'input' );
+	checkbox.role = 'checkbox';
+	checkbox.id = css.menuCheckboxId;
+	checkbox.classList.add( 'vector-menu-checkbox' );
+	checkbox.ariaHasPopup = 'true';
+	checkbox.ariaLabelledByElements = [ heading ];
 
 	const dropdown = document.createElement( 'div' );
-	dropdown.classList.add( css.menuClass );
-	dropdown.append( toggle, content );
-	return dropdown;
+	dropdown.id = css.menuId;
+	dropdown.classList.add( 'portal', 'vector-menu', 'vector-menu-dropdown' );
+	dropdown.append( checkbox, heading, body );
+	this.dropdown = dropdown;
+}
+
+Navigation.prototype = {
+	constructor: Navigation,
+
+	/**
+	 * Inserts the filter navigation on the page, if it isn't already there.
+	 */
+	insert() {
+		let activeCount = 0;
+		for ( const button of this.buttons ) {
+			if ( button.isActivated() ) {
+				++activeCount;
+			}
+		}
+
+		if ( activeCount < 2 ) {
+			this.dropdown.remove();
+			return;
+		}
+
+		const info = document.getElementById( css.infoId );
+		if ( info !== null ) {
+			info.append( this.dropdown );
+			info.style.removeProperty( 'display' );
+			mw.hook( 'contentFilter.filter.menuPlaced' ).fire( this.dropdown );
+			return;
+		}
+
+		const leftNavigation = document.getElementById( 'left-navigation' );
+		if ( leftNavigation !== null ) {
+			leftNavigation.append( this.dropdown );
+			mw.hook( 'contentFilter.filter.menuPlaced' ).fire( this.dropdown );
+			return;
+		}
+
+		// Panicking here simply means that we couldn't place the buttons on the page.
+		// If this happens, we should either add a fallback location,
+		// or place the buttons somewhere other than in the left navigation.
+		log.panic( 'Could not find a valid location in the page navigation.' );
+	},
+
+	/**
+	 * Updates the selected filter button.
+	 *
+	 * @param {number?} index The filter index.
+	 */
+	updateActiveButton( index ) {
+		const buttonIndex  = index === null ? 0 : index + 1;
+		const activeButton = this.buttons[ buttonIndex ];
+		if ( !activeButton ) {
+			log.panic( `Unregistrered button ${buttonIndex}.` );
+		}
+
+		for ( const button of this.buttons ) {
+			button.unsetActive();
+		}
+
+		activeButton.setActive();
+	},
+
+	/**
+	 * Update the button element in case the global page filter has been changed.
+	 *
+	 * @param {number?} pageFilter The new page filter.
+	 */
+	updateState( pageFilter ) {
+		for ( const button of this.buttons ) {
+			button.updateState( pageFilter );
+		}
+	}
 };
 
 /**
- * TODO
- */
-const createToggle = () => {
-	const toggle = document.createElement( 'div' );
-	toggle.classList.add( css.menuToggleClass );
-	toggle.addEventListener( 'click', createToggle.onClick );
-
-	return toggle;
-};
-
-/**
- * @param {MouseEvent} event
- */
-createToggle.onClick = ( event ) => {
-	triggerFilterUpdate( selectedIndex === null ? lastSelectedIndex : null );
-	event.preventDefault();
-};
-
-/**
- * Generates a filter menu button.
- *
- * @param {string} title
+ * @param {DocumentFragment} title
  * @param {number?} index
- * @returns {HTMLLIElement}
  */
-const createButton = ( title, index ) => {
-	const a = document.createElement( 'a' );
-	a.href = setFilterParamValue( index ).href;
-	a.addEventListener( 'click', createButton.onClick );
+function NavigationButton( title, index ) {
+	this.index = index;
+
+	const anchor = document.createElement( 'a' );
+	anchor.href = filterParameter.setURL( index ).href;
+	anchor.addEventListener( 'click', NavigationButton.prototype.onClick.bind( this ) );
+
+	const label = document.createElement( 'span' );
+	label.append( title );
+	anchor.append( label );
+
+	this.item = document.createElement( 'li' );
+	this.item.classList.add( css.buttonClass, 'mw-list-item' );
+	this.item.append( anchor );
 
 	if ( index === null ) {
-		a.textContent = title;
+		this.item.id = css.buttonWildcardId;
 	} else {
-		const titleSpan = document.createElement( 'span' );
-		titleSpan.classList.add( css.buttonTitleClass );
-		titleSpan.textContent = title;
-		a.appendChild( titleSpan );
-		a.appendChild( document.createTextNode( ' only' ) );
+		this.item.id = `${css.buttonClassPrefix}${index}`;
 	}
+}
 
-	const li = document.createElement( 'li' );
-	li.classList.add( css.buttonClass );
-	li.appendChild( a );
+NavigationButton.prototype = {
+	constructor: NavigationButton,
 
-	if ( index === null ) {
-		li.id = css.buttonWildcardId;
-	} else {
-		li.id = `${css.buttonClassPrefix}${index}`;
-		li.dataset.cfFilter = `${index}`;
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onClick( event ) {
+		filterParameter.update( this.index );
+		event.preventDefault();
+	},
+
+	setActive() {
+		this.item.classList.add( css.activeButtonClass );
+	},
+
+	unsetActive() {
+		this.item.classList.remove( css.activeButtonClass );
+	},
+
+	/**
+	 * @returns {boolean}
+	 */
+	isActivated() {
+		return !this.item.classList.contains( css.deactivatedButtonClass );
+	},
+
+	/**
+	 * @param {number?} pageFilter
+	 */
+	updateState( pageFilter ) {
+		if ( this.index === null ) {
+			return;
+		}
+
+		if ( pageFilter === null || pageFilter & Math.pow( 2, this.index ) ) {
+			this.item.classList.remove( css.deactivatedButtonClass );
+		} else {
+			this.item.classList.add( css.deactivatedButtonClass );
+		}
 	}
-
-	return li;
-};
-
-/**
- * @this {HTMLElement}
- * @param {MouseEvent} event
- */
-createButton.onClick = function ( event ) {
-	const li = this.parentElement || log.panic();
-	triggerFilterUpdate( getButtonFilterIndex( li ) );
-	event.preventDefault();
-};
-
-/**
- * Triggers the event of changing the filter index.
- *
- * @param {number?} index
- */
-const triggerFilterUpdate = ( index ) => {
-	mw.hook( 'contentFilter.filter' ).fire( index );
-	window.history.replaceState( {}, '', setFilterParamValue( index ) );
-};
-
-/**
- * Returns the filter a button is controlling.
- *
- * @param {HTMLElement} button
- * @returns {number | null}
- */
-const getButtonFilterIndex = ( button ) => {
-	if ( !button.dataset.cfFilter ) {
-		return null;
-	}
-	return +button.dataset.cfFilter;
-};
-
-/**
- * Updates the selected filter button.
- *
- * @param {number?} index The filter index.
- */
-const updateActiveButton = ( index ) => {
-	const buttonIndex  = index === null ? 0 : index + 1;
-	const activeButton = buttons[ buttonIndex ];
-	if ( !activeButton ) {
-		log.panic( `Unregistrered button ${buttonIndex}.` );
-	}
-
-	for ( const button of buttons ) {
-		button.classList.remove( css.activeButtonClass );
-	}
-
-	activeButton.classList.add( css.activeButtonClass );
-	const a = activeButton.firstElementChild || log.panic();
-	toggle.innerHTML = a.innerHTML;
 };
 
 /**
@@ -334,7 +356,7 @@ const updateView = ( index ) => {
 		}
 	}
 
-	mw.hook( 'contentFilter.filter.viewUpdated' ).fire();
+	mw.hook( 'contentFilter.filter.viewUpdated' ).fire( index );
 };
 
 /**
@@ -375,63 +397,54 @@ const updateAnchorFilter = ( a ) => {
 		return;
 	}
 
-	a.href = setFilterParamValue( selectedIndex, new URL( a.href ) ).href;
+	a.href = filterParameter.setURL( filterParameter.index, new URL( a.href ) ).href;
+};
+
+const filterParameter = new FilterParameter();
+
+/**
+ * @param {string} text
+ * @returns {DocumentFragment}
+ */
+const parseDocumentFragment = ( text ) => {
+	const template = document.createElement( 'template' );
+	template.innerHTML = text.trim();
+	return template.content;
 };
 
 /**
- * TODO
- * @type {HTMLLIElement[]}
+ * @param {string} text
+ * @returns {string[]}
  */
-const buttons = [
-	createButton( 'All versions', null ),
-	createButton( 'Rebirth', 0 ),
-	createButton( 'Afterbirth', 1 ),
-	createButton( 'Afterbirth+', 2 ),
-	createButton( 'Repentance', 3 ),
-	createButton( 'Repentance+', 4 )
-];
+const parseList = ( text ) => {
+	const items = ( '\n' + text ).split( '\n*' );
+	items.shift();
+	return items;
+};
 
-/**
- * TODO
- * @type {HTMLDivElement}
- */
-const toggle = createToggle();
+module.exports = { filterParameter };
 
-/**
- * TODO
- * @type {HTMLDivElement}
- */
-const menu = createMenu();
+new mw.Api().loadMessagesIfMissing( Object.values( messages ) ).then( () => {
+	const navigationTitle = parseDocumentFragment( mw.message( messages.base ).text() );
+	const buttonTitles = parseList( mw.message( messages.toggle ).text() ).map( parseDocumentFragment );
+	const names = parseList( mw.message( messages.name ).text() );
 
-/**
- * TODO
- * @type {number | null}
- */
-const paramValue = getFilterParamValue();
+	const navigation = new Navigation( navigationTitle, buttonTitles );
 
-/**
- * The index of the currently selected filter form item.
- * @type {number?}
- */
-let selectedIndex = null;
+	mw.hook( 'contentFilter.content.pageFilter' ).add( ( pageFilter ) => {
+		navigation.updateState( pageFilter );
+	} );
 
-/**
- * The index of the previously selected filter form item.
- * If the page has been loaded with any filter active, defaults to the last one.
- * Used to easily disable or re-enable a filter.
- *
- * @type {number}
- */
-let lastSelectedIndex = 4;
+	mw.hook( 'contentFilter.content.registered' ).add( () => {
+		navigation.insert();
+	} );
 
-module.exports = { paramValue, buttons, getButtonFilterIndex };
-
-mw.hook( 'contentFilter.filter' ).add( setSelectedIndex ).fire( paramValue );
-mw.hook( 'contentFilter.content.pageFilter' ).add( updateButtonsForPageContext );
-mw.hook( 'contentFilter.content.registered' ).add( insertMenu );
-
-hookFiredOnce( 'contentFilter.content.registered' ).then( () => {
-	mw.hook( 'contentFilter.filter' ).add( updateActiveButton, updateView );
+	hookFiredOnce( 'contentFilter.content.registered' ).then( () => {
+		mw.hook( 'contentFilter.filter' ).add( ( index ) => {
+			navigation.updateActiveButton( index );
+			updateView( index );
+		} );
+	} );
 } );
 
 } ) )( mediaWiki, document );

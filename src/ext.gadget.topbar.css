@@ -1,5 +1,3 @@
-@media screen and ( min-width: 720px ) {
-
 :root {
 	--icon-category: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-category-2' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M14 4h6v6h-6z'%3E%3C/path%3E%3Cpath d='M4 14h6v6h-6z'%3E%3C/path%3E%3Cpath d='M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0'%3E%3C/path%3E%3Cpath d='M7 7m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0'%3E%3C/path%3E%3C/svg%3E" );
 	--icon-chevron-down: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-chevron-down' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M6 9l6 6l6 -6'%3E%3C/path%3E%3C/svg%3E" );
@@ -11,6 +9,57 @@
 	--icon-reload: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ctitle%3E reload %3C/title%3E%3Cpath d='M15.65 4.35A8 8 0 1 0 17.4 13h-2.22a6 6 0 1 1-1-7.22L11 9h7V2z'/%3E%3C/svg%3E" );
 	--icon-talk: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-messages' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10'%3E%3C/path%3E%3Cpath d='M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2'%3E%3C/path%3E%3C/svg%3E" );
 }
+
+#ca-view {
+	--icon: var( --icon-eye );
+}
+
+#ca-ve-edit {
+	--icon: var( --icon-edit );
+}
+
+#ca-edit {
+	--icon: var( --icon-edit );
+}
+
+#ca-addsection {
+	--icon: var( --icon-edit );
+}
+
+#ca-viewsource {
+	--icon: var( --icon-eye );
+}
+
+#ca-history {
+	--icon: var( --icon-history );
+}
+
+#ca-recreatedata {
+	--icon: var( --icon-reload );
+}
+
+#ca-watch {
+	--icon: var( --icon-star-empty );
+}
+
+#ca-unwatch {
+	--icon: var( --icon-star-filled );
+}
+
+#ca-talk {
+	--icon: var( --icon-talk );
+}
+
+#p-cactions {
+	--icon: var( --icon-more );
+}
+
+#p-variants,
+#p-lang {
+	--icon: var( --icon-language );
+}
+
+@media screen and ( min-width: 720px ) {
 
 /*********************
 /* Base placeholders *
@@ -86,22 +135,38 @@ body #right-navigation {
 body #mw-panel {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	flex-flow: row wrap;
 	order: 0;
-	width: auto;
-	min-height: 65px;
-	margin-right: calc( clamp( 5em, 20vw, 20em ) + 76px - 2em );
+	width: -moz-fit-content;
+	width:      fit-content;
+	min-height: var( --wiki-logo-height );
+	margin-top: var( --wiki-logo-height );
 	margin-bottom: 15px;
-	margin-left: 250px;
 	padding-top: 0;
 	z-index: 101;
 }
 
 body #p-logo {
-	left: auto;
-	right: 100%;
+	left: calc( 25% - var( --wiki-logo-width ) / 2 );
+	top: auto;
+	bottom: 100%;
 	height: var( --wiki-logo-height );
 	width: var( --wiki-logo-width );
+}
+
+@media ( min-width: 1200px ) {
+	body #mw-panel {
+		margin-left: var( --wiki-logo-width );
+		margin-right: calc( clamp( 18rem, 20vw, 20rem ) + 76px - 2em );
+		margin-top: 0;
+	}
+
+	body #p-logo {
+		left: auto;
+		right: 100%;
+		top: 0;
+	}
 }
 
 .portal:has( .vector-menu-content-list:empty ) {
@@ -217,6 +282,10 @@ body #p-logo {
 	border-width: 0;
 }
 
+#mw-panel #p-lang {
+	display: none;
+}
+
 @supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
 	#mw-panel .portal .body li a:hover,
 	#mw-panel .portal:hover .vector-menu-heading {
@@ -227,54 +296,6 @@ body #p-logo {
 /******************
 /* Header buttons *
 /******************/
-
-#ca-view {
-	--icon: var( --icon-eye );
-}
-
-#ca-ve-edit {
-	--icon: var( --icon-edit );
-}
-
-#ca-edit {
-	--icon: var( --icon-edit );
-}
-
-#ca-addsection {
-	--icon: var( --icon-edit );
-}
-
-#ca-viewsource {
-	--icon: var( --icon-eye );
-}
-
-#ca-history {
-	--icon: var( --icon-history );
-}
-
-#ca-recreatedata {
-	--icon: var( --icon-reload );
-}
-
-#ca-watch {
-	--icon: var( --icon-star-empty );
-}
-
-#ca-unwatch {
-	--icon: var( --icon-star-filled );
-}
-
-#ca-talk {
-	--icon: var( --icon-talk );
-}
-
-#p-cactions {
-	--icon: var( --icon-more );
-}
-
-#p-lang {
-	--icon: var( --icon-language );
-}
 
 body .vector-menu-tabs .mw-list-item.selected::before {
 	display: none;
@@ -528,8 +549,9 @@ body #p-search {
 	position: absolute;
 	right: 0;
 	top: 0;
-	height: 65px;
-	padding-bottom: 0;
+	width: 50%;
+	height: var( --wiki-logo-height );
+	padding: 0;
 	display: flex;
 	align-items: center;
 	font-size: initial;
@@ -541,7 +563,7 @@ body #p-search::after {
 }
 
 #searchform {
-	margin-top: 0;
+	margin: auto;
 }
 
 body #p-search .searchButton {
@@ -549,8 +571,19 @@ body #p-search .searchButton {
 }
 
 .vector-search-box-inner {
-	min-width: 5rem;
+	min-width: 18rem;
 	max-width: 20rem;
+	width: 20rem;
+}
+
+@media ( min-width: 1200px ) {
+	body #p-search {
+		width: auto;
+	}
+
+	.vector-search-box-inner {
+		width: 20vw;
+	}
 }
 
 body .mw-indicators {

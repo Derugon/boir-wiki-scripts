@@ -1,5 +1,5 @@
 :root {
-	--cf-view-hover-opacity: 10%;
+	--cf-view-hover-opacity: 0.1;
 }
 
 .cf-view {

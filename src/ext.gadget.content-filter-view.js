@@ -12,6 +12,7 @@
 ], ( require ) => {
 
 const cf = require( 'ext.gadget.content-filter-core' );
+const DOMTraversal = cf.DOMTraversal;
 
 const Logger = require( 'ext.gadget.logger' );
 const log = new Logger( 'content-filter-view' );
@@ -79,7 +80,7 @@ const parseViewStackContainer = ( container, view ) => {
 
 		// No match: select the tag and its context.
 		const context = cf.getContext( tag );
-		if ( context === null || context.length === 0 ) {
+		if ( context.length === 0 ) {
 			continue;
 		}
 
@@ -188,9 +189,9 @@ const applyViewRule_ghostParents = ( element ) => {
 
 	while (
 		parent !== null &&
-		cf.isGhostContainer( parent ) &&
-		cf.getPreviousSibling( element, parent ).sibling === null &&
-		cf.getNextSibling( element, parent ).sibling === null
+		DOMTraversal.isGhostContainer( parent ) &&
+		DOMTraversal.previousSibling( element, parent ).sibling === null &&
+		DOMTraversal.nextSibling( element, parent ).sibling === null
 	) {
 		ghostParent = element = parent;
 		parent = element.parentElement;
@@ -234,7 +235,7 @@ const applyViewRule_parentInView = ( element, stack ) => {
  * @returns {HTMLElement?}
  */
 const applyViewRule_allChildren = ( element, stack ) => {
-	const parent = cf.getParent( element );
+	const parent = DOMTraversal.parent( element );
 	if ( parent === null ) {
 		return null;
 	}
@@ -256,18 +257,18 @@ const applyViewRule_allChildren = ( element, stack ) => {
 		return null;
 	}
 
-	if ( cf.getNextSibling( element, parent ).sibling !== null ) {
+	if ( DOMTraversal.nextSibling( element, parent ).sibling !== null ) {
 		return null;
 	}
 
 	let i = stack.length - 1;
-	let previousInfo = cf.getPreviousSibling( element, parent );
+	let previousInfo = DOMTraversal.previousSibling( element, parent );
 	while ( previousInfo.sibling !== null && i >= 0 ) {
 		const previousSibling = previousInfo.sibling;
 		const previousElement = stack[ i ];
 
 		if (
-			!previousSibling.isSameNode( previousElement ) &&
+			previousSibling !== previousElement &&
 			!isChildOf( previousSibling, previousElement )
 		) {
 			// Previous element not in view.
@@ -275,7 +276,7 @@ const applyViewRule_allChildren = ( element, stack ) => {
 		}
 
 		--i;
-		previousInfo = cf.getPreviousSibling( previousElement, parent );
+		previousInfo = DOMTraversal.previousSibling( previousElement, parent );
 	}
 
 	if ( previousInfo.sibling !== null ) {

@@ -180,19 +180,49 @@ const filterMax = Math.pow( 2, filterCount ) - 1;
 let filteringForced = false;
 
 /**
- * TODO
- * @type {HTMLElement[]}
+ * Reigstry for managed containers. Reclaimed objects are freed from the registry when retrieved.
  */
-const containers = [];
+const ContainerRegistry = {
+	/**
+	 * Managed containers.
+	 *
+	 * @type {WeakRef<HTMLElement>[]}
+	 */
+	containers: [],
+
+	/**
+	 * Registers a container.
+	 *
+	 * @param {HTMLElement} container Container.
+	 */
+	add: ( container ) => {
+		ContainerRegistry.containers.push( new WeakRef( container ) );
+	},
+
+	/**
+	 * Retrieves an array of all registered containers, excluding the reclaimed ones.
+	 *
+	 * @returns {HTMLElement[]} An array of registered containers.
+	 */
+	getAll: () => {
+		const containers = [];
+
+		let i = 0, j = 0;
+		for ( ; i < ContainerRegistry.containers.length; ++i ) {
+			const value = ContainerRegistry.containers[ i ].deref();
+			if ( value !== undefined ) {
+				ContainerRegistry.containers[ j++ ] = ContainerRegistry.containers[ i ];
+				containers.push( value );
+			}
+		}
+
+		ContainerRegistry.containers.length = j;
+		return containers;
+	}
+};
 
 /**
- * TODO
- * @type {number}
- */
-let pageFilter = filterMax;
-
-/**
- * Generates a context identifier, supposedly not used by any other element on the page.
+ * Generate a context identifier, supposedly not used by any other element on the page.
  *
  * @returns {number}
  */
@@ -202,7 +232,7 @@ const newUniqueContextId = () => {
 newUniqueContextId.next = 0;
 
 /**
- * Indicates whether an element wraps the main page content.
+ * Check whether an element wraps the main page content.
  *
  * @param {HTMLElement} content The element to check.
  * @returns {boolean}
@@ -210,14 +240,14 @@ newUniqueContextId.next = 0;
 const isMainContent = ( content ) => content.classList.contains( css.bodyContentClass );
 
 /**
- * Indicates whether the filters should be used on a page because of the use of
+ * Check whether the filters should be used on a page because of the use of
  * in-content specific markers.
  *
  * @param {Document} content The page content.
  * @returns {boolean} True if the filters should be used, false otherwise.
  */
 const isFilteringForced = ( content ) => {
-	if ( content.getElementsByClassName( css.filterEnableClass ).length ) {
+	if ( content.getElementsByClassName( css.filterEnableClass ).length > 0 ) {
 		return true;
 	}
 
@@ -232,16 +262,16 @@ const isFilteringForced = ( content ) => {
  */
 const getPageFilter = () => {
 	const pageContextBox = document.getElementById( css.pageScopeId );
-	if ( !pageContextBox ) {
+	if ( pageContextBox === null ) {
 		return filterMax;
 	}
 
-	if ( isTag( pageContextBox ) ) {
+	if ( pageContextBox.classList.contains( css.tagClass ) ) {
 		return getFilter( pageContextBox );
 	}
 
-	const tagChild = document.getElementsByClassName( css.tagClass )[ 0 ];
-	if ( !tagChild ) {
+	const tagChild = pageContextBox.getElementsByClassName( css.tagClass )[ 0 ];
+	if ( tagChild === undefined ) {
 		log.error(
 			'Neither the page context and any of its children have a ' +
 			'filter value property.'
@@ -254,15 +284,6 @@ const getPageFilter = () => {
 
 /**
  * TODO
- * @param {HTMLElement} element
- * @returns {boolean}
- */
-const isTag = ( element ) => {
-	return element.classList.contains( css.tagClass );
-};
-
-/**
- * TODO
  * @param {HTMLElement} container
  */
 const parseFilter = ( container ) => {
@@ -270,7 +291,7 @@ const parseFilter = ( container ) => {
 		return;
 	}
 
-	if ( container.getElementsByClassName( css.containerClass )[ 0 ] ) {
+	if ( container.getElementsByClassName( css.containerClass )[ 0 ] !== undefined ) {
 		log.error(
 			'The newly added content contains elements which are already ' +
 			'managed by this script. The filtering has been disabled ' +
@@ -284,8 +305,7 @@ const parseFilter = ( container ) => {
 	const parentContainer = getParentContainer( container );
 
 	if ( isMainContent( container ) ) {
-		filteringForced   = isFilteringForced( document );
-		containers.length = 0;
+		filteringForced = isFilteringForced( document );
 	}
 
 	if ( !filteringAvailable && !filteringForced ) {
@@ -298,16 +318,16 @@ const parseFilter = ( container ) => {
 
 	if ( isMainContent( container ) ) {
 		log.info( 'Initializing state.' );
-		pageFilter = getPageFilter();
-		mw.hook( 'contentFilter.content.pageFilter' ).fire( pageFilter );
+		mw.hook( 'contentFilter.content.pageFilter' ).fire( getPageFilter() );
 	}
 
-	for ( const tag of queryElementsByClassName( css.tagClass, container ) ) {
-		parseTag( tag );
+	const contextualizer = new Contextualizer( container );
+	for ( const tag of queryElementsByClassName( css.tagClass, container ).reverse() ) {
+		getContext( tag, contextualizer );
 	}
 
 	if ( parentContainer === null ) {
-		containers.push( container );
+		ContainerRegistry.add( container );
 	}
 
 	mw.hook( 'contentFilter.content.registered' ).fire( container, parentContainer );
@@ -335,16 +355,25 @@ const getParentContainer = ( node ) => {
 /**
  * TODO
  * @param {HTMLElement} tag
+ * @param {HTMLElement|Contextualizer} [contextualizer]
+ * @returns {HTMLElement[]}
  */
-const parseTag = ( tag ) => {
+const getContext = ( tag, contextualizer ) => {
 	if ( tag.dataset.cfContext !== undefined ) {
-		return;
+		return queryElementsByClassName( `${css.contextClassPrefix}${tag.dataset.cfContext}` );
 	}
 
-	const context = getContext( tag );
-	if ( context === null ) {
+	if ( contextualizer === undefined ) {
+		contextualizer = new Contextualizer( document.body );
+	} else if ( contextualizer instanceof HTMLElement ) {
+		contextualizer = new Contextualizer( contextualizer );
+	}
+
+	const context = contextualizer.infer( tag );
+
+	if ( context.length === 0 ) {
 		log.warn( 'No context found for the following tag:', tag );
-		return;
+		return context;
 	}
 
 	const id = newUniqueContextId();
@@ -352,10 +381,12 @@ const parseTag = ( tag ) => {
 	for ( const contextElement of context ) {
 		contextElement.classList.add( css.contextClass, `${css.contextClassPrefix}${id}` );
 	}
+
+	return context;
 };
 
 /**
- * Indicates whether the filters can be used on a page.
+ * Check whether the filters can be used on a page.
  *
  * @param {mw.Title} pageTitle The page title.
  * @returns {boolean} True if the filters can be used, false otherwise.
@@ -379,7 +410,7 @@ const isFilteringAvailable = ( pageTitle ) => {
 };
 
 /**
- * Gets the numeric filter of an element.
+ * Get the numeric filter of an element.
  *
  * @param {HTMLElement} tag The element.
  * @returns {number} The numeric filter of the given element.
@@ -389,7 +420,7 @@ const getFilter = ( tag ) => {
 		return +tag.dataset.cfVal;
 	}
 
-	if ( !isTag( tag ) ) {
+	if ( !tag.classList.contains( css.tagClass ) ) {
 		return filterMax;
 	}
 
@@ -414,346 +445,667 @@ const getFilter = ( tag ) => {
 };
 
 /**
- * TODO
- * @param {HTMLElement} tag
- * @returns {HTMLElement[] | null}
+ * @classdesc
+ * Context inference inside a container.
+ *
+ * DOM information is cached, meaning this object can break if the DOM has been rearranged since it was created.
+ *
+ * @param {HTMLElement} root Root container.
  */
-const getContext = ( tag ) => {
-	if ( tag.dataset.cfContext !== undefined ) {
-		return queryElementsByClassName( `${css.contextClassPrefix}${tag.dataset.cfContext}` );
-	}
+function Contextualizer( root ) {
+	/**
+	 * Root container.
+	 *
+	 * @type {HTMLElement}
+	 */
+	this.root = root;
+	/**
+	 * Row/column layout of observed tables within the root container.
+	 *
+	 * @type {WeakMap<HTMLTableElement, HTMLTableLayout>}
+	 */
+	this.tableLayouts = new WeakMap();
+}
 
-	const explicitContext = getExplicitScopeContext( tag );
-	if ( explicitContext !== null ) {
-		return explicitContext;
-	}
+Contextualizer.prototype = {
+	constructor: Contextualizer,
 
-	const previousInfo = getPreviousSibling( tag );
-	if ( previousInfo.sibling instanceof HTMLBRElement ) {
-		// Select the next line.
-		const range = new Range();
-		range.setStartBefore( previousInfo.sibling );
-		/** @type {ChildNode?} */
-		let e = tag;
-		while ( e.nextSibling !== null && !( e.nextSibling instanceof HTMLBRElement ) ) {
-			e = e.nextSibling;
+	/**
+	 * Infers the context of a tag.
+	 *
+	 * @param {HTMLElement} tag
+	 * @returns {HTMLElement[]}
+	 */
+	infer( tag ) {
+		const explicitContext = this.inferExplicitScope( tag );
+		if ( explicitContext !== null ) {
+			return explicitContext;
 		}
-		range.setEndAfter( e );
 
-		const wrapper = document.createElement( 'span' );
-		range.surroundContents( wrapper );
-		return [ wrapper ];
-	} else if ( previousInfo.sibling !== null ) {
-		// <A> ... (tag) ... </A>
+		const previousInfo = DOMTraversal.previousSibling( tag );
+		if ( previousInfo.sibling instanceof HTMLBRElement ) {
+			// Select the next line.
+			const range = new Range();
+			range.setStartBefore( previousInfo.sibling );
+			/** @type {ChildNode?} */
+			let e = tag;
+			while ( e.nextSibling !== null && !( e.nextSibling instanceof HTMLBRElement ) ) {
+				e = e.nextSibling;
+			}
+			range.setEndAfter( e );
+
+			const wrapper = document.createElement( 'span' );
+			range.surroundContents( wrapper );
+			return [ wrapper ];
+		} else if ( previousInfo.sibling !== null ) {
+			// <A> ... (tag) ... </A>
+			return [];
+		}
+
+		const scope = previousInfo.parent;
+		if ( scope === null ) {
+			// (tag) is alone
+			return [ tag ];
+		}
+
+		switch ( scope.tagName ) {
+			case 'DD':
+				return [ scope ];
+			case 'DT':
+				return this.inferDefinition( scope );
+			case 'H2':
+			case 'H3':
+			case 'H4':
+			case 'H5':
+			case 'H6':
+				if ( scope instanceof HTMLHeadingElement ) {
+					return this.inferSection( scope );
+				}
+				break;
+			case 'LI':
+				return [ scope ];
+			case 'P':
+				return [ scope ];
+			case 'TD':
+			case 'TH':
+				if ( scope instanceof HTMLTableCellElement ) {
+					const direction = getTableHeaderDirection( scope );
+					if ( direction !== null ) {
+						return this.inferTableHeader( scope, direction );
+					} else {
+						return this.inferTableCell( scope );
+					}
+				}
+				break;
+		}
+
+		return [];
+	},
+
+	/**
+	 * Find an explicit inference strategy specified on the element or one of its
+	 * wrappers. Multiple strategies may be specified, in which case the best one
+	 * is chosen, with the following priority ordering:
+	 *  - strategies on the element itself, then its wrappers ordered by distance.
+	 *  - on a single element/wrapper, strategy order depends on the strategy type,
+	 *    the greedier ones come first (e.g. "page" > "section" > "wrapped" ).
+	 *
+	 * @param {HTMLElement?} element
+	 * @returns {HTMLElement[]?}
+	 */
+	inferExplicitScope( element ) {
+		while ( element !== null ) {
+			if ( element.id === css.pageScopeId ) {
+				// We should have already took the page filter into account,
+				// so there is nothing else to select (than the whole page content).
+				const mainContent = document.getElementsByClassName( css.bodyContentClass )[ 0 ];
+				if ( mainContent !== null ) {
+					return [ mainContent ];
+				}
+			} else if ( element.classList.contains( css.wrappedScopeClass ) ) {
+				for ( let wrapper = element.parentElement; wrapper !== null; wrapper = wrapper.parentElement ) {
+					if ( wrapper.classList.contains( css.contextWrapperClass ) ) {
+						return [ wrapper ];
+					}
+				}
+			}
+
+			element = DOMTraversal.wrapper( element );
+		}
+
 		return null;
-	}
+	},
 
-	const scope = previousInfo.parent;
-	if ( scope === null ) {
-		// (tag) is alone
-		return [ tag ];
-	}
+	/**
+	 * [ <hI/> ] ... <hI+1/> ... <hI/>
+	 *     ==>  [ <hI/> ... <hI+1/> ... ] <hI/>
+	 *
+	 * @param {HTMLHeadingElement} heading
+	 * @returns {HTMLElement[]}
+	 */
+	inferSection( heading ) {
+		const parent = heading.parentElement;
+		if ( parent === null ) {
+			return [];
+		}
 
-	return (
-		applyContextRule_galleryText( scope ) ||
-		applyContextRule_dt( scope ) ||
-		[ scope ]
-	);
+		const level = getHeadingLevel( heading );
+
+		/** @type {ChildNode} */
+		let lastSectionNode = heading;
+		for (
+			let sibling = lastSectionNode.nextSibling;
+			!( sibling === null || sibling instanceof HTMLHeadingElement && getHeadingLevel( sibling ) <= level );
+			sibling = sibling.nextSibling
+		) {
+			lastSectionNode = sibling;
+		}
+
+		// Section is empty:
+		// [ <hI/> ] <hI/>
+		//     ==>  [ <hI/> ] <hI/>
+		if ( lastSectionNode === heading ) {
+			return [ heading ];
+		}
+
+		// Section has only one element:
+		// [ <hI/> ] <A/> <hI/>
+		//     ==>  [ <hI/> <A/> ] <hI/>
+		if ( lastSectionNode instanceof HTMLElement && heading.nextSibling === lastSectionNode ) {
+			return [ heading, lastSectionNode ];
+		}
+
+		const wrapper = document.createElement( 'div' );
+		const range = new Range();
+		range.setStartAfter( heading );
+		range.setEndAfter( lastSectionNode );
+		range.surroundContents( wrapper );
+		heading.insertAdjacentElement( 'afterend', wrapper );
+
+		return [ heading, wrapper ];
+	},
+
+	/**
+	 * [ <dt/> ] <dd/> <dd/> <dt/>
+	 *     ==>   [ <dt/> <dd/> <dd/> ] <dt/>
+	 *
+	 * @param {HTMLElement} term
+	 * @returns {HTMLElement[]}
+	 */
+	inferDefinition( term ) {
+		const scopeParentElement = term.parentElement;
+		const ddElements = [];
+		let nextElement = term.nextElementSibling;
+		while ( nextElement !== null ) {
+			if ( nextElement.tagName === 'DT' ) {
+				break;
+			}
+
+			if ( nextElement.tagName === 'DD' ) {
+				ddElements.push( nextElement );
+			}
+
+			if ( nextElement instanceof HTMLDivElement && nextElement.firstElementChild !== null ) {
+				nextElement = nextElement.firstElementChild;
+				continue;
+			}
+
+			while (
+				nextElement.nextElementSibling === null &&
+				nextElement.parentElement !== null &&
+				nextElement.parentElement !== scopeParentElement
+			) {
+				nextElement = nextElement.parentElement;
+			}
+			nextElement = nextElement.nextElementSibling;
+		}
+
+		if ( ddElements.length > 0 ) {
+			ddElements.unshift( term );
+			return ddElements;
+		} else {
+			return [];
+		}
+	},
+
+	/**
+	 * <tr> ... [ <th/> ] ... </tr>
+	 *     ==>   [ <tr> ... <th/> ... </tr> ]
+	 * (or by column ...)
+	 *
+	 * @param {HTMLTableCellElement} headingCell
+	 * @param {'col' | 'row'} direction
+	 * @returns {HTMLElement[]}
+	 */
+	inferTableHeader( headingCell, direction ) {
+		const row = headingCell.parentElement;
+		if ( row === null ) {
+			return [];
+		}
+
+		let table = row.parentElement;
+		if ( table instanceof HTMLTableSectionElement ) {
+			table = table.parentElement;
+		}
+		if ( table === null ) {
+			return [];
+		}
+
+		let tableLayout = this.tableLayouts.get( table );
+		if ( tableLayout === undefined ) {
+			tableLayout = new HTMLTableLayout( table );
+			this.tableLayouts.set( table, tableLayout );
+		}
+
+		/** @type {Set<HTMLTableCellElement>} */
+		const cells = new Set();
+
+		switch ( direction ) {
+			case 'col':
+				const j = tableLayout.getBaseColumn( headingCell );
+				for ( let jSpan = headingCell.colSpan - 1; jSpan >= 0; --jSpan ) {
+					for ( const cell of tableLayout.getColumnCells( j + jSpan ) ) {
+						cells.add( cell );
+					}
+				}
+				break;
+			case 'row':
+				const i = tableLayout.getBaseRow( headingCell );
+				for ( let iSpan = headingCell.rowSpan - 1; iSpan >= 0; --iSpan ) {
+					for ( const cell of tableLayout.getRowCells( i + iSpan ) ) {
+						cells.add( cell );
+					}
+				}
+		}
+
+		return Array.from( cells );
+	},
+
+	/**
+	 * [ <td> ... </td> ]
+	 *     ==>   <td> [ ... ] </td>
+	 *
+	 * @param {HTMLTableCellElement} cell
+	 * @returns {HTMLElement[]}
+	 */
+	inferTableCell( cell ) {
+		const wrapper = document.createElement( 'div' );
+
+		const range = new Range();
+		range.selectNodeContents( cell );
+		range.surroundContents( wrapper );
+		cell.append( wrapper );
+
+		return [ wrapper ];
+	}
 };
 
 /**
- * Find an explicit inference strategy specified on the element or one of its
- * wrappers. Multiple strategies may be specified, in which case the best one
- * is chosen, with the following priority ordering:
- *  - strategies on the element itself, then its wrappers ordered by distance.
- *  - on a single element/wrapper, strategy order depends on the strategy type,
- *    the greedier ones come first (e.g. "page" > "section" > "wrapped" ).
- *
- * @param {HTMLElement?} element
+ * @param {HTMLTableElement} table Table element.
  */
-const getExplicitScopeContext = ( element ) => {
-	while ( element !== null ) {
-		if ( element.id === css.pageScopeId ) {
-			// We should have already took the page filter into account,
-			// so there is nothing else to select (than the whole page content).
-			const mainContent = document.getElementsByClassName( css.bodyContentClass )[ 0 ];
-			if ( mainContent !== null ) {
-				return [ mainContent ];
+function HTMLTableLayout( table ) {
+	/**
+	 * @type {HTMLTableElement}
+	 */
+	this.table = table;
+	/**
+	 * @type {HTMLTableCellElement[][]}
+	 */
+	this.content = [];
+
+	for ( let i = 0, row = table.rows[ i ]; row; ++i, row = table.rows[ i ] ) {
+		if ( this.content[ i ] === undefined ) {
+			this.content[ i ] = [];
+		}
+
+		for ( let j = 0, k = 0, cell = row.cells[ k ]; cell; ++j, ++k, cell = row.cells[ k ] ) {
+			// Skip cells covered by a rowspan from a previous row
+			while ( this.content[ i ][ j ] !== undefined ) {
+				++j;
 			}
-		} else if ( element.classList.contains( css.wrappedScopeClass ) ) {
-			for ( let wrapper = element.parentElement; wrapper !== null; wrapper = wrapper.parentElement ) {
-				if ( wrapper.classList.contains( css.contextWrapperClass ) ) {
-					return [ wrapper ];
+
+			for ( let iSpan = cell.rowSpan - 1; iSpan >= 0; --iSpan ) {
+				if ( this.content[ i + iSpan ] === undefined ) {
+					this.content[ i + iSpan ] = [];
+				}
+
+				for ( let jSpan = cell.colSpan - 1; jSpan >= 0; --jSpan ) {
+					this.content[ i + iSpan ][ j + jSpan ] = cell;
 				}
 			}
 		}
-
-		element = getWrapper( element );
 	}
+}
 
-	return null;
+HTMLTableLayout.prototype = {
+	constructor: HTMLTableLayout,
+
+	/**
+	 * Get the index of the first row covered by a table cell.
+	 *
+	 * @param {HTMLTableCellElement} cell Table cell.
+	 * @returns {number} The base row index.
+	 */
+	getBaseRow( cell ) {
+		const row = cell.parentElement || log.panic();
+		return row.rowIndex;
+	},
+
+	/**
+	 * Get the index of the first column covered by a table cell.
+	 *
+	 * @param {HTMLTableCellElement} cell Table cell.
+	 * @returns {number} The base column index.
+	 */
+	getBaseColumn( cell ) {
+		const row = cell.parentElement || log.panic();
+		const rowContent = this.content[ row.rowIndex ];
+		for ( let i = cell.cellIndex; i < rowContent.length; ++i ) {
+			if ( cell === rowContent[ i ] ) {
+				return i;
+			}
+		}
+		log.panic();
+	},
+
+	/**
+	 * Get the set of cells on a column.
+	 *
+	 * @param {number} j Column index.
+	 * @returns {Set<HTMLTableCellElement>}
+	 */
+	getColumnCells( j ) {
+		const cells = new Set();
+		for ( const row of this.content ) {
+			const cell = row[ j ];
+			if ( cell !== undefined ) {
+				cells.add( cell );
+			}
+		}
+		return cells;
+	},
+
+	/**
+	 * Get the set of cells on a row.
+	 *
+	 * @param {number} i Row index.
+	 * @returns {Set<HTMLTableCellElement>}
+	 */
+	getRowCells( i ) {
+		const cells = new Set();
+		const row = this.content[ i ];
+		if ( row !== undefined ) {
+			for ( const cell of row ) {
+				cells.add( cell );
+			}
+		}
+		return cells;
+	}
 };
 
 /**
- * <A class="gallerybox"> ... <B class="gallerytext"> [ <X/> ] </B> </A>
- *     ==>   [ <A class="gallerybox"> ... <B class="gallerytext"> <X/> </B> </A> ]
+ * Determine whether an HTML table cell covers columns or rows.
+ * 
+ * For a <td>, based on:
+ * - whether the cell is the first one of its row.
  *
- * @param {HTMLElement} scope
- */
-const applyContextRule_galleryText = ( scope ) => {
-	if ( !( scope instanceof HTMLParagraphElement ) ) {
-		return null;
-	}
-
-	const galleryText = scope.parentElement;
-	if ( galleryText === null || !galleryText.classList.contains( 'gallerytext' ) ) {
-		return null;
-	}
-
-	let galleryBox = galleryText.parentElement;
-	while ( galleryBox !== null && !galleryBox.classList.contains( 'gallerybox' ) ) {
-		galleryBox = galleryBox.parentElement;
-	}
-
-	if ( galleryBox === null ) {
-		return null;
-	}
-
-	return [ galleryBox ];
-};
-
-/**
- * [ <dt/> ] <dd/> <dd/> <dt/>
- *     ==>   [ <dt/> <dd/> <dd/> ] <dt/>
+ * For a <th>, based on:
+ * - the cell scope attribute, otherwise
+ * - whether the cell is in <thead>, otherwise
+ * - whether there are <td>s in the row.
  *
- * @param {HTMLElement} scope
+ * @param {HTMLTableCellElement} cell Table header cell element.
+ * @returns {'col' | 'row' | null} Whether the header covers columns or rows.
  */
-const applyContextRule_dt = ( scope ) => {
-	if ( scope.tagName !== 'DT' ) {
-		return null;
-	}
-
-	const scopeParentElement = scope.parentElement;
-	const ddElements = [];
-	let nextElement = scope.nextElementSibling;
-	while ( nextElement !== null ) {
-		if ( nextElement.tagName === 'DT' ) {
-			break;
+const getTableHeaderDirection = ( cell ) => {
+	if ( cell.tagName === 'TD' ) {
+		if ( cell.previousElementSibling === null ) {
+			return 'row';
 		}
 
-		if ( nextElement.tagName === 'DD' ) {
-			ddElements.push( nextElement );
-		}
-
-		if ( nextElement instanceof HTMLDivElement && nextElement.firstElementChild !== null ) {
-			nextElement = nextElement.firstElementChild;
-			continue;
-		}
-
-		while (
-			nextElement.nextElementSibling === null &&
-			nextElement.parentElement !== null &&
-			nextElement.parentElement !== scopeParentElement
-		) {
-			nextElement = nextElement.parentElement;
-		}
-		nextElement = nextElement.nextElementSibling;
-	}
-
-	if ( ddElements.length > 0 ) {
-		ddElements.unshift( scope );
-		return ddElements;
-	} else {
 		return null;
 	}
+
+	switch ( cell.scope ) {
+		case 'col':
+		case 'colgroup':
+			return 'col';
+		case 'row':
+		case 'rowgroup':
+			return 'row';
+	}
+
+	const row = cell.parentElement;
+	if ( row === null ) {
+		return 'row';
+	}
+
+	const section = row.parentElement;
+	if ( section !== null && section.tagName === 'THEAD' ) {
+		return 'col';
+	}
+
+	// From here on, set the scope attribute to not traverse the DOM twice.
+
+	for ( let i = 0, siblingCell = row.cells[ i ]; siblingCell; ++i, siblingCell = row.cells[ i ] ) {
+		if ( siblingCell.nodeName === 'TD' ) {
+			cell.scope = 'row';
+			return 'row';
+		}
+	}
+
+	cell.scope = 'col';
+	return 'col';
 };
 
 /**
- * TODO
- * @param {Node} node
- */
-const getWrapper = ( node ) => {
-	let sibling = node.previousSibling;
-	while ( sibling !== null && isEmptyNode( sibling ) ) {
-		sibling = sibling.previousSibling;
-	}
-
-	if ( sibling !== null ) {
-		return null;
-	}
-
-	sibling = node.previousSibling;
-	while ( sibling !== null && isEmptyNode( sibling ) ) {
-		sibling = sibling.previousSibling;
-	}
-
-	if ( sibling !== null ) {
-		return null;
-	}
-
-	return node.parentElement;
-};
-
-/**
- * Get the non-ghost parent of a node.
+ * Get the level of a heading element.
  *
- * @param {Node} node Node.
- * @returns {HTMLElement?}
+ * @param {HTMLHeadingElement} heading Heading element.
+ * @returns {number} The (1-based) heading element level.
  */
-const getParent = ( node ) => {
-	let parent = node.parentElement;
-	while ( parent !== null && isGhostContainer( parent ) ) {
-		parent = parent.parentElement;
-	}
-
-	return parent;
+const getHeadingLevel = ( heading ) => {
+	return +heading.tagName.substring( 1 );
 };
 
-/**
- * Get the non-ghost previous sibling of a node.
- * If no sibling is found, the non-ghost parent it stopped searching at is given instead.
- *
- * @param {Node} node Node.
- * @param {HTMLElement} [container] Container assumed to be the non-ghost parent of the node.
- * @returns {ContentFilter.SiblingSearchResult}
- */
-const getPreviousSibling = ( node, container ) => {
-	while ( true ) {
+const DOMTraversal = {
+	/**
+	 * TODO
+	 * @param {Node} node
+	 */
+	wrapper: ( node ) => {
 		let sibling = node.previousSibling;
-		while ( sibling !== null && isGhostNode( sibling ) ) {
+		while ( sibling !== null && DOMTraversal.isEmptyNode( sibling ) ) {
 			sibling = sibling.previousSibling;
 		}
 
 		if ( sibling !== null ) {
-			return { sibling: sibling };
+			return null;
 		}
 
-		const parent = node.parentElement;
-		if ( parent === null || parent === container || !isGhostContainer( parent ) ) {
-			return { sibling: null, parent: parent };
-		}
-
-		node = parent;
-	}
-};
-
-/**
- * Get the non-ghost next sibling of a node.
- * If no sibling is found, the non-ghost parent it stopped searching at is given instead.
- *
- * @param {Node} node Node.
- * @param {HTMLElement} [container] Container assumed to be the non-ghost parent of the node.
- * @returns {ContentFilter.SiblingSearchResult}
- */
-const getNextSibling = ( node, container ) => {
-	while ( true ) {
-		let sibling = node.nextSibling;
-		while ( sibling !== null && isGhostNode( sibling ) ) {
-			sibling = sibling.nextSibling;
+		sibling = node.previousSibling;
+		while ( sibling !== null && DOMTraversal.isEmptyNode( sibling ) ) {
+			sibling = sibling.previousSibling;
 		}
 
 		if ( sibling !== null ) {
-			return { sibling: sibling };
+			return null;
 		}
 
-		const parent = node.parentElement;
-		if ( parent === null || parent === container || !isGhostContainer( parent ) ) {
-			return { sibling: null, parent: parent };
+		return node.parentElement;
+	},
+
+	/**
+	 * Get the non-ghost parent of a node.
+	 *
+	 * @param {Node} node Node.
+	 * @returns {HTMLElement?}
+	 */
+	parent: ( node ) => {
+		let parent = node.parentElement;
+		while ( parent !== null && DOMTraversal.isGhostContainer( parent ) ) {
+			parent = parent.parentElement;
 		}
 
-		node = parent;
-	}
-};
+		return parent;
+	},
 
-/**
- * Indicates whether a node should be considered as an additional non-essential node.
- *
- * @param {Node} node The node.
- */
-const isEmptyNode = ( node ) => {
-	switch ( node.nodeType ) {
-	case Node.COMMENT_NODE:
-		return true;
+	/**
+	 * Get the non-ghost previous sibling of a node.
+	 * If no sibling is found, the non-ghost parent it stopped searching at is given instead.
+	 *
+	 * @param {Node} node Node.
+	 * @param {HTMLElement} [container] Container assumed to be the non-ghost parent of the node.
+	 * @returns {ContentFilter.SiblingSearchResult}
+	 */
+	previousSibling: ( node, container ) => {
+		while ( true ) {
+			/** @type {Node?} */
+			let sibling = node;
+			do {
+				sibling = sibling.previousSibling;
+				if ( sibling instanceof HTMLElement && sibling.classList.contains( css.contentEndClass ) ) {
+					sibling = null;
+				}
+			} while ( sibling !== null && DOMTraversal.isGhostNode( sibling ) );
 
-	case Node.TEXT_NODE:
-		return !node.textContent || !node.textContent.trim();
+			if ( sibling !== null ) {
+				return { sibling: sibling };
+			}
 
-	default:
-		return false;
-	}
-};
+			const parent = node.parentElement;
+			if ( parent === null || parent === container || !DOMTraversal.isGhostContainer( parent ) ) {
+				return { sibling: null, parent: parent };
+			}
 
-/**
- * Indicates whether an element should not be considered as a container,
- * and its children should then be considered being part of its parent.
- *
- * @param {HTMLElement} element The container element.
- * @returns {boolean} True if the element is not an actual container, false otherwise.
- */
-const isGhostContainer = ( element ) => {
-	if ( element instanceof HTMLSpanElement || element instanceof HTMLDivElement ) {
-		return true;
-	}
+			node = parent;
+		}
+	},
 
-	return false;
-};
+	/**
+	 * Get the non-ghost next sibling of a node.
+	 * If no sibling is found, the non-ghost parent it stopped searching at is given instead.
+	 *
+	 * @param {Node} node Node.
+	 * @param {HTMLElement} [container] Container assumed to be the non-ghost parent of the node.
+	 * @returns {ContentFilter.SiblingSearchResult}
+	 */
+	nextSibling: ( node, container ) => {
+		while ( true ) {
+			/** @type {Node?} */
+			let sibling = node;
+			do {
+				sibling = sibling.nextSibling;
+				if ( sibling instanceof HTMLElement && sibling.classList.contains( css.contentEndClass ) ) {
+					sibling = null;
+				}
+			} while ( sibling !== null && DOMTraversal.isGhostNode( sibling ) );
 
-/**
- * Indicates whether a node should be considered as an additional non-essential node.
- *
- * @param {Node} node The node.
- */
-const isGhostNode = ( node ) => {
-	if ( isEmptyNode( node ) ) {
-		return true;
-	}
+			if ( sibling !== null ) {
+				return { sibling: sibling };
+			}
 
-	switch ( node.nodeType ) {
-	case Node.ELEMENT_NODE:
-		/** @type {HTMLElement} */ // @ts-ignore
-		const element = node;
+			const parent = node.parentElement;
+			if ( parent === null || parent === container || !DOMTraversal.isGhostContainer( parent ) ) {
+				return { sibling: null, parent: parent };
+			}
 
-		if (
-			element.classList.contains( 'mw-collapsible-toggle' ) ||
-			element.classList.contains( css.skipClass )
-		) {
+			node = parent;
+		}
+	},
+
+	/**
+	 * Indicates whether a node should be considered as an additional non-essential node.
+	 *
+	 * @param {Node} node The node.
+	 */
+	isEmptyNode: ( node ) => {
+		switch ( node.nodeType ) {
+		case Node.COMMENT_NODE:
 			return true;
-		}
 
-		if ( !isGhostContainer( element ) ) {
+		case Node.TEXT_NODE:
+			return !node.textContent || !node.textContent.trim();
+
+		default:
+			return false;
+		}
+	},
+
+	/**
+	 * Check whether an element should not be considered as a container,
+	 * and its children should then be considered being part of its parent.
+	 *
+	 * @param {HTMLElement} element The container element.
+	 * @returns {boolean} True if the element is not an actual container, false otherwise.
+	 */
+	isGhostContainer: ( element ) => {
+		if ( !( element instanceof HTMLSpanElement || element instanceof HTMLDivElement ) ) {
 			return false;
 		}
 
-		for ( const child of element.childNodes ) {
-			if ( !isGhostNode( child ) ) {
-				return false;
-			}
+		if ( element.classList.contains( css.containerClass ) ) {
+			return false;
 		}
 
 		return true;
+	},
 
-	default:
-		return false;
+	/**
+	 * Check whether a node should be considered as an additional non-essential node.
+	 *
+	 * @param {Node} node The node.
+	 */
+	isGhostNode: ( node ) => {
+		if ( DOMTraversal.isEmptyNode( node ) ) {
+			return true;
+		}
+
+		switch ( node.nodeType ) {
+		case Node.ELEMENT_NODE:
+			/** @type {HTMLElement} */ // @ts-ignore
+			const element = node;
+
+			if (
+				element.classList.contains( 'mw-collapsible-toggle' ) ||
+				element.classList.contains( 'thumb' ) ||
+				element.classList.contains( css.skipClass )
+			) {
+				return true;
+			}
+
+			if ( !DOMTraversal.isGhostContainer( element ) ) {
+				return false;
+			}
+
+			for ( const child of element.childNodes ) {
+				if ( !DOMTraversal.isGhostNode( child ) ) {
+					return false;
+				}
+			}
+
+			return true;
+
+		default:
+			return false;
+		}
 	}
 };
 
 /**
  * Whether the filters can be used on the current page.
+ *
  * @type {boolean}
  */
 const filteringAvailable = isFilteringAvailable( currentTitle );
 
 module.exports = {
-	filterMax, containers, isFilteringAvailable, getFilter, getContext, getParent,
-	getPreviousSibling, getNextSibling, isGhostContainer, isGhostNode,
+	filterMax, isFilteringAvailable, getFilter, getContext, DOMTraversal,
 	/**
 	 * @param {Document | HTMLElement} [root]
 	 */
 	getTags: ( root ) => queryElementsByClassName( css.tagClass, root ),
-	/**
-	 * @param {Document | HTMLElement} [root]
-	 */
-	getContainers: ( root ) => queryElementsByClassName( css.containerClass, root )
+	getContainers: ContainerRegistry.getAll
 };
 
 safeAddContentHook( ( $content ) => {

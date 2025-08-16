@@ -15,11 +15,11 @@ table.floatright {
 
 table.cf-context,
 th.cf-context,
-td.cf-context,
 dt.cf-context,
 dd.cf-context,
 li.cf-context,
-p.cf-context {
+p.cf-context,
+div.cf-context {
 	position: relative;
 	max-width: max-content;
 }
@@ -32,11 +32,11 @@ p.cf-context {
 
 table.cf-context::before,
 th.cf-context::before,
-td.cf-context::before,
 dt.cf-context::before,
 dd.cf-context::before,
 li.cf-context::before,
-p.cf-context::before {
+p.cf-context::before,
+div.cf-context::before {
 	content       : "";
 	position      : absolute;
 	left          : -5px;
@@ -47,7 +47,6 @@ p.cf-context::before {
 
 table.cf-context::before,
 th.cf-context::before,
-td.cf-context::before,
 dt.cf-context::before,
 dd.cf-context::before {
 	top   : -5px;
@@ -55,7 +54,8 @@ dd.cf-context::before {
 }
 
 li.cf-context::before,
-p.cf-context::before {
+p.cf-context::before,
+div.cf-context::before {
 	top   : -2px;
 	height: calc( 100% + 4px );
 }
@@ -70,10 +70,10 @@ span.cf-context {
 
 table.cf-context::before,
 th.cf-context::before,
-td.cf-context::before,
 dd.cf-context::before,
 li.cf-context::before,
 p.cf-context::before,
+div.cf-context::before,
 span.cf-context {
 	transition-duration: 0.2s;
 	transition-property: background-color, border-color;
@@ -84,10 +84,10 @@ span.cf-context {
 
 table.cf-context-hover::before,
 th.cf-context-hover::before,
-td.cf-context-hover::before,
 dd.cf-context-hover::before,
 li.cf-context-hover::before,
 p.cf-context-hover::before,
+div.cf-context-hover::before,
 span.cf-context-hover {
 	border-color: var( --cf-context-border-color );
 	background  : var( --cf-context-background-color );

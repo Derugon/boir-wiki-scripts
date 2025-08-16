@@ -1,14 +1,21 @@
 /**
- * Name:        Tooltips script
- * Description: Add custom tooltips to the page content.
+ * Name:         Tooltips
+ * Description:  Add custom tooltips to the page content.
+ *
+ * Module:       ext.gadget.tooltips
+ * Dependencies: mediawiki.api, ext.gadget.mouse-tracker
  */
 
 // <nowiki>
-( ( $, mw ) => mw.loader.using( [ 'mediawiki.api', 'ext.gadget.logger' ], () => {
+( ( $, mw ) => mw.loader.using( [
+	'mediawiki.api',
+	'ext.gadget.logger', 'ext.gadget.mouse-tracker'
+], () => {
 
 const Logger = require( 'ext.gadget.logger' );
 /** @type {Logger} */
 const log = new Logger( 'tooltips' );
+const MouseTracker = require( 'ext.gadget.mouse-tracker' );
 
 const css = {
 	tooltipClass: 'tooltip',
@@ -22,12 +29,13 @@ const css = {
 };
 
 /**
- * The MediaWiki API.
+ * MediaWiki API.
  */
 const api = new mw.Api();
 
 /**
- * Initializes all tooltips in a container.
+ * Initialize all tooltips in a container.
+ *
  * @param {HTMLElement} container The container.
  */
 const init = ( container ) => {
@@ -37,9 +45,10 @@ const init = ( container ) => {
 };
 
 /**
- * Generates the tooltip used on an element from its corresponding data.
+ * Generate the tooltip used on an element from its corresponding data.
+ *
  * @this {HTMLElement}
- * @param {Event} event
+ * @param {Event} event Some event.
  */
 const createTooltipOnEvent = function ( event ) {
 	const source = this;
@@ -75,12 +84,14 @@ const createTooltipOnEvent = function ( event ) {
 /**
  * Creates a tooltip from a target element. The tooltip is linked to a source element,
  * that may or may not currently be in the DOM.
- * @param {HTMLElement} source The source element.
- * @param {HTMLElement} target The tooltip target element.
+ *
+ * @param {HTMLElement} source Source element.
+ * @param {HTMLElement} target Tooltip target element.
  */
 const createTooltip = ( source, target ) => {
+	// Remove titles inside the tooltip text, to prevent showing both the tooltip and the title.
 	for ( const anchor of queryElementsByClassName( 'a', source ) ) {
-		removeTitle( anchor );
+		anchor.title = '';
 	}
 
 	if ( source.dataset.tooltip !== undefined ) {
@@ -88,31 +99,19 @@ const createTooltip = ( source, target ) => {
 	}
 	target.classList.add( css.contentClass );
 	for ( const slideshow of queryElementsByClassName( 'boir-slideshow', target ) ) {
-		makeSlideshowAuto( slideshow );
+		slideshow.classList.add( 'boir-slideshow-auto' );
 	}
 
-	if ( !document.contains( wrapper ) ) {
-		placeWrapper();
-	}
-
-	wrapper.appendChild( target );
+	TooltipWrapper.add( target );
 	mw.hook( 'wikipage.content' ).fire( $( target ) );
 
 	bindSourceEvents( source );
 };
 
 /**
- * Removes the title of an element within a tooltip text, to prevent showing
- * both the tooltip and the title.
- * @param {HTMLElement} element The element to remove the title of.
- */
-const removeTitle = ( element ) => {
-	element.title = '';
-};
-
-/**
  * Add event listeners to a source element, asusming the target tooltip element
  * is properly defined and in the DOM.
+ *
  * @param {HTMLElement} source
  */
 const bindSourceEvents = ( source ) => {
@@ -124,55 +123,81 @@ const bindSourceEvents = ( source ) => {
 };
 
 /**
- * Shows a tooltip.
+ * Show a tooltip.
+ *
  * @this {HTMLElement}
  */
 const showTooltip = function () {
-	wrapper.classList.add( css.activeWrapperClass );
+	TooltipWrapper.show();
 	const target = document.getElementById( this.dataset.tooltip ) || log.panic();
 	target.classList.add( css.activeContentClass );
 };
 
 /**
- * Hides a tooltip.
+ * Hide a tooltip.
+ *
  * @this {HTMLElement}
  */
 const hideTooltip = function() {
-	wrapper.classList.remove( css.activeWrapperClass );
+	TooltipWrapper.hide();
 	const target = document.getElementById( this.dataset.tooltip ) || log.panic();
 	target.classList.remove( css.activeContentClass );
 };
 
-/**
- * Creates the tooltip wrapper.
- */
-const createWrapper = () => {
-	const wrapper = document.createElement( 'div' );
-	wrapper.id = css.wrapperId;
-	document.addEventListener( 'mousemove', updateWrapper );
+const TooltipWrapper = {
+	/**
+	 * Mouse position tracker.
+	 *
+	 * @type {MouseTracker}
+	 */
+	mouseTracker: new MouseTracker(),
 
-	return wrapper;
-};
+	/**
+	 * Wrapper element.
+	 *
+	 * @type {HTMLElement}
+	 */
+	element: ( () => {
+		const element = document.createElement( 'div' );
+		element.id = css.wrapperId;
+		return element;
+	} )(),
 
-/**
- * Places the tooltip wrapper on the page.
- */
-const placeWrapper = () => {
-	const content = document.getElementById( 'mw-content-text' );
-	if ( content === null ) {
-		log.panic( 'No page content found, could not place the tooltip wrapper.' );
+	/**
+	 * Add a tooltip to the wrapper.
+	 * 
+	 * @param {HTMLElement} target Tooltip target element.
+	 */
+	add: ( target ) => {
+		TooltipWrapper.element.appendChild( target );
+
+		if ( document.contains( TooltipWrapper.element ) ) {
+			return;
+		}
+
+		const content = document.getElementById( 'mw-content-text' );
+		if ( content === null ) {
+			log.panic( 'No page content found, could not place the tooltip wrapper.' );
+		}
+
+		content.appendChild( TooltipWrapper.element );
+	},
+
+	/**
+	 * Show the tooltip wrapper.
+	 */
+	show: () => {
+		TooltipWrapper.mouseTracker.start();
+		TooltipWrapper.element.classList.add( css.activeWrapperClass );
+	},
+
+	/**
+	 * Hide the tooltip wrapper.
+	 */
+	hide: () => {
+		TooltipWrapper.element.classList.remove( css.activeWrapperClass );
+		TooltipWrapper.mouseTracker.stop();
 	}
-
-	content.appendChild( wrapper );
-};
-
-/**
- * Updates the position of the tooltip wrapper.
- * @param {MouseEvent} event The mouse moving event.
- */
-const updateWrapper = ( event ) => {
-	wrapper.style.left = `${event.clientX}px`;
-	wrapper.style.top  = `${event.clientY}px`;
 };
 
 /**
@@ -186,20 +211,6 @@ const stringToElements = ( str ) => {
 	// @ts-ignore
 	return template.content.firstElementChild;
 };
-
-/**
- * Makes a slideshow cycle automatically.
- * @param {HTMLElement} slideshow Slideshow.
- */
-const makeSlideshowAuto = ( slideshow ) => {
-	slideshow.classList.add( 'boir-slideshow-auto' );
-};
-
-/**
- * The tooltip wrapper.
- * @type {HTMLElement}
- */
-const wrapper = createWrapper();
 
 safeAddContentHook( ( $content ) => {
 	const content = $content[ 0 ];

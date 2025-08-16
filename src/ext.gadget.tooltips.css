@@ -13,20 +13,19 @@
 	background: var( --wiki-content-background-color--secondary );
 }
 
-@media ( min-width: 720px ) {
-	#tooltip-wrapper {
-		/* TODO: remove !important once cache updated */
-		margin-right: var( --tb-tooltip-margin-right );
-		left        : calc( min( var( --tb-cursor-left ) + var( --tb-tooltip-margin-left ), 100vw - var( --tb-tooltip-min-width ) - var( --tb-tooltip-margin-right ) ) ) !important;
-		top         : calc( var( --tb-cursor-top ) + var( --tb-tooltip-margin-top ) ) !important;
-	}
-}
-
-@media ( max-width: 719px ) {
+@media not all and ( min-width: 720px ) {
 	#tooltip-wrapper {
 		margin: var( --wiki-content-padding );
 		left  : 0;
 		bottom: 0;
+	}
+}
+
+@media ( min-width: 720px ) {
+	#tooltip-wrapper {
+		margin-right: var( --tb-tooltip-margin-right );
+		left        : calc( min( var( --tb-cursor-left ) + var( --tb-tooltip-margin-left ), 100vw - var( --tb-tooltip-min-width ) - var( --tb-tooltip-margin-right ) ) );
+		top         : calc( var( --tb-cursor-top ) + var( --tb-tooltip-margin-top ) );
 	}
 }
 

@@ -1,32 +1,55 @@
-#cf-button-0 {
-	--cf-button-title-color           : #142e59;
-	--cf-button-title-color--secondary: #c3d7f7;
+:root {
+	--icon-dlc: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath stroke='black' stroke-width='1.25' fill='none' d='M1 10a8 7.5 0 0 0 18 0 8 7.5 0 0 0-18 0M8 13a2 2 0 0 1 4 0v1h-4v-1'/%3E%3Cpath fill='black' fill-rule='evenodd' d='M2.5 11a1 1 0 0 0 4.5 0 2 2 0 0 0-4.5 0m.7-.5a.5.5 0 0 0 1.5 0 .5.5 0 0 0-1.5 0M13 11a1 1 0 0 0 4.5 0 1 1 0 0 0-4.5 0m.7-.5a.5.5 0 0 0 1.5 0 .5.5 0 0 0-1.5 0'/%3E%3C/svg%3E" );
 }
 
-#cf-button-1,
-#cf-button-2 {
-	--cf-button-title-color           : #661200;
-	--cf-button-title-color--secondary: #ff5f47;
+#cf-menu {
+	--icon: var( --icon-dlc );
 }
 
-#cf-button-3,
-#cf-button-4 {
-	--cf-button-title-color           : #490505;
-	--cf-button-title-color--secondary: #ff1c1c;
+.release-rebirth {
+	--release-color: #142e59;
+	--release-color--secondary: #c3d7f7;
 }
 
-.cf-menu {
-	position      : relative;
-	display       : inline-block;
-	margin-left   : 20px;
-	line-height   : 1;
-	font-size     : 14px;
-	font-weight   : 500;
+.release-afterbirth,
+.release-afterbirth-plus {
+	--release-color: #661200;
+	--release-color--secondary: #ff5f47;
+}
+
+.release-repentance,
+.release-repentance-plus {
+	--release-color: #490505;
+	--release-color--secondary: #ff1c1c;
+}
+
+.release {
+	font-family: var( --tb-title-font );
+	color: var( --release-color--secondary );
+	text-shadow: var( --release-color ) 0 0 5px;
+	font-size: 1.25em;
+	line-height: 0.8;
+}
+
+#cf-menu-list {
+	list-style: none;
+	margin: 0;
+}
+
+#cf-info {
+	text-align: center;
+}
+
+#cf-info #cf-menu {
+	float: none;
+	display: inline-block;
+	border: none;
+	line-height: 1;
+	font-weight: 500;
 	vertical-align: text-bottom;
-	user-select   : none;
 }
 
-.cf-toggle {
+#cf-info #cf-label {
 	line-height  : 1;
 	padding      : 7px 10px;
 	white-space  : nowrap;
@@ -38,12 +61,16 @@
 	cursor       : pointer;
 }
 
-.cf-menu:hover > .cf-toggle {
+#cf-info #cf-label::after {
+	display: none;
+}
+
+#cf-info #cf-menu:hover > #cf-label {
 	background   : color-mix( in srgb, var( --wiki-accent-color ) 40%, transparent );
 	border-radius: 10px 10px 0 0;
 }
 
-.cf-menu-content {
+#cf-info #cf-menu-content {
 	display   : none;
 	z-index   : 1;
 	position  : absolute;
@@ -55,7 +82,7 @@
 	text-align: center;
 }
 
-.cf-menu:hover > .cf-menu-content {
+#cf-info #cf-menu:hover > #cf-menu-content {
 	display: block;
 }
 
@@ -66,32 +93,13 @@ ul.cf-menu-list {
 	padding   : 3px;
 }
 
-#cf-info {
-	text-align: center;
-}
-
 .cf-button > a,
 .cf-button > a:visited {
-	display        : block;
-	padding        : 7px 10px;
 	text-decoration: none;
-	color          : var( --wiki-content-text-color );
 }
 
 .cf-button > a:hover {
 	background: color-mix( in srgb, var( --wiki-accent-color ) 20%, transparent );
-	color     : var( --wiki-content-link-color );
-}
-
-.cf-button-title {
-	font-family     : var( --tb-title-font );
-	color           : var( --cf-button-title-color--secondary );
-	text-shadow     : var( --cf-button-title-color ) 0 0 5px;
-	font-size-adjust: 0.6;
-}
-
-.cf-button > a:hover > .cf-button-title {
-	color: color-mix( in hsl, var( --cf-button-title-color--secondary ), var( --cf-button-title-color ) 20% );
 }
 
 .cf-button-active,
@@ -101,19 +109,19 @@ ul.cf-menu-list {
 }
 
 @media print {
-	.cf-menu,
+	#cf-menu,
 	#cf-info {
 		display: none;
 	}
 }
 
 @supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
-	.cf-toggle {
+	#cf-info #cf-label {
 		border-color: var( --wiki-accent-color );
 	}
 
-	.cf-toggle,
-	.cf-menu:hover > .cf-toggle,
+	#cf-info #cf-label,
+	#cf-info #cf-menu:hover > #cf-label,
 	.cf-button > a:hover {
 		background: var( --wiki-accent-color );
 	}

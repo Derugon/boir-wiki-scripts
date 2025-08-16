@@ -39,6 +39,33 @@ declare interface HTMLElement {
 	querySelectorAll<E extends HTMLElement = HTMLElement>(selectors: string): NodeListOf<E>;
 }
 
+declare namespace HTMLTableCellElement {
+	type ParentElement = HTMLTableRowElement;
+}
+
+declare interface HTMLTableCellElement {
+	readonly parentElement: HTMLTableCellElement.ParentElement | null;
+}
+
+declare namespace HTMLTableRowElement {
+	type ParentElement = HTMLTableElement | HTMLTableSectionElement;
+	type SiblingElement = HTMLTableRowElement | HTMLTableSectionElement;
+	type ChildElement = HTMLScriptElement | HTMLTableCellElement | HTMLTemplateElement;
+}
+
+declare interface HTMLTableRowElement {
+	readonly parentElement: HTMLTableRowElement.ParentElement | null;
+    readonly children: HTMLCollectionOf<HTMLTableRowElement.ChildElement>;
+	readonly nextElementSibling: HTMLTableRowElement.SiblingElement | null;
+	readonly previousElementSibling: HTMLTableRowElement.SiblingElement | null;
+	readonly firstElementChild: HTMLTableRowElement.ChildElement;
+	readonly lastElementChild: HTMLTableRowElement.ChildElement;
+}
+
+declare interface HTMLTableSectionElement {
+	readonly parentElement: HTMLTableElement | null;
+}
+
 declare interface HTMLTemplateElement {
 	readonly content: HTMLDocumentFragment;
 }

@@ -6205,6 +6205,7 @@ body .parsoid-body::after {
 
 #p-logo,
 main {
+	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 }
 
@@ -6265,7 +6266,7 @@ main {
 }
 
 #searchButton {
-	opacity: 100%;
+	opacity: 1;
 }
 
 /*********************
@@ -6478,7 +6479,7 @@ a.extiw[title^="original:"]::after {
 	height: 1em;
 	width: 1em;
 	margin-left: 1px;
-	background-image: url( filepath://Fandom.svg ); /* [[File:Fandom.svg]] */
+	background-image: url( https://commons.wiki.gg/images/Fandom.svg ); /* [[File:Fandom.svg]] */
 	background-size: auto 0.857em;
 	background-repeat: no-repeat;
 	background-position: center;

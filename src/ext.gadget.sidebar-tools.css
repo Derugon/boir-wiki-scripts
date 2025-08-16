@@ -10,7 +10,7 @@ body #mw-panel #p-tb:has( .vector-menu-content-list:empty ) {
 	display: none;
 }
 
-@media ( max-width: 719px ) {
+@media not all and ( min-width: 720px ) {
 	body.has-vector-mobile-menu #mw-panel .mobile-nav-toggle.nav--expanded ~ #p-tb {
 		display: block;
 	}

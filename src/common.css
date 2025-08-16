@@ -7,7 +7,7 @@
 
 @font-face {
 	font-family: "tboi";
-	src: url( filepath://Upheaval.ttf ) format( "truetype" );
+	src: url( https://commons.wiki.gg/images/Upheaval.ttf ) format( "truetype" );
 }
 
 :root {
@@ -118,7 +118,7 @@
 	--tb-title-font: tboi, sans-serif;
 }
 
-@media screen and ( min-width: 720px ) {
+@media ( min-width: 720px ) {
 	:root {
 		--wiki-content-border-width: 37px;
 	}
@@ -542,10 +542,10 @@
 	gap: 10px;
 }
 
-@media screen and ( max-width: 999px ) {
-	#mp-container{
+@media not all and ( min-width: 1000px ) {
+	#mp-container {
 		grid-template-areas: var( --main-page-layout--mobile );
-		grid-template-columns: var( --main-page-layout-columns--mobile,100% );
+		grid-template-columns: var( --main-page-layout-columns--mobile, 100% );
 	}
 
 	.mp-box.mp-hide-on-mobile {
@@ -553,18 +553,20 @@
 	}
 }
 
-@media screen and ( min-width: 1000px ) and ( max-width: 1349px ) {
-	#mp-container {
-		grid-template-areas: var( --main-page-layout--tablet );
-		grid-template-columns: var( --main-page-layout-columns--tablet, 1fr 1fr );
-	}
+@media ( min-width: 1000px ) {
+	@media not all and ( min-width: 1350px ) {
+		#mp-container {
+			grid-template-areas: var( --main-page-layout--tablet );
+			grid-template-columns: var( --main-page-layout-columns--tablet, 1fr 1fr );
+		}
 
-	.mp-box.mp-hide-on-tablet {
-		display: none;
+		.mp-box.mp-hide-on-tablet {
+			display: none;
+		}
 	}
 }
 
-@media screen and ( min-width: 1350px ) {
+@media ( min-width: 1350px ) {
 	#mp-container {
 		grid-template-areas: var( --main-page-layout--desktop );
 		grid-template-columns: var( --main-page-layout-columns--desktop, 2fr 1fr 2fr );
@@ -772,7 +774,7 @@
 	margin: auto;
 }
 
-@media screen and ( min-width: 720px ) {
+@media ( min-width: 720px ) {
 	#mp-welcome {
 		margin-top: 3em;
 	}
@@ -793,7 +795,7 @@
 	pointer-events: all;
 }
 
-@media screen and ( min-width: 1000px ) {
+@media ( min-width: 1000px ) {
 	#mp-intro {
 		margin: 0 25%;
 	}
@@ -829,7 +831,7 @@
 	}
 }
 
-@media screen and ( min-width: 720px ) {
+@media ( min-width: 720px ) {
 	#mp-links > ul {
 		column-count: 2;
 	}
@@ -1036,7 +1038,7 @@
 	text-align   : center;
 }
 
-@media screen and ( min-width: 720px ) {
+@media ( min-width: 720px ) {
 	body .context-box {
 		position  : relative;
 		z-index   : 1;
@@ -1088,7 +1090,7 @@
 /**********************/
 
 .ghost {
-	opacity: 50%;
+	opacity: .5;
 }
 
 /************************
@@ -1535,16 +1537,17 @@ div.nav-header {
 }
 
 .pixelated {
+	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 }
 
-@media screen and ( min-width: 720px ) {
+@media ( min-width: 720px ) {
 	.mobileonly {
 		display: none;
 	}
 }
 
-@media screen and ( max-width: 719px ) {
+@media not all and ( min-width: 720px ) {
 	.nomobile {
 		display: none;
 	}

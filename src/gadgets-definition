@@ -1,0 +1,34 @@
+* interwiki-mapping-target [ResourceLoader|default|hidden|dependencies=site,mediawiki.util] | interwiki-mapping-target.js
+* logger [ResourceLoader|default|hidden] | logger.js
+* mouse-tracker [ResourceLoader|hidden] | mouse-tracker.js
+* slideshows [ResourceLoader|default|hidden] | slideshows.js | slideshows.css
+* debug-hide [ResourceLoader|default|hidden] | debug-hide.css
+* debug [ResourceLoader] | debug.css
+
+== content-style ==
+* rebirth-theme [ResourceLoader|default] | rebirth-theme.css
+* inline-icon-hide [ResourceLoader|default|hidden] | inline-icon-hide.css
+* inline-icon [ResourceLoader|default] | inline-icon.css
+* tooltips [ResourceLoader|default|dependencies=mediawiki.api,ext.gadget.mouse-tracker] | tooltips.js | tooltips.css
+* infobox-item-altar [ResourceLoader|default] | infobox-item-altar.css
+* userlink-compact [ResourceLoader] | userlink-compact.css
+
+== content-filter ==
+* content-filter-core [ResourceLoader|hidden|dependencies=site,mediawiki.Title] | content-filter-core.js
+* content-filter-context-highlight [ResourceLoader|dependencies=ext.gadget.content-filter-core] | content-filter-context-highlight.js | content-filter-context-highlight.css
+* content-filter-view [ResourceLoader|hidden|dependencies=ext.gadget.content-filter-core] | content-filter-view.js
+* content-filter-css [ResourceLoader|hidden|default] | content-filter.css
+* content-filter [ResourceLoader|dependencies=mediawiki.util,ext.gadget.content-filter-view|peers=content-filter-css|actions=view] | content-filter.js
+* content-filter-preview [ResourceLoader|default|actions=view] | content-filter-preview.js | content-filter-preview.css
+
+== interface ==
+* topbarCSS [ResourceLoader|default|hidden] | topbar.css
+* topbarJS [ResourceLoader|default|hidden|dependencies=ext.gadget.topbarCSS] | topbar.js
+* fixed-width [ResourceLoader] | fixed-width.css
+* view-compact-hide [ResourceLoader|hidden] | view-compact.css
+* view-compact [ResourceLoader|default|peers=view-compact-hide] | view-compact.js
+* sidebar-tools-hide [ResourceLoader|default|hidden] | sidebar-tools-hide.css
+* sidebar-tools [ResourceLoader|default] | sidebar-tools.css
+* sidebar-languages-hide [ResourceLoader|default|hidden] | sidebar-languages-hide.css
+* sidebar-languages [ResourceLoader|default] | sidebar-languages.css
+* style-tests [ResourceLoader] | style-tests.css
