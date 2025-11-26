@@ -17,7 +17,8 @@ mw.loader.using( 'mediawiki.api', () => {
 				.textContent = mw.message( langButtonMessage ).text();
 
 			const input = document.createElement( 'input' );
-			input.role = 'checkbox';
+			input.type = 'checkbox';
+			input.role = 'button';
 			input.id = 'p-lang-checkbox';
 			input.classList.add( 'vector-menu-checkbox' );
 			input.ariaHasPopup = 'true';

@@ -2,6 +2,20 @@
 	--icon-dlc: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath stroke='black' stroke-width='1.25' fill='none' d='M1 10a8 7.5 0 0 0 18 0 8 7.5 0 0 0-18 0M8 13a2 2 0 0 1 4 0v1h-4v-1'/%3E%3Cpath fill='black' fill-rule='evenodd' d='M2.5 11a1 1 0 0 0 4.5 0 2 2 0 0 0-4.5 0m.7-.5a.5.5 0 0 0 1.5 0 .5.5 0 0 0-1.5 0M13 11a1 1 0 0 0 4.5 0 1 1 0 0 0-4.5 0m.7-.5a.5.5 0 0 0 1.5 0 .5.5 0 0 0-1.5 0'/%3E%3C/svg%3E" );
 }
 
+.cf-only {
+	display: none;
+}
+
+.cf-available .cf-only {
+	display: initial;
+}
+
+#cf-firstHeading-ext {
+	font-size: 1rem;
+	user-select: none;
+	opacity: 0.5;
+}
+
 #cf-menu {
 	--icon: var( --icon-dlc );
 }
@@ -25,10 +39,15 @@
 
 .release {
 	font-family: var( --tb-title-font );
-	color: var( --release-color--secondary );
 	text-shadow: var( --release-color ) 0 0 5px;
 	font-size: 1.25em;
 	line-height: 0.8;
+}
+
+.release,
+.release a,
+.release a:hover {
+	color: var( --release-color--secondary );
 }
 
 #cf-menu-list {

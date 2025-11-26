@@ -42,6 +42,13 @@ const css = {
 	filterEnableClass: 'cf-enable',
 
 	/**
+	 * If an element on a page has this class (directly on the page or
+	 * transcluded), the filtering becomes unavailable, even if the page is
+	 * from a namespace in filteredNamespaces or in filteredSpecialTitles.
+	 */
+	filterDisableClass: 'cf-disable',
+
+	/**
 	 * TODO
 	 */
 	tagClass: 'cf-tag',
@@ -175,9 +182,9 @@ const filterMax = Math.pow( 2, filterCount ) - 1;
 
 /**
  * TODO
- * @type {boolean}
+ * @type {boolean?}
  */
-let filteringForced = false;
+let filteringForced = null;
 
 /**
  * Reigstry for managed containers. Reclaimed objects are freed from the registry when retrieved.
@@ -244,14 +251,19 @@ const isMainContent = ( content ) => content.classList.contains( css.bodyContent
  * in-content specific markers.
  *
  * @param {Document} content The page content.
- * @returns {boolean} True if the filters should be used, false otherwise.
+ * @returns {boolean?} True if the filters should be used, false if they should not,
+ *                     null if there is no evidence.
  */
 const isFilteringForced = ( content ) => {
-	if ( content.getElementsByClassName( css.filterEnableClass ).length > 0 ) {
+	if ( content.getElementsByClassName( css.filterEnableClass )[ 0 ] ) {
 		return true;
 	}
 
-	return false;
+	if ( content.getElementsByClassName( css.filterDisableClass )[ 0 ] ) {
+		return false;
+	}
+
+	return null;
 };
 
 /**
@@ -308,7 +320,7 @@ const parseFilter = ( container ) => {
 		filteringForced = isFilteringForced( document );
 	}
 
-	if ( !filteringAvailable && !filteringForced ) {
+	if ( filteringAvailable ? filteringForced === false : filteringForced !== true ) {
 		return;
 	}
 
@@ -509,6 +521,8 @@ Contextualizer.prototype = {
 		}
 
 		switch ( scope.tagName ) {
+			case 'A':
+				return [ scope ];
 			case 'DD':
 				return [ scope ];
 			case 'DT':
@@ -562,8 +576,22 @@ Contextualizer.prototype = {
 				if ( mainContent !== null ) {
 					return [ mainContent ];
 				}
+			} else if ( element.classList.contains( css.sectionScopeClass ) ) {
+				for (
+					let heading = element.previousElementSibling || element.parentElement;
+					heading !== null;
+					heading = heading.previousElementSibling || heading.parentElement
+				) {
+					if ( heading instanceof HTMLHeadingElement ) {
+						return this.inferSection( heading );
+					}
+				}
 			} else if ( element.classList.contains( css.wrappedScopeClass ) ) {
-				for ( let wrapper = element.parentElement; wrapper !== null; wrapper = wrapper.parentElement ) {
+				for (
+					let wrapper = element.parentElement;
+					wrapper !== null;
+					wrapper = wrapper.parentElement
+				) {
 					if ( wrapper.classList.contains( css.contextWrapperClass ) ) {
 						return [ wrapper ];
 					}
@@ -589,13 +617,13 @@ Contextualizer.prototype = {
 			return [];
 		}
 
-		const level = getHeadingLevel( heading );
+		const level = DOMTraversal.headingLevel( heading );
 
 		/** @type {ChildNode} */
 		let lastSectionNode = heading;
 		for (
 			let sibling = lastSectionNode.nextSibling;
-			!( sibling === null || sibling instanceof HTMLHeadingElement && getHeadingLevel( sibling ) <= level );
+			!( sibling === null || sibling instanceof HTMLHeadingElement && DOMTraversal.headingLevel( sibling ) <= level );
 			sibling = sibling.nextSibling
 		) {
 			lastSectionNode = sibling;
@@ -898,16 +926,6 @@ const getTableHeaderDirection = ( cell ) => {
 	return 'col';
 };
 
-/**
- * Get the level of a heading element.
- *
- * @param {HTMLHeadingElement} heading Heading element.
- * @returns {number} The (1-based) heading element level.
- */
-const getHeadingLevel = ( heading ) => {
-	return +heading.tagName.substring( 1 );
-};
-
 const DOMTraversal = {
 	/**
 	 * TODO
@@ -1089,6 +1107,16 @@ const DOMTraversal = {
 		default:
 			return false;
 		}
+	},
+
+	/**
+	 * Get the level of a heading element.
+	 *
+	 * @param {HTMLHeadingElement} heading Heading element.
+	 * @returns {number} The (1-based) heading element level.
+	 */
+	headingLevel: ( heading ) => {
+		return +heading.tagName.substring( 1 );
 	}
 };
 

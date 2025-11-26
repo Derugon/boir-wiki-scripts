@@ -1,5 +1,5 @@
 /* All CSS here will be loaded for users of the Vector skin */
-/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Vector.css?diff=latest&oldid=2426] */
+/* Last DLW update: [https://defaultloadout.wiki.gg/wiki/MediaWiki:Vector.css?diff=latest&oldid=2631] */
 
 /*
 	This is the wiki.gg default loadout,
@@ -9,7 +9,7 @@
 
 	If you want to maintain your own CSS for annual MediaWiki updates & be responsible for ALL bugfixes YOURSELF, change UPDATE in the following line to say NOUPDATE:
     DLW: NOUPDATE
-    DLW VERSION: 2.1.3
+    DLW VERSION: 2.2.3.5
 
 	IMPORTANT: if you are updating your wiki from a version before May 22, 2025,
 	you need to copy [[MediaWiki:Gadgets/vectorScripts]] and [[MediaWiki:Gadgets/vectorScripts/main.js]] as well or your navigation tabs will break.
@@ -20,8 +20,9 @@
 **********************************************************/
 :root {
 	--wiki-heading-color: var(--wiki-content-heading-color);
+	--wiki-heading-font-family: var(--wiki-content-heading-font-family);
+	--wiki-firstheading-font-family: var(--wiki-content-firstheading-font-family);
 }
-
 /****************************************
 * End backwards compatibility variables *
 *****************************************/
@@ -29,25 +30,18 @@
 /************************************
 * Body, head, and general framework *
 *************************************/
+:root{
+	--wiki-logo-box-width: calc(var(--wiki-sidebar-width, 10em) * (1 - var(--wiki-is-top-logo, 0)) + min( var(--wiki-logo-file-width, 160) / var(--wiki-logo-file-height, 160) * var(--wiki-logo-height, 160px), 100vw - var(--wiki-left-spacing, 0.5em) - var(--wiki-right-spacing, 0px) - 18px, var(--wiki-page-content-max-width, 9999px) ) * var(--wiki-is-top-logo, 0)); /* 18px: the scrollbar */
+	--wiki-logo-box-height: calc(var(--wiki-logo-file-height, 160) / var(--wiki-logo-file-width, 160) * var(--wiki-logo-box-width));
+}
+
 html, body {
 	height: auto;
 	min-height: 100%;
 }
 
-/* site background, avoid being covered by the wiki.gg netbar. */
+/* site background */
 html {
-	background-color: var(--wiki-body-background-color);
-}
-
-body::before {
-	content: "";
-	display: block;
-	position: fixed;
-	top: var(--wikigg-header-height);
-	bottom: 0;
-	left: 0;
-	right: 0;
-	z-index: -99999;
 	background-color: var(--wiki-body-background-color);
 	background-image: var(--wiki-body-background-image);
 	/* the following have fallbacks for backwards compatibility with older versions of the loadout */
@@ -61,7 +55,6 @@ body {
 	background: none;
 	font-family: var(--wiki-body-font-family);
 	accent-color: var(--wiki-accent-color);
-	box-sizing: border-box;
 	padding-top: calc(var(--wikigg-header-height) + var(--wiki-top-spacing, 0px));
 	padding-bottom: var(--wiki-bottom-spacing, 0px);
 	padding-left: var(--wiki-left-spacing, 0px);
@@ -80,10 +73,14 @@ body::after {
 	clear: both;
 }
 
+.vector-body{
+	z-index:1; /* base z-index for popups. */
+}
+
 #mw-page-base,
 #mw-head-base {
 	background: none;
-	--height: calc(var(--wiki-navigation-height, 3em) + var(--wiki-content-border-width, 1px) * var(--wiki-is-navigation-inside-content, 0) + var(--wiki-is-top-logo, 0) * (var(--wiki-logo-height, 160px) + var(--wiki-logo-margin, 15px))); /* if is-top-logo, height of navigation, else height of navigation + logo-height + logo-margin */
+	--height: calc(var(--wiki-navigation-height, 3em) + var(--wiki-content-border-width, 1px) * var(--wiki-is-navigation-inside-content, 0) + var(--wiki-is-top-logo, 0) * (var(--wiki-logo-box-height, 160px) + var(--wiki-logo-margin, 15px))); /* if not is-top-logo, height of navigation, else height of navigation + logo-height + logo-margin */
 	height: var(--height);
 }
 #mw-page-base {
@@ -120,9 +117,10 @@ ul {
 
 /****** navbar (#mw-head) ******/
 .vector-menu-tabs .mw-list-item,
-#p-cactions {
+#p-cactions, #p-variants {
 	float: unset;
-	line-height: 1.5;
+	line-height: 1.5; /* fallback */
+	line-height: round(nearest, calc(var(--wiki-navigation-font-size,0.8125em)*1.5), 1px);
 	box-sizing: border-box;
 	white-space: nowrap;
 }
@@ -139,7 +137,7 @@ ul {
 	position: relative;
 	display: flex;
 	align-items: stretch;
-	z-index: 1;
+	z-index: 4; /* above #mw-panel and .mw-indicators */
 	background: var(--wiki-navigation-box-background, none);
 	border: calc(var(--wiki-content-border-width, 1px) * var(--wiki-is-navigation-inside-content, 0)) var(--wiki-content-border-style, solid) var(--wiki-content-border-color);
 	border-bottom-width: 0;
@@ -236,6 +234,10 @@ ul {
 	height: 100%;
 }
 
+.vector-menu-tabs-legacy ul{
+	float: none;
+}
+
 .vector-menu-tabs .vector-menu-content-list {
 	display: flex;
 	align-items: flex-end;
@@ -246,11 +248,20 @@ ul {
 .vector-menu-dropdown {
 	/* outer box of normal tabs: border-bottom */
 	border-bottom: var(--navigation-border-bottom-width) var(--wiki-navigation-border-bottom-style, var(--wiki-navigation-selected-border-style, solid)) var(--wiki-navigation-border-bottom-color, var(--wiki-navigation-selected-border-color));
-	border-radius: var(--wiki-navigation-border-radius) var(--wiki-navigation-border-radius) 0 0;
 	position: relative;
 	margin-right: max(0px, var(--wiki-navigation-tab-spacing)); /* make space for gap */
 	height: auto;
+	padding-bottom: var(--wiki-navigation-bottom-spacing, 0px);
+	cursor: auto;
 }
+.vector-menu-dropdown .vector-menu-checkbox{
+	height: calc(100% - var(--wiki-navigation-bottom-spacing, 0px));
+}
+
+.vector-menu-tabs .mw-list-item:hover,
+.vector-menu-dropdown:hover{
+	border-bottom-color: var(--wiki-navigation-border-bottom-color--hover, var(--wiki-navigation-border-bottom-color--hover, var(--wiki-navigation-border-color, var(--wiki-content-border-color))));
+} 
 
 .vector-menu-tabs .mw-list-item::after,
 .vector-menu-dropdown::after {
@@ -266,6 +277,7 @@ ul {
 }
 
 .vector-menu-tabs .mw-list-item + .mw-list-item,
+.vector-menu-tabs .placeholder + .mw-list-item,
 .vector-menu-dropdown {
 	margin-left: calc(min(0px, var(--wiki-navigation-tab-spacing)));
 }
@@ -274,11 +286,12 @@ ul {
 .vector-menu-tabs .mw-list-item a:visited,
 #mw-head .vector-menu-dropdown .vector-menu-heading { /* "#mw-head " is needed here to correctly overwriting mw default css */
 	/* inner box of normal tabs: tab style */
+	float: none;
 	height: auto;
 	margin: 0;
 	padding: var(--wiki-navigation-tab-padding-top, 1.25em) var(--wiki-navigation-tab-padding-x, 0.75em) var(--wiki-navigation-tab-padding-bottom, 4px);
 	border: var(--wiki-navigation-border-width, 1px) var(--wiki-navigation-border-style, solid) var(--wiki-navigation-border-color);
-	border-bottom: 0;
+	border-bottom-width: calc(min(var(--wiki-navigation-bottom-spacing, 0px)*999, var(--wiki-navigation-border-width, 1px)));
 	border-radius: var(--wiki-navigation-border-radius) var(--wiki-navigation-border-radius) 0 0;
 	border-image: var(--wiki-navigation-border-image);
 	color: var(--wiki-navigation-text-color);
@@ -288,10 +301,13 @@ ul {
 	background-repeat: var(--wiki-navigation-background-repeat, repeat);
 	background-position: var(--wiki-navigation-background-position, center);
 	font-size: var(--wiki-navigation-font-size, 0.8125em);
+	font-weight: var(--wiki-navigation-font-weight, normal);
+	text-transform: var(--wiki-navigation-text-transform, none);
+	backdrop-filter: var(--wiki-navigation-backdrop-filter, var(--wiki-navigation-selected-backdrop-filter, none));
 }
 
 .vector-menu-tabs .mw-list-item a:hover,
-#mw-head .vector-menu-dropdown .vector-menu-heading:hover {
+#mw-head .vector-menu-dropdown:hover .vector-menu-heading {
 	border-color: var(--wiki-navigation-border-color--hover, var(--wiki-navigation-border-color));
 	color: var(--wiki-navigation-text-color--hover);
 	border-image: var(--wiki-navigation-border-image--hover);
@@ -300,6 +316,7 @@ ul {
 	background-size: var(--wiki-navigation-background-size--hover, var(--wiki-navigation-background-size, auto));
 	background-repeat: var(--wiki-navigation-background-repeat--hover, var(--wiki-navigation-background-repeat, repeat));
 	background-position: var(--wiki-navigation-background-position--hover, var(--wiki-navigation-background-position, center));
+	transform: var(--wiki-navigation-transform--hover, none);
 }
 
 .vector-menu-tabs .mw-list-item.selected {
@@ -315,10 +332,11 @@ ul {
 	background-repeat: var(--wiki-navigation-selected-background-repeat, repeat);
 	background-position: var(--wiki-navigation-selected-background-position, center);
 	border: var(--wiki-navigation-selected-border-width, 1px) var(--wiki-navigation-selected-border-style, solid) var(--wiki-navigation-selected-border-color);
-	border-bottom: 0;
+	border-bottom-width: calc(min(var(--wiki-navigation-bottom-spacing, 0px)*999, var(--wiki-navigation-selected-border-width, 1px)));
 	border-image: var(--wiki-navigation-selected-border-image);
 	color: var(--wiki-navigation-selected-text-color);
-
+	font-weight: var(--wiki-navigation-selected-font-weight, var(--wiki-navigation-font-weight, normal));
+	backdrop-filter: var(--wiki-navigation-selected-backdrop-filter, none);
 }
 
 .vector-menu-tabs .mw-list-item.selected::before {
@@ -339,12 +357,14 @@ ul {
 /* watch/unwatch star */
 .vector-menu-tabs #ca-watch.icon a,
 .vector-menu-tabs #ca-unwatch.icon a {
-	width: 1.5em; /* same as line height */
-	height: 1.5em;
-	line-height: 1.5em;
+	width: var(--wiki-navigation-icon-size, 1em);
+	height: 100%;
 	box-sizing: content-box;
 	padding: var(--wiki-navigation-tab-padding-top, 1.25em) var(--wiki-navigation-tab-padding-x--icon, var(--wiki-navigation-tab-padding-x, 0.75em)) var(--wiki-navigation-tab-padding-bottom, 4px) var(--wiki-navigation-tab-padding-x--icon, var(--wiki-navigation-tab-padding-x, 0.75em));
 	color: transparent; /* for watch/unwatch, the text of <a> will be plain 'watch'/'unwatch' without <span> after clicking. */
+	display: flex;
+	align-items: center;
+	text-indent: 999px;
 }
 
 .vector-menu-tabs #ca-watch.icon a::before,
@@ -355,7 +375,7 @@ ul {
 	background-image: none !important;
 	width: var(--wiki-navigation-icon-size, 1em);
 	height: var(--wiki-navigation-icon-size, 1em);
-	margin: calc((1.5em - var(--wiki-navigation-icon-size, 1em)) / 2);
+	flex: 0 0 auto;
 	--mask: var(--icon) no-repeat;
 	-webkit-mask: var(--mask);
 	mask: var(--mask);
@@ -371,14 +391,9 @@ ul {
 	background-color: var(--wiki-navigation-text-color--hover);
 }
 
-.vector-menu-tabs #ca-watch.icon a span,
-.vector-menu-tabs #ca-unwatch.icon a span {
-	display: none;
-}
-
-.vector-menu-tabs #ca-watch.icon a::before,
-.vector-menu-tabs #ca-unwatch.icon a::before {
-	transform-origin: 50% calc(var(--wiki-navigation-icon-size, 1em) / 2 * 1.125);
+.vector-menu-tabs #ca-unwatch.icon .loading::before, 
+.vector-menu-tabs #ca-watch.icon .loading::before{
+	transform-origin: 50% 56.25%;
 }
 
 .vector-menu-tabs #ca-watch.icon {
@@ -430,19 +445,23 @@ ul {
 
 .vector-menu-dropdown .vector-menu-content {
 	/* dropdown list body */
+	border: none;
+	background: none;
+	left: 0; /* reset */
+	margin: 0; /* reset */
+	top: calc(100% - var(--wiki-navigation-bottom-spacing, 0px));
+	overflow: unset;
+}
+
+.vector-menu-dropdown .vector-menu-content ul {
 	border: var(--wiki-navigation-dropdown-border-width) solid var(--wiki-navigation-dropdown-border-color);
 	border-radius: 0 0 var(--wiki-navigation-dropdown-border-radius) var(--wiki-navigation-dropdown-border-radius);
 	border-image: var(--wiki-navigation-dropdown-border-image);
 	background: color-mix(in srgb, var(--wiki-navigation-dropdown-background-color, var(--wiki-content-background-color)) var(--wiki-navigation-dropdown-background-opacity, var(--wiki-content-background-opacity, 100%)), transparent);
-	box-shadow: var(--wiki-navigation-dropdown-shadow);
+	box-shadow: var(--wiki-navigation-dropdown-box-shadow, var(--wiki-navigation-dropdown-shadow, none)); /* --wiki-navigation-dropdown-shadow is deprecated name */
 	backdrop-filter: var(--wiki-navigation-dropdown-backdrop-filter);
-	left: 0; /* reset */
-	margin: 0; /* reset */
-}
-
-.vector-menu-dropdown .vector-menu-content ul {
 	padding: var(--wiki-navigation-dropdown-padding, 0);
-	border: 0;
+	margin-top: var(--wiki-navigation-dropdown-offset, 0);
 }
 
 .vector-menu-dropdown .vector-menu-content li:hover {
@@ -452,15 +471,14 @@ ul {
 .vector-menu-dropdown .vector-menu-content li a {
 	display: block;
 	padding: var(--wiki-navigation-dropdown-item-padding, 0);
-	color: var(--wiki-navigation-text-color);
 }
-
+.vector-menu-dropdown .vector-menu-content li a,
 .vector-menu-dropdown .vector-menu-content li a:visited {
-	color: var(--wiki-navigation-text-color);
+	color: var(--wiki-navigation-dropdown-text-color, var(--wiki-navigation-text-color));
 }
 
 .vector-menu-dropdown .vector-menu-content li a:hover {
-	color: var(--wiki-navigation-text-color--hover, var(--wiki-content-link-color--hover)); /* fallback for backwards compatibility */
+	color: var(--wiki-navigation-dropdown-text-color--hover, var(--wiki-navigation-text-color--hover, var(--wiki-content-link-color--hover))); /* fallback for backwards compatibility */
 }
 
 /*** search form ***/
@@ -479,8 +497,15 @@ ul {
 	font-size: unset;
 }
 /*new search form */
+.cdx-search-input--has-end-button .cdx-search-input__input-wrapper{
+	margin: 0;
+}
+
+.cdx-menu-item--enabled.cdx-menu-item--highlighted {
+	background-color: var(--wiki-navigation-search-highlight-background-color);
+}
 #p-search input{
-	line-height: normal;
+	line-height: 1.25; /* "normal" behaves inconsistently in different browsers */
 }
 #p-search input{
 	height: unset;
@@ -492,17 +517,14 @@ ul {
 	min-width: var(--wiki-navigation-search-height, 2em);
 	top: 0;
 	bottom: 0;
-	right: 0;
+	right: 2px;
+	background-color: color-mix(in srgb, var(--wiki-navigation-search-button-color, currentColor) var(--wiki-navigation-search-button-color-opacity, 80%), transparent);
+	opacity: 100%;
 }
-#p-search button::before{
-	position: absolute;
-}
-@media screen and (min-width: 721px) {
-	#p-search .cdx-text-input{
-		min-width: 10em;
-		width: 20vw;
-		max-width: 20em;
-	}
+#p-search button:hover,
+#p-search button:focus{
+	background-color: color-mix(in srgb, var(--wiki-navigation-search-button-color--hover, var(--wiki-navigation-search-button-color, currentColor)) var(--wiki-navigation-search-button-color-opacity--hover, 95%), transparent);
+	opacity: 100%;
 }
 
 /* top border of the content box */
@@ -577,17 +599,22 @@ a:visited:active,
 	color: var(--wiki-warning-color);
 }
 
+/* link decorations */
+
 /* move external marker to an after so we can filter it to link color */
-.mw-parser-output a.external {
+.mw-parser-output a.external,
+.sitenotice a.external {
 	background: none;
 	padding-right: 0;
 }
 
-.mw-parser-output a.external::after {
+.mw-parser-output a.external::after,
+.sitenotice a.external::after,
+a.extiw[title="wgg:globalprefs"]::after {
 	display: inline-block;
 	width: 1em;
 	height: 1em;
-	margin-left: 1px;
+	margin-left: 0px;
 	content: '';
 	vertical-align: text-top;
 	--mask: var(--icon) no-repeat;
@@ -602,12 +629,17 @@ a:visited:active,
 	background-color: currentColor;
 }
 
-.mw-parser-output a.external::after {
-	margin-left: 0;
+.mw-parser-output a.external::after,
+.sitenotice a.external::after {
 	--icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22%3E %3Cpath d=%22M6 1h5v5L8.86 3.85 4.7 8 4 7.3l4.15-4.16L6 1ZM2 3h2v1H2v6h6V8h1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z%22/%3E %3C/svg%3E");
 }
 
-.plainlinks a.external::after {
+a.extiw[title="wgg:globalprefs"]::after {
+	--icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20aria-hidden%3D%22true%22%3E%3C!----%3E%3Cg%3E%3Cg%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20transform%3D%22translate(10%2010)%22%3E%3Cpath%20id%3D%22cdx-icon-settings-a%22%20d%3D%22M1.5-10h-3l-1%206.5h5m0%207h-5l1%206.5h3%22%3E%3C%2Fpath%3E%3Cuse%20xlink%3Ahref%3D%22%23cdx-icon-settings-a%22%20transform%3D%22rotate(45)%22%3E%3C%2Fuse%3E%3Cuse%20xlink%3Ahref%3D%22%23cdx-icon-settings-a%22%20transform%3D%22rotate(90)%22%3E%3C%2Fuse%3E%3Cuse%20xlink%3Ahref%3D%22%23cdx-icon-settings-a%22%20transform%3D%22rotate(135)%22%3E%3C%2Fuse%3E%3C%2Fg%3E%3Cpath%20d%3D%22M10%202.5a7.5%207.5%200%20000%2015%207.5%207.5%200%20000-15v4a3.5%203.5%200%20010%207%203.5%203.5%200%20010-7%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+.plainlinks a.external::after,
+.plainlinks a.extiw[title="wgg:globalprefs"]::after {
 	display: none;
 }
 
@@ -640,6 +672,10 @@ a.extiw[title^="support:"] {
 	background-image: url(https://commons.wiki.gg/images/9/9b/Wiki.gg_icon-pink.svg)
 }
 
+.plainlinks a.extiw {
+	background-image:none;
+}
+
 /************
 * End links *
 *************/
@@ -650,11 +686,15 @@ a.extiw[title^="support:"] {
 #mw-panel {
 	width: var(--wiki-sidebar-width, 10em);
 	box-sizing: border-box;
-	padding-left: unset;
 	position: relative;
 	z-index: 1; /* above #footer */
-	padding-top: calc((1 - var(--wiki-is-top-logo, 0)) * (var(--wiki-logo-file-height, 160) / var(--wiki-logo-file-width, 160) * var(--wiki-sidebar-width, 10em) + var(--wiki-logo-margin, 15px))); /* if is-top-logo, logo-file ratio * sidebar-width + logo-margin, else 0 */
-	top: calc(-1 * var(--wiki-is-navigation-inside-content, 0) * (var(--wiki-navigation-height) + var(--wiki-content-border-width,1px)));
+	top: calc(-1 * var(--wiki-is-navigation-inside-content, 0) * (var(--wiki-navigation-height) + var(--wiki-content-border-width,1px)) + var(--wiki-sidebar-offset, 0px));
+	margin-top: calc((1 - var(--wiki-is-top-logo, 0)) * (var(--wiki-logo-file-height, 160) / var(--wiki-logo-file-width, 160) * var(--wiki-sidebar-width, 10em) + var(--wiki-logo-margin, 15px))); /* if is-top-logo, logo-file ratio * sidebar-width + logo-margin, else 0 */
+	padding: var(--wiki-sidebar-box-padding, 0);
+	background: var(--wiki-sidebar-box-background, none);
+	border: var(--wiki-sidebar-box-border, 0);
+	border-radius: var(--wiki-sidebar-box-border-radius, 0);
+	border-image: var(--wiki-sidebar-box-border-image, none);
 }
 
 #mw-panel .vector-menu-portal {
@@ -667,7 +707,10 @@ a.extiw[title^="support:"] {
 	border-image: var(--wiki-sidebar-border-image, none);
 	margin: 0 var(--wiki-sidebar-margin, 0.5em);
 	padding: var(--wiki-sidebar-padding, 0);
+	box-shadow: var(--wiki-sidebar-box-shadow, none);
+	filter: var(--wiki-sidebar-filter, none);
 	backdrop-filter: var(--wiki-sidebar-backdrop-filter, none);
+	overflow: hidden; /* to prevent overflow when combining border-radius with heading background */
 }
 #mw-panel #p-ext-discordwidget{
 	backdrop-filter: none;
@@ -687,29 +730,88 @@ a.extiw[title^="support:"] {
 	margin-bottom: 0;
 }
 
+/* Sidebar spacing and border-radius section */
+#mw-panel .vector-menu-portal:not(:last-child) {
+	margin-bottom: var(--wiki-sidebar-portal-spacing);
+}
+
+#mw-panel #p-logo + .vector-menu-portal,
+#mw-panel #p-ext-discordwidget + .vector-menu-portal {
+	/*
+		The way this works is that if the sidebar does not have any spacing, only the top and bottom corners
+		of the top and bottom portals respectively should be rounded, instead of all corners of every portal.
+
+		min and calc are combined here to basically create an `if x > 0 then y else z` function.
+
+		The lower of (sidebar-border-radius) and (spacing * 999) are compared and the smaller value is taken (999 is simply an arbitrary large number).
+		If portal spacing is zero, multiplying it gets 0 and will be the smaller value. If it's non-zero, it will be large and sidebar-border-radius will be the smaller value.
+
+		This is only applied to the "inner" corners because we'd want the "outer" corners rounded in either scenario.
+	*/
+	border-radius: var(--wiki-sidebar-border-radius) var(--wiki-sidebar-border-radius) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999));
+}
+
+#mw-panel .vector-menu-portal:last-child {
+	/* see rule above for explanation */
+	border-radius: calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) var(--wiki-sidebar-border-radius) var(--wiki-sidebar-border-radius);
+}
+
+#mw-panel .vector-menu-portal {
+	/* see above rules for explanation */
+	border-radius: calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999));
+}
+
+#mw-panel .vector-menu-portal + .vector-menu-portal {
+	/* This keeps the border from doubling up if there is no spacing between them,
+		The portals other than the first only have a top border if there is spacing */
+	border-top-width: min(var(--wiki-sidebar-border-width, 1px), var(--wiki-sidebar-portal-spacing, 0px)); /* the 1px and 0px fallbacks are for backwards compatibility with older versions of the loadout */
+}
+
+#mw-panel #p-ext-discordwidget + .vector-menu-portal {
+	border-top-width: var(--wiki-sidebar-border-width, 1px);
+}
+
+/* end sidebar spacing and border-radius */
+
 .vector-menu-portal .vector-menu-heading {
 	padding: var(--wiki-sidebar-heading-padding, 0.5rem 0.25rem 0.5rem 0.5rem);
-	margin: 0 0 var(--wiki-sidebar-heading-margin-bottom, -0.5rem) 0;
+	margin: var(--wiki-sidebar-heading-margin, 0 0 var(--wiki-sidebar-heading-margin-bottom, -0.5rem) 0); /* --wiki-sidebar-heading-margin-bottom is deprecated */
 	background: var(--wiki-sidebar-heading-background, none);
+	border-image: var(--wiki-sidebar-heading-border-image, none);
 	color: var(--wiki-sidebar-heading-color);
 	font-family: var(--wiki-sidebar-heading-font-family);
 	font-size: var(--wiki-sidebar-heading-font-size, 0.75em);
 	font-weight: var(--wiki-sidebar-heading-font-weight, normal);
+	font-style: var(--wiki-sidebar-heading-font-style, normal);
+	text-transform: var(--wiki-sidebar-heading-text-transform, none);
+	line-height: var(--wiki-sidebar-heading-line-height, normal);
+	text-shadow: var(--wiki-sidebar-heading-text-shadow, none)
 }
 
 .vector-menu-portal .vector-menu-content {
-	margin: 0;
+	margin: var(--wiki-sidebar-list-margin, 0);
 	padding: var(--wiki-sidebar-list-padding, 0.25rem);
+	background: var(--wiki-sidebar-list-background, none);
+	border-image: var(--wiki-sidebar-list-border-image, none);
 }
 
 .vector-menu-portal .vector-menu-content ul {
 	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--wiki-sidebar-list-item-spacing, 0);
 }
 
 .vector-menu-portal .vector-menu-content li {
 	font-size: var(--wiki-sidebar-font-size, 0.75em);
 	line-height: var(--wiki-sidebar-line-height, 1.125em);
 	padding: 0;
+	background: var(--wiki-sidebar-list-item-background, none);
+	border-image: var(--wiki-sidebar-list-item-border-image, none);
+}
+.vector-menu-portal .vector-menu-content li:hover {
+	background: var(--wiki-sidebar-list-item-background--hover, var(--wiki-sidebar-list-item-background, none));
+	border-image: var(--wiki-sidebar-list-item-border-image--hover, var(--wiki-sidebar-list-item-border-image, none));
 }
 
 .vector-menu-portal .vector-menu-content li a {
@@ -731,7 +833,6 @@ a.extiw[title^="support:"] {
 .vector-menu-portal .vector-menu-content .mw-list-item a:hover,
 .vector-menu-portal .vector-menu-content .mw-list-item a:visited:hover {
 	color: var(--wiki-sidebar-link-color--hover, var(--wiki-content-link-color--hover)); /* fallback for backwards compatibility */
-	background: var(--wiki-sidebar-list-item-background--hover, none);
 }
 
 #t-newpage {
@@ -796,54 +897,6 @@ a.extiw[title^="support:"] {
 	gap: 3px;
 }
 
-#p-tb .vector-menu-content-list {
-	display: flex;
-	flex-direction: column;
-}
-
-/* Sidebar spacing and border-radius section */
-#mw-panel .vector-menu-portal:not(:last-child) {
-	margin-bottom: var(--wiki-sidebar-portal-spacing);
-}
-
-#mw-panel #p-logo + .vector-menu-portal,
-#mw-panel #p-ext-discordwidget + .vector-menu-portal {
-	/*
-		The way this works is that if the sidebar does not have any spacing, only the top and bottom corners
-		of the top and bottom portals respectively should be rounded, instead of all corners of every portal.
-
-		min and calc are combined here to basically create an `if x > 0 then y else z` function.
-
-		The lower of (sidebar-border-radius) and (spacing * 999) are compared and the smaller value is taken (999 is simply an arbitrary large number).
-		If portal spacing is zero, multiplying it gets 0 and will be the smaller value. If it's non-zero, it will be large and sidebar-border-radius will be the smaller value.
-
-		This is only applied to the "inner" corners because we'd want the "outer" corners rounded in either scenario.
-	*/
-	border-radius: var(--wiki-sidebar-border-radius) var(--wiki-sidebar-border-radius) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999));
-}
-
-#mw-panel .vector-menu-portal:last-child {
-	/* see rule above for explanation */
-	border-radius: calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999)) var(--wiki-sidebar-border-radius) var(--wiki-sidebar-border-radius);
-}
-
-#mw-panel .vector-menu-portal {
-	/* see above rules for explanation */
-	border-radius: calc(min(var(--wiki-sidebar-border-radius), var(--wiki-sidebar-portal-spacing) * 999));
-}
-
-#mw-panel .vector-menu-portal + .vector-menu-portal {
-	/* This keeps the border from doubling up if there is no spacing between them,
-		The portals other than the first only have a top border if there is spacing */
-	border-top-width: min(var(--wiki-sidebar-border-width, 1px), var(--wiki-sidebar-portal-spacing, 0px)); /* the 1px and 0px fallbacks are for backwards compatibility with older versions of the loadout */
-}
-
-#mw-panel #p-ext-discordwidget + .vector-menu-portal {
-	border-top-width: var(--wiki-sidebar-border-width, 1px);
-}
-
-/* end sidebar spacing and border-radius */
-
 /*******************
 * End left sidebar *
 ********************/
@@ -853,11 +906,12 @@ a.extiw[title^="support:"] {
 ********/
 /* [[File:Site-logo.png]] */
 #p-logo {
-	width: calc(var(--wiki-sidebar-width, 10em) * (1 - var(--wiki-is-top-logo, 0)) + var(--wiki-logo-file-width, 160) / var(--wiki-logo-file-height, 160) * var(--wiki-logo-height, 160px) * var(--wiki-is-top-logo, 0));
-	height: calc(var(--wiki-logo-file-height, 160) / var(--wiki-logo-file-width, 160) * var(--wiki-sidebar-width, 10em) * (1 - var(--wiki-is-top-logo, 0)) + var(--wiki-logo-height, 160px) * var(--wiki-is-top-logo, 0));
+	width: var(--wiki-logo-box-width);
+	height: var(--wiki-logo-box-height);
 	position: absolute;
-	top: calc(-1 * (var(--wiki-navigation-height, 3rem) + var(--wiki-logo-height, 160px) + var(--wiki-logo-margin, 0px) - var(--wiki-is-navigation-inside-content, 0) * (var(--wiki-navigation-height))) * var(--wiki-is-top-logo, 0));
-	left: calc((min((100vw - var(--wiki-left-spacing, 0.5em) - var(--wiki-left-spacing)), var(--wiki-page-content-max-width, 9999px)) - var(--wiki-logo-file-width, 160) / var(--wiki-logo-file-height, 160) * var(--wiki-logo-height, 160px)) / 2 * var(--wiki-is-top-logo, 0));
+	top: calc(-1 * ( (var(--wiki-navigation-height, 3rem) + var(--wiki-logo-box-height) + var(--wiki-logo-margin, 15px) - var(--wiki-is-navigation-inside-content, 0) * (var(--wiki-navigation-height)) + var(--wiki-sidebar-offset, 0px)) * var(--wiki-is-top-logo, 0)
++ (var(--wiki-logo-box-height) + var(--wiki-logo-margin,15px)) * (1 - var(--wiki-is-top-logo, 0)) ));
+	left: calc((min((100vw - var(--wiki-left-spacing, 0.5em) - var(--wiki-right-spacing, 0px) - 18px), var(--wiki-page-content-max-width, 9999px)) - var(--wiki-logo-box-width)) / 2 * var(--wiki-is-top-logo, 0));
 	margin: 0;
 	filter: var(--wiki-logo-filter, none);
 }
@@ -871,6 +925,7 @@ a.extiw[title^="support:"] {
 	right: 0;
 	width: 100%;
 	height: 100%;
+	background-image: var(--wiki-logo-image, url(filepath://Site-logo.png)); /* The canonical logo must be Site-logo.png. This variable is mainly used to provide different logo for different themes. */
 }
 
 /***********
@@ -892,13 +947,13 @@ a.extiw[title^="support:"] {
 	background-color: color-mix(in srgb, var(--wiki-content-background-color) var(--wiki-content-background-opacity), transparent);
 	margin-left: calc(var(--wiki-sidebar-width, 10em) + var(--wiki-gap-between-sidebar-and-content, 0.5em));
 	margin-top: unset;
+	padding: var(--wiki-content-top-spacing, 1.25em) var(--wiki-content-right-spacing, 1.5em) var(--wiki-content-bottom-spacing, 1.5em) var(--wiki-content-left-spacing, 1.5em);
 	border-top: 0;
 	border-left: var(--wiki-content-border-width, 1px) solid transparent;
 	border-right: var(--wiki-content-border-width, 1px) solid transparent;
 	border-bottom: var(--wiki-content-border-bottom-width, 1px) solid transparent;
 	border-radius: calc((1 - var(--wiki-is-navigation-inside-content, 0)) * min(var(--wiki-content-border-top-radius, var(--wiki-content-border-radius, 0px)), var(--wiki-navigation-left-spacing, 0px))) calc((1 - var(--wiki-is-navigation-inside-content, 0)) * var(--wiki-content-border-top-radius, var(--wiki-content-border-radius, 0px))) calc(min(var(--wiki-spacing-before-footer, 0px) * 999, var(--wiki-content-border-radius, 0px))) calc(min(var(--wiki-spacing-before-footer, 0px) * 999, var(--wiki-content-border-radius, 0px)));
 	position: relative;
-	backdrop-filter: var(--wiki-content-backdrop-filter, none);
 	border-image: var(--wiki-content-border-image, none);
 }
 
@@ -907,6 +962,20 @@ a.extiw[title^="support:"] {
 	.parsoid-body {
 		background-color: var(--wiki-content-background-color);
 	}
+}
+/* apply backdrop-filter on .mw-body results in the creation of a containing block for absolute and fixed positioned descendants, so we have to move it to here */
+.mw-body::before,
+.parsoid-body::before{
+	content: '';
+	display: block;
+	backdrop-filter: var(--wiki-content-backdrop-filter, none);
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: -1;
+	border-radius: calc((1 - var(--wiki-is-navigation-inside-content, 0)) * min(var(--wiki-content-border-top-radius, var(--wiki-content-border-radius, 0px)), var(--wiki-navigation-left-spacing, 0px))) calc((1 - var(--wiki-is-navigation-inside-content, 0)) * var(--wiki-content-border-top-radius, var(--wiki-content-border-radius, 0px))) calc(min(var(--wiki-spacing-before-footer, 0px) * 999, var(--wiki-content-border-radius, 0px))) calc(min(var(--wiki-spacing-before-footer, 0px) * 999, var(--wiki-content-border-radius, 0px))); /* as .mw-body */
 }
 
 .mw-body::after,
@@ -1001,23 +1070,59 @@ a.extiw[title^="support:"] {
 * Headings *
 ************/
 .mw-body h1 {
-	border-bottom: 1px solid var(--wiki-content-border-color);
-	font-family: var(--wiki-firstheading-font-family);
-
+	border-bottom: var(--wiki-content-firstheading-border-bottom-width, var(--wiki-content-heading-border-bottom-width, 1px)) var(--wiki-content-firstheading-border-style, var(--wiki-content-heading-border-style, solid)) var(--wiki-content-firstheading-border-color, var(--wiki-content-heading-border-color, var(--wiki-content-border-color)));
+	font-size: var(--wiki-content-firstheading-font-size, 1.8em);
+	font-family: var(--wiki-content-firstheading-font-family, var(--wiki-content-heading-font-family));
+	font-weight: var(--wiki-content-firstheading-font-weight, var(--wiki-content-heading-font-weight));
+    font-style: var(--wiki-content-firstheading-font-style, var(--wiki-content-heading-font-style));
+    text-transform: var(--wiki-content-firstheading-text-transform, var(--wiki-content-heading-text-transform));
+	line-height: var(--wiki-content-firstheading-line-height, var(--wiki-content-heading-line-height));
+	color: var(--wiki-content-firstheading-color, var(--wiki-content-heading-color));
+	text-shadow: var(--wiki-content-firstheading-text-shadow, var(--wiki-content-heading-text-shadow, none));
 }
 
 .mw-body h2 {
-	border-bottom: 1px solid var(--wiki-content-border-color);
-	font-family: var(--wiki-heading-font-family);
+	border-bottom: var(--wiki-content-heading-border-bottom-width, 1px) var(--wiki-content-heading-border-style, solid) var(--wiki-content-heading-border-color, var(--wiki-content-border-color));
+	font-size: var(--wiki-content-heading-h2-font-size, 1.5em);
+	font-family: var(--wiki-content-heading-font-family);
+	font-weight: var(--wiki-content-heading-font-weight, normal);
+    font-style: var(--wiki-content-heading-font-style, normal);
+    text-transform: var(--wiki-content-heading-text-transform, none);
+	line-height: var(--wiki-content-heading-line-height, normal);
+	color: var(--wiki-content-heading-color);
+	text-shadow: var(--wiki-content-heading-text-shadow, none);
 }
 
-h1, h2, h3, h4, h5, h6 {
-	color: var(--wiki-heading-color);
+.mw-body h3, 
+.mw-body h4,
+.mw-body h5,
+.mw-body h6{
+	border-bottom: var(--wiki-content-subheading-border-bottom-width, 0) var(--wiki-content-subheading-border-style, var(--wiki-content-heading-border-style, solid)) var(--wiki-content-subheading-border-color, var(--wiki-content-heading-border-color, var(--wiki-content-border-color)));
+	font-family: var(--wiki-content-subheading-font-family, var(--wiki-body-font-family));
+	font-weight: var(--wiki-content-subheading-font-weight, bold);
+    font-style: var(--wiki-content-subheading-font-style, normal);
+    text-transform: var(--wiki-content-subheading-text-transform, none);
+	line-height: var(--wiki-content-subheading-line-height, var(--wiki-content-heading-line-height));
+	color: var(--wiki-content-subheading-color, var(--wiki-content-heading-color));
+	text-shadow: var(--wiki-content-subheading-text-shadow, var(--wiki-content-heading-text-shadow, none));
 }
+.mw-body h3{
+	font-size: var(--wiki-content-heading-h3-font-size, 1.2em);
+} 
+.mw-body h4{
+	font-size: var(--wiki-content-heading-h4-font-size, 114%);
+} 
+.mw-body h5{
+	font-size: var(--wiki-content-heading-h5-font-size, 108%);
+} 
+.mw-body h6{
+	font-size: var(--wiki-content-heading-h6-font-size, 100%);
+} 
+
 
 .mw-editsection-bracket,
 .mw-editsection-divider {
-	color: var(--wiki-heading-color);
+	color: var(--wiki-content-heading-color);
 }
 
 /***************
@@ -1528,9 +1633,13 @@ span.mw-history-suppressed {
 .toc,
 .toccolours,
 .mw-warning {
-	background-color: var(--wiki-content-background-color--secondary);
-	border: 1px solid var(--wiki-content-border-color);
-	box-shadow: 0 0.1em 0.2em #000000;
+	background: var(--wiki-content-toc-background, var(--wiki-content-background-color--secondary));
+	border-width: var(--wiki-content-toc-border-width, 1px);
+	border-style: var(--wiki-content-toc-border-style, solid);
+	border-color: var(--wiki-content-toc-border-color, var(--wiki-content-border-color));
+	border-radius: var(--wiki-content-toc-border-radius, 0px);
+	border-image: var(--wiki-content-toc-border-image, none);
+	box-shadow: var(--wiki-content-toc-box-shadow, none);
 }
 
 #mw-toc-heading {
@@ -1776,6 +1885,15 @@ table.floatleft {
 .ext-WikiEditor-twopanes-TwoPaneLayout .ext-WikiEditor-twopanes-pane1,
 .ext-WikiEditor-twopanes-TwoPaneLayout .ext-WikiEditor-twopanes-pane2 {
 	border-color: var(--wiki-content-border-color);
+}
+
+/* creates a warning message about previewing sidebar edits */
+.page-MediaWiki_Sidebar .wikiEditor-ui-bottom:has(.ext-WikiEditor-twopanes-TwoPaneLayout)::before {
+	content:"Warning: Sidebar previews are not accurate. Please save to see your changes!";
+	background:var(--wiki-alert-color);
+	display:block;
+	text-align:center;
+	color:var(--wiki-alert-label-color);
 }
 
 .ext-WikiEditor-realtimepreview-button.oo-ui-toggleWidget-on .oo-ui-labelElement-label {
@@ -2220,6 +2338,13 @@ input#wpSummary {
 /* VisualEditor: Fix broken toolbar layout */
 .oo-ui-toolbar {
 	clear: none;
+	display: flex; /* fix overflow issue at narrow widths */
+}
+.ve-ui-toolbar > .oo-ui-toolbar-bar{
+	width: 100%; /* fix overflow issue at narrow widths */
+}
+.ve-ui-toolbar.ve-ui-toolbar-floating > .oo-ui-toolbar-bar{
+	width: auto; /* fix overflow issue at narrow widths */
 }
 
 .ve-init-mw-desktopArticleTarget-toolbar-open > .oo-ui-toolbar-bar > div:nth-child(4) {
@@ -2227,7 +2352,7 @@ input#wpSummary {
 }
 
 .ve-ui-toolbar-floating > .oo-ui-toolbar-bar {
-	top: var(--wikigg-header-height);
+	top: var(--wikigg-header-scroll-height);
 }
 
 .oo-ui-toolbar-bar .oo-ui-toolbar-bar,
@@ -2345,10 +2470,24 @@ input[type="submit"] {
 }
 
 /* category bar and filetoc */
-.catlinks,
+.catlinks{
+	background: var(--wiki-content-catlinks-background, var(--wiki-content-background-color--secondary));
+	border-width: var(--wiki-content-catlinks-border-width, 1px);
+	border-style: var(--wiki-content-catlinks-border-style, solid);
+	border-color: var(--wiki-content-catlinks-border-color, var(--wiki-content-border-color));
+	border-radius: var(--wiki-content-catlinks-border-radius, 0px);
+	border-image: var(--wiki-content-catlinks-border-image, none);
+	box-shadow: var(--wiki-content-catlinks-box-shadow, none);
+	
+}
 ul#filetoc {
-	background: var(--wiki-content-background-color--secondary);
-	border: 1px solid var(--wiki-content-border-color);
+	background: var(--wiki-content-filetoc-background, var(--wiki-content-background-color--secondary));
+	border-width: var(--wiki-content-filetoc-border-width, 1px);
+	border-style: var(--wiki-content-filetoc-border-style, solid);
+	border-color: var(--wiki-content-filetoc-border-color, var(--wiki-content-border-color));
+	border-radius: var(--wiki-content-filetoc-border-radius, 0px);
+	border-image: var(--wiki-content-filetoc-border-image, none);
+	box-shadow: var(--wiki-content-filetoc-box-shadow, none);
 }
 
 /**/
@@ -2412,12 +2551,16 @@ body .ui-button:active {
 	color: var(--wiki-content-text-mix-color);
 }
 
+#contentSub2:empty {
+    display: none;
+}
+
 /* notifications ("your edit was saved", etc.) */
 .mw-notification {
 	background-color: var(--wiki-content-background-color--secondary);
 	color: var(--wiki-content-text-color);
 	border-color: var(--wiki-content-border-color);
-	top: var(--wikigg-header-height);
+	top: var(--wikigg-header-scroll-height);
 }
 
 .mw-notification .oo-ui-labelElement-label {
@@ -2653,13 +2796,6 @@ table.dataTable.display tbody tr:hover {
 	background-color: var(--wiki-content-background-color--secondary);
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
-.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover,
-.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
-	/* we need this !important to override a built-in one */
-	color: var(--wiki-content-text-mix-color) !important;
-}
-
 table.dataTable.row-border tbody th,
 table.dataTable.row-border tbody td,
 table.dataTable.display tbody th,
@@ -2667,10 +2803,18 @@ table.dataTable.display tbody td {
 	border-top: 1px solid var(--wiki-content-border-color);
 }
 
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover,
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
+	/* we need this !important to override a built-in one */
+	color: var(--wiki-content-text-mix-color) !important;
+}
+
 .dataTables_wrapper .dataTables_paginate .paginate_button.current,
 .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
 	/* we need this !important to override a built-in one */
-	color: var(--wiki-content-text-mix-color) !important;
+	color: var(--wiki-content-text-color) !important;
 	border: 1px solid var(--wiki-content-border-color);
 	background-color: var(--wiki-content-background-color);
 	background: linear-gradient(to bottom, var(--wiki-content-background-color) 0%, var(--wiki-content-background-color--secondary) 100%);
@@ -3123,7 +3267,6 @@ div.specialCargoQuery-extraPane {
 	color: var(--wiki-content-text-color);
 	-webkit-transition: border-color 300ms, box-shadow 300ms;
 	transition: border-color 300ms, box-shadow 300ms;
-	background-color: var(--wiki-content-background-color--secondary)
 }
 
 .oo-ui-tagMultiselectWidget.oo-ui-widget-enabled.oo-ui-tagMultiselectWidget-inlined.oo-ui-tagMultiselectWidget-focus .oo-ui-tagMultiselectWidget-handle {
@@ -3181,10 +3324,6 @@ div.specialCargoQuery-extraPane {
 	color: color-mix(in srgb, var(--wiki-content-text-color) 25%, transparent);
 	text-shadow: none;
 	border-color: var(--wiki-content-text-mix-color);
-}
-
-.oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input::placeholder {
-	color: var(--wiki-content-text-mix-color);
 }
 
 .oo-ui-dropdownInputWidget select {
@@ -3315,7 +3454,7 @@ div.specialCargoQuery-extraPane {
 }
 
 .oo-ui-messageDialog-title {
-	color: var(--wiki-heading-color);
+	color: var(--wiki-content-heading-color);
 }
 
 .oo-ui-processDialog-actions-safe .oo-ui-widget-enabled.oo-ui-iconElement:not(.oo-ui-labelElement) > .oo-ui-buttonElement-button:hover {
@@ -3837,6 +3976,13 @@ div.specialCargoQuery-extraPane {
 	background-color: var(--wiki-content-text-color);
 }
 
+code {
+	/* prevents long code blocks from overflowing on mobile */
+	white-space: pre-wrap;
+	word-break: break-word;   /* fallback for older browsers */
+	overflow-wrap: anywhere;
+}
+
 pre,
 code,
 .mw-code {
@@ -3849,143 +3995,11 @@ code,
 	color: var(--wiki-content-text-mix-color);
 }
 
-.mw-highlight,
-.view-light .mw-highlight {
-	--pygments-background: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
-	--pygments-err: #db0000;
-	--pygments-c: #3a7575;
-	--pygments-k: #008000;
-	--pygments-o: #666;
-	--pygments-ch: #3a7575;
-	--pygments-cm: #3a7575;
-	--pygments-cp: #986200;
-	--pygments-cpf: #3a7575;
-	--pygments-c1: #3a7575;
-	--pygments-cs: #3a7575;
-	--pygments-gd: #a00000;
-	--pygments-gr: #db0000;
-	--pygments-gh: #000080;
-	--pygments-gi: #008100;
-	--pygments-go: #6e6e6e;
-	--pygments-gp: #000080;
-	--pygments-gu: #800080;
-	--pygments-gt: #04d;
-	--pygments-kc: #008000;
-	--pygments-kd: #008000;
-	--pygments-kn: #008000;
-	--pygments-kp: #008000;
-	--pygments-kr: #008000;
-	--pygments-kt: #b00040;
-	--pygments-m: #666;
-	--pygments-s: #ba2121;
-	--pygments-na: #647421;
-	--pygments-nb: #008000;
-	--pygments-nc: #00f;
-	--pygments-no: #800;
-	--pygments-nd: #a412ff;
-	--pygments-ni: #6d6d6d;
-	--pygments-ne: #c9352e;
-	--pygments-nf: #00f;
-	--pygments-nl: #727200;
-	--pygments-nn: #00f;
-	--pygments-nt: #008000;
-	--pygments-nv: #19177c;
-	--pygments-ow: #a412ff;
-	--pygments-w: #6e6e6e;
-	--pygments-mb: #666;
-	--pygments-mf: #666;
-	--pygments-mh: #666;
-	--pygments-mi: #666;
-	--pygments-mo: #666;
-	--pygments-sa: #ba2121;
-	--pygments-sb: #ba2121;
-	--pygments-sc: #ba2121;
-	--pygments-dl: #ba2121;
-	--pygments-sd: #ba2121;
-	--pygments-s2: #ba2121;
-	--pygments-se: #a55a1e;
-	--pygments-sh: #ba2121;
-	--pygments-si: #af4d74;
-	--pygments-sx: #008000;
-	--pygments-sr: #af4d74;
-	--pygments-s1: #ba2121;
-	--pygments-ss: #19177c;
-	--pygments-bp: #008000;
-	--pygments-fm: #00f;
-	--pygments-vc: #19177c;
-	--pygments-vg: #19177c;
-	--pygments-vi: #19177c;
-	--pygments-vm: #19177c;
-	--pygments-il: #666;
+.mw-highlight{
+	overflow: unset !important;
 }
-
-.view-dark .mw-highlight {
-	--pygments-background: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
-	--pygments-err: #fe4242;
-	--pygments-c: #4b9797;
-	--pygments-k: #00a300;
-	--pygments-o: #898989;
-	--pygments-ch: #4b9797;
-	--pygments-cm: #4b9797;
-	--pygments-cp: #c17d00;
-	--pygments-cpf: #4b9797;
-	--pygments-c1: #4b9797;
-	--pygments-cs: #4b9797;
-	--pygments-gd: #ff3f3f;
-	--pygments-gr: #fe4242;
-	--pygments-gh: #7a7aff;
-	--pygments-gi: #00a000;
-	--pygments-go: #8a8a8a;
-	--pygments-gp: #7a7aff;
-	--pygments-gu: #f500f5;
-	--pygments-gt: #4e84fe;
-	--pygments-kc: #00a300;
-	--pygments-kd: #00a300;
-	--pygments-kn: #00a300;
-	--pygments-kp: #00a300;
-	--pygments-kr: #00a300;
-	--pygments-kt: #fe357e;
-	--pygments-m: #898989;
-	--pygments-s: #e25e5e;
-	--pygments-na: #80932a;
-	--pygments-nb: #00a300;
-	--pygments-nc: #7a7afe;
-	--pygments-no: #ff4040;
-	--pygments-nd: #bf5aff;
-	--pygments-ni: #999;
-	--pygments-ne: #da655f;
-	--pygments-nf: #7a7afe;
-	--pygments-nl: #a0a000;
-	--pygments-nn: #7a7afe;
-	--pygments-nt: #00a300;
-	--pygments-nv: #8381e7;
-	--pygments-ow: #bf5aff;
-	--pygments-w: #bbb;
-	--pygments-mb: #898989;
-	--pygments-mf: #898989;
-	--pygments-mh: #898989;
-	--pygments-mi: #898989;
-	--pygments-mo: #898989;
-	--pygments-sa: #e25e5e;
-	--pygments-sb: #e25e5e;
-	--pygments-sc: #e25e5e;
-	--pygments-dl: #e25e5e;
-	--pygments-sd: #e25e5e;
-	--pygments-s2: #e25e5e;
-	--pygments-se: #d07125;
-	--pygments-sh: #e25e5e;
-	--pygments-si: #c17492;
-	--pygments-sx: #00a300;
-	--pygments-sr: #c17492;
-	--pygments-s1: #e25e5e;
-	--pygments-ss: #8381e7;
-	--pygments-bp: #00a300;
-	--pygments-fm: #7a7afe;
-	--pygments-vc: #8381e7;
-	--pygments-vg: #8381e7;
-	--pygments-vi: #8381e7;
-	--pygments-vm: #8381e7;
-	--pygments-il: #898989;
+.mw-highlight pre{
+	overflow: auto;
 }
 
 div.mw-highlight,
@@ -3994,268 +4008,8 @@ div.mw-highlight,
 	margin: 0.5em 0;
 }
 
-.mw-highlight .err {
-	border-color: var(--pygments-err);
-}
-
-.mw-highlight .c {
-	color: var(--pygments-c);
-}
-
-.mw-highlight .k {
-	color: var(--pygments-k);
-}
-
-.mw-highlight .o {
-	color: var(--pygments-o);
-}
-
-.mw-highlight .ch {
-	color: var(--pygments-ch);
-}
-
-.mw-highlight .cm {
-	color: var(--pygments-cm);
-}
-
-.mw-highlight .cp {
-	color: var(--pygments-cp);
-}
-
-.mw-highlight .cpf {
-	color: var(--pygments-cpf);
-}
-
-.mw-highlight .c1 {
-	color: var(--pygments-c1);
-}
-
-.mw-highlight .cs {
-	color: var(--pygments-cs);
-}
-
-.mw-highlight .gd {
-	color: var(--pygments-gd);
-}
-
-.mw-highlight .gr {
-	color: var(--pygments-gr);
-}
-
-.mw-highlight .gh {
-	color: var(--pygments-gh);
-}
-
-.mw-highlight .gi {
-	color: var(--pygments-gi);
-}
-
-.mw-highlight .go {
-	color: var(--pygments-go);
-}
-
-.mw-highlight .gp {
-	color: var(--pygments-gp);
-}
-
-.mw-highlight .gu {
-	color: var(--pygments-gu);
-}
-
-.mw-highlight .gt {
-	color: var(--pygments-gt);
-}
-
-.mw-highlight .kc {
-	color: var(--pygments-kc);
-}
-
-.mw-highlight .kd {
-	color: var(--pygments-kd);
-}
-
-.mw-highlight .kn {
-	color: var(--pygments-kn);
-}
-
-.mw-highlight .kp {
-	color: var(--pygments-kp);
-}
-
-.mw-highlight .kr {
-	color: var(--pygments-kr);
-}
-
-.mw-highlight .kt {
-	color: var(--pygments-kt);
-}
-
-.mw-highlight .m {
-	color: var(--pygments-m);
-}
-
-.mw-highlight .s {
-	color: var(--pygments-s);
-}
-
-.mw-highlight .na {
-	color: var(--pygments-na);
-}
-
-.mw-highlight .nb {
-	color: var(--pygments-nb);
-}
-
-.mw-highlight .nc {
-	color: var(--pygments-nc);
-}
-
-.mw-highlight .no {
-	color: var(--pygments-no);
-}
-
-.mw-highlight .nd {
-	color: var(--pygments-nd);
-}
-
-.mw-highlight .ni {
-	color: var(--pygments-ni);
-}
-
-.mw-highlight .ne {
-	color: var(--pygments-ne);
-}
-
-.mw-highlight .nf {
-	color: var(--pygments-nf);
-}
-
-.mw-highlight .nl {
-	color: var(--pygments-nl);
-}
-
-.mw-highlight .nn {
-	color: var(--pygments-nn);
-}
-
-.mw-highlight .nt {
-	color: var(--pygments-nt);
-}
-
-.mw-highlight .nv {
-	color: var(--pygments-nv);
-}
-
-.mw-highlight .ow {
-	color: var(--pygments-ow);
-}
-
-.mw-highlight .w {
-	color: var(--pygments-w);
-}
-
-.mw-highlight .mb {
-	color: var(--pygments-mb);
-}
-
-.mw-highlight .mf {
-	color: var(--pygments-mf);
-}
-
-.mw-highlight .mh {
-	color: var(--pygments-mh);
-}
-
-.mw-highlight .mi {
-	color: var(--pygments-mi);
-}
-
-.mw-highlight .mo {
-	color: var(--pygments-mo);
-}
-
-.mw-highlight .sa {
-	color: var(--pygments-sa);
-}
-
-.mw-highlight .sb {
-	color: var(--pygments-sb);
-}
-
-.mw-highlight .sc {
-	color: var(--pygments-sc);
-}
-
-.mw-highlight .dl {
-	color: var(--pygments-dl);
-}
-
-.mw-highlight .sd {
-	color: var(--pygments-sd);
-}
-
-.mw-highlight .s2 {
-	color: var(--pygments-s2);
-}
-
-.mw-highlight .se {
-	color: var(--pygments-se);
-}
-
-.mw-highlight .sh {
-	color: var(--pygments-sh);
-}
-
-.mw-highlight .si {
-	color: var(--pygments-si);
-}
-
-.mw-highlight .sx {
-	color: var(--pygments-sx);
-}
-
-.mw-highlight .sr {
-	color: var(--pygments-sr);
-}
-
-.mw-highlight .s1 {
-	color: var(--pygments-s1);
-}
-
-.mw-highlight .ss {
-	color: var(--pygments-ss);
-}
-
-.mw-highlight .bp {
-	color: var(--pygments-bp);
-}
-
-.mw-highlight .fm {
-	color: var(--pygments-fm);
-}
-
-.mw-highlight .vc {
-	color: var(--pygments-vc);
-}
-
-.mw-highlight .vg {
-	color: var(--pygments-vg);
-}
-
-.mw-highlight .vi {
-	color: var(--pygments-vi);
-}
-
-.mw-highlight .vm {
-	color: var(--pygments-vm);
-}
-
-.mw-highlight .il {
-	color: var(--pygments-il);
-}
-
 .mw-highlight pre {
-	background: var(--pygments-background);
+	background: color-mix(in srgb, var(--wiki-content-background-color--secondary) 50%, transparent);
 	margin: 0;
 }
 
@@ -4271,7 +4025,7 @@ div.mw-highlight,
 
 .mw-apisandbox-toolbar {
 	background: var(--wiki-content-background-color--secondary);
-	top: var(--wikigg-header-height);
+	top: var(--wikigg-header-scroll-height);
 }
 
 /* special:replacetext */
@@ -4310,17 +4064,26 @@ div.mw-highlight,
 
 /* search bar */
 #searchInput {
-	background-color: var(--wiki-content-background-color--secondary);
-	border-color: var(--wiki-content-border-color);
-	color: var(--wiki-content-text-color);
-	box-shadow: none;
+	font-size: inherit; /* override UA style */
+	background-color: var(--wiki-navigation-search-background-color, var(--wiki-content-background-color--secondary));
+	background-image: var(--wiki-navigation-search-background-image, none);
+	background-position: var(--wiki-navigation-search-background-position, 0);
+	background-size: var(--wiki-navigation-search-background-size, auto);
+	background-repeat: var(--wiki-navigation-search-background-repeat, repeat);
+	border: var(--wiki-navigation-search-border-width, 1px) var(--wiki-navigation-search-border-style, solid) var(--wiki-navigation-search-border-color, var(--wiki-content-border-color));
+	border-radius: var(--wiki-navigation-search-border-radius, 2px);
+	color: var(--wiki-navigation-search-text-color, var(--wiki-content-text-color));
+	backdrop-filter: var(--wiki-navigation-search-backdrop-filter, none);
+	box-shadow: var(--wiki-navigation-search-box-shadow, none);
+	border-image: var(--wiki-navigation-search-border-image, none);
 }
 
 #searchInput:focus,
 #searchform:hover #searchInput,
 #searchform:hover #searchInput:focus {
-	border-color: var(--wiki-accent-color);
-	box-shadow: none;
+	border-color: var(--wiki-navigation-search-border-color--hover, var(--wiki-accent-color));
+	box-shadow: var(--wiki-navigation-search-box-shadow--hover, var(--wiki-navigation-search-box-shadow, none));
+	border-image: var(--wiki-navigation-search-border-image--hover, var(--wiki-navigation-search-border-image, none));
 }
 
 #searchButton {
@@ -4401,7 +4164,7 @@ fieldset#mw-searchoptions {
 }
 
 .mw-body-content .mw-number-text h3 {
-	color: var(--wiki-heading-color);
+	color: var(--wiki-content-heading-color);
 }
 
 .mw-number-text.icon-edits,
@@ -4579,17 +4342,6 @@ fieldset#mw-searchoptions {
 	color: var(--wiki-content-text-mix-color);
 }
 
-.mw-mmv-image img.gif,
-.mw-mmv-image img.png,
-.mw-mmv-image img.webp,
-.mw-mmv-image img.svg,
-.mw-mmv-image img.tiff,
-.mw-mmv-image img.tif {
-	/* Using the normal checker image instead of mmv's because the normal one has transparency */
-	background: url(/mw-1.43/resources/src/mediawiki.action/images/checker.svg?ff513) repeat;
-	background-color:var(--wiki-content-background-color--secondary);
-}
-
 .mw-ui-button.mw-ui-quiet,
 .mw-ui-button.mw-ui-quiet.mw-ui-progressive,
 .mw-ui-button.mw-ui-quiet.mw-ui-destructive {
@@ -4695,10 +4447,19 @@ input[type="checkbox"]:focus + .mw-ui-button.mw-ui-quiet.mw-ui-destructive,
 
 /**/
 
-/* override default vector putting a background color on file pages in dark mode */
-html.skin-theme-clientpref-night #file img,
-html.skin-theme-clientpref-os #file img {
-	background-color: transparent;
+/* make the upload form and file pages responsive */
+#wpDestFile,
+#wpUploadDescription,
+#wpLicense,
+#wpUploadFile,
+#multiFileCategory {
+	/* max-width does not work here, but setting width has negligible side effects */
+	width:100%;
+	box-sizing:border-box;
+}
+
+#mw_metadata {
+	max-width:100%;
 }
 
 /*************************
@@ -4708,45 +4469,13 @@ html.skin-theme-clientpref-os #file img {
 /************************
 * Theme-based Scribunto *
 *************************/
-#mw-scribunto-input {
-	background-color: var(--wiki-content-background-color--secondary);
-	border: 1px solid var(--wiki-content-border-color);
-	color: var(--wiki-content-text-color);
-}
-
 .mw-scribunto-console-fieldset,
 .mw-scribunto-message,
 .mw-scribunto-input,
-.mw-scribunto-error,
 .mw-scribunto-print,
 .mw-scribunto-normalOutput {
-	background: transparent;
-}
-
-.mw-scribunto-console-fieldset {
 	color: var(--wiki-content-text-color);
 }
-
-.mw-scribunto-message {
-	color: var(--wiki-content-text-color);
-}
-
-.mw-scribunto-input {
-	color: var(--wiki-content-text-color--hover);
-}
-
-.mw-scribunto-error {
-	color: var(--wiki-alert-color);
-}
-
-.mw-scribunto-print {
-	color: var(--wiki-content-text-color);
-}
-
-.mw-scribunto-normalOutput {
-	color: var(--wiki-content-text-color);
-}
-
 /****************
 * End Scribunto *
 *****************/
@@ -4755,7 +4484,7 @@ html.skin-theme-clientpref-os #file img {
 * Theme-based VisualEditor *
 ****************************/
 .ve-activated .vector-menu-tabs .selected {
-	box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--wiki-content-border-color) 50%, transparent);
+	box-shadow: none;
 }
 
 .ve-init-mw-progressBarWidget {
@@ -4773,7 +4502,7 @@ html.skin-theme-clientpref-os #file img {
 }
 
 .ve-init-mw-desktopArticleTarget-toolbarPlaceholder-floating .ve-init-mw-desktopArticleTarget-toolbarPlaceholder-bar {
-	top: var(--wikigg-header-height, 0);
+	top: var(--wikigg-header-scroll-height, 0);
 	background: var(--wiki-content-background-color);
 }
 
@@ -5674,7 +5403,6 @@ table.jexcel > thead > tr > td {
 	-webkit-mask-position: var(--mask-position, center);
 	mask-position: var(--mask-position, center);
 	background-color: var(--mask-color, currentColor);
-	background-color: var(--mask-color, currentColor);
 }
 
 .popups-icon--preview-generic::after {
@@ -5737,6 +5465,35 @@ table.jexcel > thead > tr > td {
 * End Extension:CiteThisPage *
 ******************************/
 
+/*************************
+* Extension:ImageMap *
+**************************/
+		
+.noresize img { /* Why does the ImageMap container have no special class name? */
+	display: block; /* fix the scrollbar issue */
+}
+		
+/*****************************
+* End Extension:ImageMap *
+******************************/
+
+/**********************
+* Extension:Page Forms *
+***********************/
+.fieldBox,
+.templateForm {
+	background-color:var(--wiki-content-background-color--secondary);
+	border-color:var(--wiki-content-border-color);
+}
+
+.fieldBox .hierarchy_structure textarea {
+	/* this !important is needed to override an inline color rule */
+	color:var(--wiki-content-text-color) !important;
+}
+/***************************
+* End Extension:Page Forms *
+****************************/
+
 /*********************
 * Mobile adjustments *
 **********************/
@@ -5747,36 +5504,30 @@ table.jexcel > thead > tr > td {
 }
 
 @media screen and (max-width: 720px) {
-	:root:root { /* make it won't be override by user's common.css */
+	html:root { /* make it won't be override by user's common.css */
 		--wiki-is-top-logo: 1;
 		--wiki-left-spacing: 0px;
 		--wiki-right-spacing: 0px;
 		--wiki-navigation-left-spacing: 3px;
-		--wiki-navigation-right-spacing: 3px;
+		--wiki-navigation-right-spacing: var(--wiki-navigation-left-spacing, 0px);
 		--wiki-content-border-radius: 0px;
 		--wiki-content-border-top-radius: 0px;
 		--wiki-footer-border-radius: 0px;
 		--wiki-content-padding: 0.5rem;
+		--wiki-navigation-menu-margin: 0.5rem; /* margin around toggle button and search box */
 		--wiki-navigation-height: calc(2rem + var(--wiki-is-navigation-inside-content, 0)*0.5em);
-		--wiki-navigation-right-margin: 1px;
-		--wiki-navigation-left-margin: 0px;
-		--wiki-navigation-top-padding: 5px;
 		--wiki-navigation-bottom-padding: 0px;
 		--wiki-navigation-tab-height: 2rem;
-		--wiki-navigation-search-height: 2.15rem;
-		--wiki-navigation-search-margin: 0.5rem;
-		--wiki-navigation-right-spacing: var(--wiki-navigation-left-spacing, 0px);
-		--wiki-navigation-selected-bottom-background-color: color-mix(in srgb, var(--wiki-navigation-selected-background-color) var(--wiki-navigation-selected-background-opacity), transparent);
+		--wiki-navigation-search-height: calc(2rem + 4px);
 		--wiki-logo-height: 80px;
-		--wiki-logo-width: 100%;
 		--wiki-logo-margin: 10px;
 		--wiki-navigation-tab-full-height: calc(var(--wiki-navigation-tab-height) + max(var(--wiki-navigation-selected-border-width), var(--wiki-navigation-border-width)) + var(--wiki-content-border-width, 1px));
 		--wiki-head-icon-padding: 0.25rem;
 		--wiki-head-icon-size: calc(var(--wiki-navigation-tab-height) - var(--wiki-head-icon-padding) * 2);
-		--wiki-menu-margin: 0.2rem;
-		--wiki-menu-top-offset: calc(var(--wiki-navigation-height, 3em) + var(--wikigg-header-height) + var(--wiki-navigation-bottom-padding) + var(--wiki-navigation-search-margin));
+		--wiki-head-toggle-button-size: var(--wiki-navigation-search-height);
 		--wiki-sidebar-portal-spacing: 0px;
 		--wiki-top-spacing: var(--wiki-logo-margin);
+		--wiki-logo-box-width: calc(min( var(--wiki-logo-file-width, 160) / var(--wiki-logo-file-height, 160) * var(--wiki-logo-height), calc(100vw - var(--wiki-navigation-menu-margin)*2 - 18px)));
 	}
 
 	#mw-head-base {
@@ -5788,13 +5539,7 @@ table.jexcel > thead > tr > td {
 	#p-logo {
 		max-width: 100vw;
 		top: calc(var(--wikigg-header-height) + var(--wiki-top-spacing, var(--wiki-logo-margin, 15px)));
-		left: calc(max(0px, (100% - var(--wiki-logo-file-width) / var(--wiki-logo-file-height) * var(--wiki-logo-height)) / 2));
-	}
-
-
-	#p-logo a {
-		top: var(--wiki-logo-offset-y--mobile, 0);
-		left: var(--wiki-logo-offset-x--mobile, 0);
+		left: calc(max(0px, (100% - var(--wiki-logo-file-width) / var(--wiki-logo-file-height) * var(--wiki-logo-box-height)) / 2));
 	}
 
 	#mw-head {
@@ -5802,8 +5547,7 @@ table.jexcel > thead > tr > td {
 		left: 0;
 		width: 100%;
 		margin: unset;
-		top: calc(var(--wikigg-header-height) + var(--wiki-top-spacing, var(--wiki-logo-margin)) + var(--wiki-logo-height) + var(--wiki-logo-margin));
-		z-index: 4; /** above #mw-panel **/
+		top: calc(var(--wikigg-header-height) + var(--wiki-top-spacing, var(--wiki-logo-margin)) + var(--wiki-logo-box-height) + var(--wiki-logo-margin));
 		border-radius: 0;
 	}
 
@@ -5815,18 +5559,18 @@ table.jexcel > thead > tr > td {
 		display: block; /* for right spacing */
 	}
 
-	#p-cactions {
+	#p-cactions, #p-variants {
 		margin-right: 0px;
 	}
 
-	#p-cactions::after {
+	#p-cactions::after, #p-variants::after {
 		width: 0;
 	}
 
 	#p-search {
 		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
+		left: var(--wiki-navigation-menu-margin);
+		right: var(--wiki-navigation-menu-margin);
 		top: calc(var(--wiki-navigation-height, 3em) + var(--navigation-border-bottom-width));
 		margin: 0;
 		padding: 0;
@@ -5838,7 +5582,8 @@ table.jexcel > thead > tr > td {
 	}
 
 	#simpleSearch {
-		width: calc(100vw - var(--wiki-navigation-right-margin) - var(--wiki-navigation-left-margin));
+		width: auto;
+        max-width: unset; /* override vector default of 20em */
 	}
 
 	.vector-search-box-input {
@@ -5846,7 +5591,7 @@ table.jexcel > thead > tr > td {
 	}
 
 	.vector-search-box form {
-		margin: var(--wiki-navigation-search-margin) 0px;
+		margin: var(--wiki-navigation-menu-margin) 0px;
 	}
 
 	#mw-head,
@@ -5860,7 +5605,7 @@ table.jexcel > thead > tr > td {
 
 	.mw-body, .parsoid-body {
 		margin-top: 0;
-		padding-top: calc(var(--navigation-border-bottom-width) + var(--wiki-content-padding) + var(--wiki-navigation-search-height) + var(--wiki-navigation-bottom-padding) + (var(--wiki-navigation-search-margin) * 2));
+		padding-top: calc(var(--navigation-border-bottom-width) + var(--wiki-content-padding) + var(--wiki-navigation-search-height) + var(--wiki-navigation-bottom-padding) + (var(--wiki-navigation-menu-margin) * 2));
 	}
 	.mw-body::after, .parsoid-body::after {
 		left: 0;
@@ -5875,10 +5620,7 @@ table.jexcel > thead > tr > td {
 		position: unset;
 		width: 100%;
 		margin: 0px auto;
-		padding: 0;
 		top: 0;
-		background-position: bottom right, top center;
-		background-size: 100% 0.5em, 100% 100%;
 		float: unset;
 	}
 
@@ -5951,20 +5693,34 @@ table.jexcel > thead > tr > td {
 	/* Expandable mobile navigation panel */
 	body.has-vector-mobile-menu #mw-panel {
 		position: absolute;
-		top: calc(var(--wikigg-header-height) + var(--wiki-top-spacing, var(--wiki-logo-margin, 15px)) + var(--wiki-logo-height) + var(--wiki-logo-margin, 15px) + var(--wiki-content-border-width, 1px) * var(--wiki-is-navigation-inside-content, 0) + var(--wiki-navigation-height, 3em) + var(--navigation-border-bottom-width) + var(--wiki-navigation-search-margin));
+		--panel-offset: calc(var(--wiki-head-toggle-button-size) + var(--wiki-sidebar-offset, 0px));
+		top: calc(var(--wikigg-header-height) + var(--wiki-top-spacing, var(--wiki-logo-margin, 15px)) + var(--wiki-logo-box-height) + var(--wiki-logo-margin, 15px) + var(--wiki-content-border-width, 1px) * var(--wiki-is-navigation-inside-content, 0px) + var(--wiki-navigation-height, 3em) + var(--navigation-border-bottom-width) + var(--wiki-navigation-menu-margin) + var(--panel-offset)); 
+		left: var(--wiki-navigation-menu-margin);
+		right: var(--wiki-navigation-menu-margin);
+		width: auto;
 		z-index: 3;
+	}
+	body.has-vector-mobile-menu #mw-panel:not(.nav--expanded){
+		padding: 0;
+		border: 0;
+		border-image: none;
 	}
 
 	body.has-vector-mobile-menu #mw-panel .mobile-nav-toggle {
-		position: relative;
+		position: absolute;
 		cursor: pointer;
 		z-index: 5;
-		display: block;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: var(--wiki-head-toggle-button-size);
+		height: var(--wiki-head-toggle-button-size);
+		box-sizing: border-box;
 		appearance: none;
+		padding: 0;
 		border: 1px solid var(--wiki-content-border-color);
-		margin-left: var(--wiki-navigation-search-margin);
-		margin-bottom: 2px;
 		background-color: var(--wiki-navigation-background-color);
+		top: calc(-1 * var(--panel-offset));
 	}
 
 	#mw-panel #p-ext-discordwidget {
@@ -5987,7 +5743,7 @@ table.jexcel > thead > tr > td {
 		font-size: 110%;
 		border-left-width: var(--wiki-sidebar-border-width, 1px);
 		border-right-width: var(--wiki-sidebar-border-width, 1px);
-		margin-inline: calc(var(--wiki-navigation-left-margin) + var(--wiki-menu-margin));
+		margin-inline: var(--wiki-sidebar-margin, 0.5em);
 	}
 
 	body.has-vector-mobile-menu #mw-navigation #mw-panel .vector-menu-portal + .vector-menu-portal {
@@ -6020,7 +5776,7 @@ table.jexcel > thead > tr > td {
 
 	body.has-vector-mobile-menu #p-logo {
 		/* Logo's a part of the sidebar panel, which uses relative positioning for the expandable button. Offset the logo appropriately. */
-		top: calc(-1 * (var(--wiki-logo-height) + var(--wiki-logo-margin, 15px) + var(--wiki-content-border-width, 1px) * var(--wiki-is-navigation-inside-content, 0) + var(--wiki-navigation-height, 3em) + var(--navigation-border-bottom-width) + var(--wiki-navigation-search-margin)));
+		top: calc(-1 * (var(--wiki-logo-box-height) + var(--wiki-logo-margin, 15px) + var(--wiki-content-border-width, 1px) * var(--wiki-is-navigation-inside-content, 0) + var(--wiki-navigation-height, 3em) + var(--navigation-border-bottom-width) + var(--wiki-navigation-menu-margin) + var(--panel-offset)));
 	}
 
 	.mobile-nav-toggle {
@@ -6031,15 +5787,15 @@ table.jexcel > thead > tr > td {
 		display: inline-flex;
 	}
 
-	body.has-vector-mobile-menu #p-tb .vector-menu-content-list {
+	body.has-vector-mobile-menu .vector-menu-content-list {
 		flex-direction: row;
 	}
 
 	/* Search adjustments for the expandable menu */
 	body.has-vector-mobile-menu #p-search {
 		/* reposition to the right when mobile sidebar menu is active */
-		left: calc(var(--wiki-navigation-search-margin) * 3 + var(--wiki-head-icon-size) + var(--wiki-head-icon-padding));
-		right: calc(var(--wiki-navigation-right-margin) + var(--wiki-navigation-search-margin));
+		left: calc(var(--wiki-navigation-menu-margin) * 2 + var(--wiki-head-toggle-button-size));
+		right: var(--wiki-navigation-menu-margin);
 		transform: none;
 	}
 
@@ -6085,7 +5841,7 @@ table.jexcel > thead > tr > td {
 	}
 
 	#mw-head .vector-menu-tabs .mw-list-item a:hover::before,
-	#mw-head .vector-menu-dropdown .vector-menu-heading:hover::before,
+	#mw-head .vector-menu-dropdown:hover .vector-menu-heading::before,
 	#mw-panel .mobile-nav-toggle:hover::before,
 	#mw-panel .mobile-nav-toggle.nav--expanded::before {
 		background-color: var(--wiki-navigation-text-color--hover, var(--wiki-content-link-color--hover)); /* fallback for backwards compatibility */
@@ -6216,7 +5972,6 @@ main {
 		border-image: var( --wiki-content-border-image ) repeat;
 		background-clip: padding-box;
 		box-shadow: 0 0 15px #000 inset;
-		padding: 8px 12px;
 	}
 }
 
@@ -6479,7 +6234,7 @@ a.extiw[title^="original:"]::after {
 	height: 1em;
 	width: 1em;
 	margin-left: 1px;
-	background-image: url( https://commons.wiki.gg/images/Fandom.svg ); /* [[File:Fandom.svg]] */
+	background-image: url( filepath://Fandom.svg );
 	background-size: auto 0.857em;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -6550,4 +6305,19 @@ body #catlinks {
 .mw-templatedata-doc-params caption {
 	width: -moz-fit-content;
 	width:      fit-content;
+}
+
+/* Fix left navigation dropdown direction on mobile */
+@media screen {
+	@media not all and ( min-width: 720px ) {
+		#left-navigation .vector-menu-dropdown .vector-menu-content {
+			left: 0;
+			right: auto;
+		}
+	}
+}
+
+/* Fix WikiEditor space highlight color not relying on wiki variables */
+.ͼ1 .cm-highlightSpace {
+	background-image: radial-gradient( circle at 50% 55%, color-mix( in srgb, var( --wiki-accent-color ) 15%, transparent ) 20%, transparent 5% );
 }

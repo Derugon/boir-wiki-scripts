@@ -16,7 +16,7 @@
 	content     : "";
 	display     : block;
 	border      : 30px solid;
-	border-image: url( filepath://CSS_Border_Infobox.png ) 30 fill round; /* [[File:CSS Border Infobox.png]] */
+	border-image: url( filepath://CSS_Border_Infobox.png ) 30 fill round;
 	bottom      : 0;
 	top         : 0;
 	left        : 0;
@@ -25,11 +25,11 @@
 	position    : absolute;
 }
 
-.pi-title,
-.pi-group,
-.pi-data,
-.pi-font,
-.pi-secondary-font {
+.mw-body .pi-title,
+.mw-body .pi-group,
+.mw-body .pi-data,
+.mw-body .pi-font,
+.mw-body .pi-secondary-font {
 	color: var( --tb-infobox-color );
 }
 
@@ -43,12 +43,21 @@
 
 .portable-infobox > .pi-item > .pi-header,
 .portable-infobox > .pi-item > .pi-data-label,
+.portable-infobox .pi-smart-group h3.pi-smart-data-label,
 .pi-item[data-source="quote"] > .pi-data-value.pi-font,
 .pi-custom-font {
 	font-family: var( --tb-title-font );
 	font-size  : 150%;
 	font-weight: normal;
 	line-height: 75%;
+}
+
+.portable-infobox .pi-smart-group {
+	border-top-style: none;
+}
+
+.pi-item[data-source="quote"] {
+	border-bottom-style: none;
 }
 
 .portable-infobox code {
@@ -66,7 +75,7 @@
 	height         : 30px;
 	border-radius  : 0;
 	padding-top    : 8px;
-	background     : url( filepath://TableDlc.png ) no-repeat scroll center border-box; /* [[File:TableDlc.png]] */
+	background     : url( filepath://TableDlc.png ) no-repeat scroll center border-box;
 	background-size: 100%;
 }
 
@@ -76,7 +85,7 @@
 
 #tooltip-wrapper {
 	border      : 24px solid;
-	border-image: url( filepath://CSS_Border_Tooltip.png ) 24 fill round stretch; /* [[File:CSS Border Tooltip.png]] */
+	border-image: url( filepath://CSS_Border_Tooltip.png ) 24 fill round stretch;
 	background  : none;
 }
 

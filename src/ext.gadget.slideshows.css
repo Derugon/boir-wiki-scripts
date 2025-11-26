@@ -12,8 +12,7 @@
 	display: flex;
 	position: relative;
 	width: max-content;
-	min-width: var( --boir-slide-min-width );
-	padding-bottom: calc( var( --boir-slide-min-height ) + 2px );
+	flex-flow: row wrap;
 	justify-content: center;
 	gap: 2px;
 }
@@ -32,8 +31,10 @@
 }
 
 .boir-slideshow-enabled > dl > dd {
-	position: absolute;
-	bottom: 0;
+	order: 2;
+	min-width: var( --boir-slide-min-width );
+	min-height: var( --boir-slide-min-height );
+	flex-basis: 100%;
 }
 
 .boir-slideshow-enabled > dl > dt:not( .boir-slide-active ) + dd {

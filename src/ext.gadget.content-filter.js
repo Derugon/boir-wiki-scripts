@@ -7,7 +7,7 @@
  */
 
 // <nowiki>
-( ( mw, document ) => mw.loader.using( [
+( ( $, mw, document ) => mw.loader.using( [
 	'mediawiki.api', 'mediawiki.Uri', 'ext.gadget.content-filter-view', 'ext.gadget.logger'
 ], ( require ) => {
 
@@ -27,12 +27,16 @@ log.info( 'Loading.' );
 const urlParam = 'cfval';
 
 const css = {
+	availableBodyClass: 'cf-available',
+
 	/**
 	 * If an element with this ID is on a page (directly on the page or
 	 * transcluded), the filter buttons will be inserted in it. These will
 	 * then not appear on the page header.
 	 */
 	infoId: 'cf-info',
+
+	firstHeadingExtId: 'cf-firstHeading-ext',
 
 	menuId: 'cf-menu',
 	menuHeadingId: 'cf-menu-heading',
@@ -60,18 +64,13 @@ const messages = {
 /**
  * MediaWiki configuration values.
  */
-const config = mw.config.get( [ 'skin', 'wgAction', 'wgArticlePath' ] );
+const config = mw.config.get( [ 'skin', 'wgAction', 'wgArticlePath', 'wgTitle' ] );
 
 if ( config.skin !== 'vector' ) {
 	log.warn(
 		'This gadget has been written to be used with the vector skin only.' +
 		'Some things may not be displayed properly with the current skin.'
 	);
-}
-
-// No filtering in edit mode, it would require reloading the page.
-if ( config.wgAction !== 'view' ) {
-	return;
 }
 
 /**
@@ -145,8 +144,9 @@ FilterParameter.prototype = {
  * 
  * @param {DocumentFragment} title Dropdown title.
  * @param {DocumentFragment[]} buttonTitles Button titles.
+ * @param {string[]} buttonNames Button page names.
  */
-function Navigation( title, buttonTitles ) {
+function Navigation( title, buttonTitles, buttonNames ) {
 	const menu = document.createElement( 'ul' );
 	menu.id = css.menuListId;
 	menu.classList.add( 'menu', 'vector-menu-content-list' );
@@ -157,8 +157,9 @@ function Navigation( title, buttonTitles ) {
 	 */
 	this.buttons = [];
 	let index = null;
+	let buttonName = null;
 	for ( const buttonTitle of buttonTitles ) {
-		const button = new NavigationButton( buttonTitle, index );
+		const button = new NavigationButton( index, buttonTitle, buttonName );
 		this.buttons.push( button );
 		menu.append( button.item );
 		if ( index === null ) {
@@ -166,6 +167,7 @@ function Navigation( title, buttonTitles ) {
 		} else {
 			++index;
 		}
+		buttonName = buttonNames[index];
 	}
 
 	const body = document.createElement( 'div' );
@@ -183,7 +185,8 @@ function Navigation( title, buttonTitles ) {
 	heading.append( label );
 
 	const checkbox = document.createElement( 'input' );
-	checkbox.role = 'checkbox';
+	checkbox.type = 'checkbox';
+	checkbox.role = 'button';
 	checkbox.id = css.menuCheckboxId;
 	checkbox.classList.add( 'vector-menu-checkbox' );
 	checkbox.ariaHasPopup = 'true';
@@ -268,14 +271,16 @@ Navigation.prototype = {
 };
 
 /**
- * @param {DocumentFragment} title
  * @param {number?} index
+ * @param {DocumentFragment} title
+ * @param {string?} name
  */
-function NavigationButton( title, index ) {
+function NavigationButton( index, title, name ) {
 	this.index = index;
 
 	const anchor = document.createElement( 'a' );
 	anchor.href = filterParameter.setURL( index ).href;
+	anchor.title = name === null ? config.wgTitle : `${config.wgTitle} – ${name}`;
 	anchor.addEventListener( 'click', NavigationButton.prototype.onClick.bind( this ) );
 
 	const label = document.createElement( 'span' );
@@ -336,6 +341,26 @@ NavigationButton.prototype = {
 };
 
 /**
+ * @param {DocumentFragment} content
+ */
+const updatePageHeading = ( content ) => {
+	const oldExt = document.getElementById( css.firstHeadingExtId );
+	if ( oldExt !== null ) {
+		oldExt.remove();
+	}
+
+	const firstHeading = document.getElementById( 'firstHeading' );
+	if ( firstHeading === null ) {
+		return;
+	}
+
+	const ext = document.createElement( 'span' );
+	ext.id = css.firstHeadingExtId;
+	ext.append( ' ', content.cloneNode( true ) );
+	firstHeading.append( ext );
+};
+
+/**
  * TODO
  * @param {number?} index
  */
@@ -354,6 +379,10 @@ const updateView = ( index ) => {
 		for ( const viewFragment of queryElementsByClassName( `cf-view-${index}` ) ) {
 			viewFragment.classList.add( css.activeViewClass );
 		}
+
+		for ( const viewMarker of queryElementsByClassName( `cf-view-marker-${index}` ) ) {
+			viewMarker.click();
+		}
 	}
 
 	mw.hook( 'contentFilter.filter.viewUpdated' ).fire( index );
@@ -369,7 +398,7 @@ const updateAnchorFilter = ( a ) => {
 		log.panic();
 	}
 
-	if ( !a.href || a.parentElement.classList.contains( css.buttonClass ) ) {
+	if ( !a.href || a.parentElement.classList.contains( css.buttonClass ) || a.href.startsWith( '#' ) ) {
 		return;
 	}
 
@@ -408,7 +437,7 @@ const filterParameter = new FilterParameter();
  */
 const parseDocumentFragment = ( text ) => {
 	const template = document.createElement( 'template' );
-	template.innerHTML = text.trim();
+	template.innerHTML = text;
 	return template.content;
 };
 
@@ -419,33 +448,46 @@ const parseDocumentFragment = ( text ) => {
 const parseList = ( text ) => {
 	const items = ( '\n' + text ).split( '\n*' );
 	items.shift();
-	return items;
+	return items.map( i => i.trim() );
 };
 
 module.exports = { filterParameter };
 
-new mw.Api().loadMessagesIfMissing( Object.values( messages ) ).then( () => {
-	const navigationTitle = parseDocumentFragment( mw.message( messages.base ).text() );
-	const buttonTitles = parseList( mw.message( messages.toggle ).text() ).map( parseDocumentFragment );
-	const names = parseList( mw.message( messages.name ).text() );
+// No filtering in edit mode, it would require reloading the page.
+if ( config.wgAction === 'view' ) {
+	$( () => {
+		document.body.classList.add( css.availableBodyClass );
 
-	const navigation = new Navigation( navigationTitle, buttonTitles );
+		new mw.Api().loadMessagesIfMissing( Object.values( messages ) ).then( () => {
+			const navigationTitle = parseDocumentFragment( mw.message( messages.base ).text() );
+			const buttonTitles = parseList( mw.message( messages.toggle ).text() ).map( parseDocumentFragment );
+			const buttonNames = parseList( mw.message( messages.name ).text() );
+			const pageTitles = parseList( mw.message( messages.title ).text() ).map( parseDocumentFragment );
 
-	mw.hook( 'contentFilter.content.pageFilter' ).add( ( pageFilter ) => {
-		navigation.updateState( pageFilter );
-	} );
+			const navigation = new Navigation( navigationTitle, buttonTitles, buttonNames );
 
-	mw.hook( 'contentFilter.content.registered' ).add( () => {
-		navigation.insert();
-	} );
+			mw.hook( 'contentFilter.filter' ).add( ( index ) => {
+				const i = index === null ? 0 : index + 1;
+				updatePageHeading( pageTitles[i] );
+			} );
 
-	hookFiredOnce( 'contentFilter.content.registered' ).then( () => {
-		mw.hook( 'contentFilter.filter' ).add( ( index ) => {
-			navigation.updateActiveButton( index );
-			updateView( index );
+			mw.hook( 'contentFilter.content.pageFilter' ).add( ( pageFilter ) => {
+				navigation.updateState( pageFilter );
+			} );
+
+			mw.hook( 'contentFilter.content.registered' ).add( () => {
+				navigation.insert();
+			} );
+
+			hookFiredOnce( 'contentFilter.content.registered' ).then( () => {
+				mw.hook( 'contentFilter.filter' ).add( ( index ) => {
+					navigation.updateActiveButton( index );
+					updateView( index );
+				} );
+			} );
 		} );
 	} );
-} );
+}
 
-} ) )( mediaWiki, document );
+} ) )( jQuery, mediaWiki, document );
 // </nowiki>

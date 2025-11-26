@@ -1,7 +1,7 @@
 .item-altar {
 	width           : 108px;
 	height          : 92px;
-	background-image: url( filepath://Item_altar.png ); /* [[File:Item altar.png]] */
+	background-image: url( filepath://Item_altar.png );
 	background-size : 100%;
 }
 

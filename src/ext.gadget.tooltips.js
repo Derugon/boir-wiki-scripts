@@ -59,7 +59,8 @@ const createTooltipOnEvent = function ( event ) {
 		if ( document.getElementById( template ) ) {
 			bindSourceEvents( source );
 		} else {
-			api.parse( `{{${template}}}` ).then( ( output ) => {
+			const wikitext = decodeURIComponent( template.split( '+' ).join( ' ' ) );
+			api.parse( `{{${wikitext}}}` ).then( ( output ) => {
 				createTooltip( source, stringToElements( output ) || log.panic() );
 			} );
 		}

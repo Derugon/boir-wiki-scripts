@@ -17,10 +17,10 @@
  *
  * @param {string} name Logger name.
  */
-function Logger( name ) {
+const Logger = function ( name ) {
 	this.name = name;
 	Logger.registry[name] = this;
-}
+};
 
 /**
  * Registered loggers.

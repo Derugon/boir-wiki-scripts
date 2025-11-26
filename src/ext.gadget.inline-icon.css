@@ -1,5 +1,31 @@
 /* override [[MediaWiki:Gadget-inline-icon-hide.css]] */
 
+:root {
+	--tb-icon-size: 1.4em;
+}
+
+body .tb-icon {
+	display: inline-block;
+}
+
+.tb-icon img {
+	width: auto;
+	max-width: var( --tb-icon-size );
+	height: var( --tb-icon-size );
+	margin-bottom: calc( 0px - var( --tb-icon-size ) );
+	transform: translateY( calc( 0px - var( --tb-icon-size ) / 2 ) );
+	object-fit: contain;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+}
+
+.tb-link-icon img {
+	margin-right: .25em;
+}
+
 body .inline-icon {
 	display: initial;
 	margin-right: .25em;
