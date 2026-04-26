@@ -1,0 +1,23 @@
+/* override [[MediaWiki:Gadgets/sidebar-tools-hide/main.css]] */
+
+@media screen {
+
+:root #mw-panel #p-tb {
+	display: block;
+}
+
+:root #mw-panel #p-tb:has( .vector-menu-content-list:empty ) {
+	display: none;
+}
+
+@media ( max-width: 720px ) {
+	:root .has-vector-mobile-menu #mw-panel .mobile-nav-toggle.nav--expanded ~ #p-tb {
+		display: block;
+	}
+
+	:root .has-vector-mobile-menu #mw-panel #p-tb {
+		display: none;
+	}
+}
+
+}

@@ -103,27 +103,6 @@ $(function() {
 // [START: module]
 ( ( $, mw ) => {
 
-    /*************
-    /* Polyfills *
-    /*************/
-
-    if ( !( 'WeakRef' in window ) ) {
-        /**
-         * @template {{}} T
-         * @param {T} target
-         */
-        const WeakRef = function ( target ) {
-            this.target = target;
-        };
-
-        WeakRef.prototype.deref = function () {
-            return this.target;
-        };
-
-        // @ts-ignore
-        window.WeakRef = WeakRef;
-    }
-
 	/********************
 	/* queryElementsBy_ *
 	/********************/
@@ -190,16 +169,6 @@ $( () => {
 	// HTML attribute removal
 	$( '.notitle a' ).removeAttr( 'title' );
 	$( 'img.no-alt' ).removeAttr( 'alt' );
-
-	// Annotate empty TemplateData tables.
-    for ( const table of queryElementsByClassName( 'mw-templatedata-doc-params' ) ) {
-        for ( const e of queryElementsByClassName( 'mw-templatedata-doc-muted', table ) ) {
-            if ( e.textContent === 'No parameters specified' ) {
-                table.classList.add( 'mw-templatedata-doc-params-empty' );
-                break;
-            }
-        }
-    }
 
 	// Negative
     

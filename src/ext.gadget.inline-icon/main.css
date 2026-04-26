@@ -1,0 +1,18 @@
+.tb-icon img,
+img.tb-icon {
+	width: auto;
+	max-width: var( --tb-icon-size );
+	height: var( --tb-icon-size );
+	margin: calc( 0px - var( --tb-icon-size ) / 2 ) 0;
+	object-fit: contain;
+	vertical-align: middle; /* fallback */
+	vertical-align: center;
+	-webkit-user-select: none; /* fallback */
+	   -moz-user-select: none; /* fallback */
+	        user-select: none;
+}
+
+.tb-link-icon img,
+img.tb-link-icon {
+	margin-right: var( --tb-icon-margin-right );
+}

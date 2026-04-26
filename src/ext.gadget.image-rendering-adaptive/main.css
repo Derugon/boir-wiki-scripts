@@ -1,0 +1,11 @@
+.tb-image-rendering-smooth {
+	image-rendering: auto; /* fallback */
+	image-rendering: optimizeQuality; /* fallback */
+	image-rendering: smooth;
+}
+
+.tb-image-rendering-pixelated {
+	image-rendering: optimizeSpeed; /* fallback */
+	image-rendering: crisp-edges; /* fallback */
+	image-rendering: pixelated;
+}

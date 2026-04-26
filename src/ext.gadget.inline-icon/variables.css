@@ -1,0 +1,9 @@
+:root {
+	--tb-icon-size: 1.25em;
+	--tb-icon-margin-left: 0.25em;
+	--tb-icon-margin-right: 0.25em;
+}
+
+.dlc {
+	--tb-icon-size: 2em;
+}

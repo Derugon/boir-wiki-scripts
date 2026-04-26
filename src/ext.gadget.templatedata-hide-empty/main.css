@@ -1,0 +1,3 @@
+.mw-templatedata-doc-params:has( .mw-templatedata-doc-muted[colspan="7"] ) {
+	display: none;
+}

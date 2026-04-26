@@ -1,0 +1,5 @@
+/* override [[MediaWiki:Gadgets/debug-hide/main.css]] */
+
+:root .ns-0 .mw-parser-output .error {
+	display: initial;
+}

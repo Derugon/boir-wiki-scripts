@@ -1,0 +1,3 @@
+:root:not( .tb-size-small ):not( .tb-size-large ) {
+	--wiki-content-font-size: var( --wiki-content-font-size-medium );
+}

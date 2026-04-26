@@ -1,0 +1,57 @@
+#tooltip-wrapper,
+.tooltip-content {
+	display: none;
+}
+
+@media screen and ( hover ) {
+	#tooltip-wrapper {
+		display: block;
+		position: fixed;
+		left: calc( var( --tb-cursor-left ) + var( --tb-tooltip-shift-left ) ); /* fallback */
+		left: clamp(
+			var( --tb-tooltip-margin-inline ),
+			var( --tb-cursor-left ) + var( --tb-tooltip-shift-left ),
+			100vw - var( --tb-tooltip-min-width ) - var( --tb-tooltip-margin-inline )
+		);
+		top: calc( var( --tb-cursor-top ) + var( --tb-tooltip-shift-top ) );
+		max-width: var( --tb-tooltip-max-width );
+		margin-right: var( --tb-tooltip-margin-inline );
+		z-index: 1;
+		background: var( --wiki-content-background-color--secondary );
+		opacity: 0;
+		transition: opacity 0s;
+		pointer-events: none;
+		-webkit-user-select: none;
+		   -moz-user-select: none;
+		        user-select: none;
+	}
+
+	#tooltip-wrapper.tooltip-wrapper-active {
+		opacity: 1;
+		transition: opacity 0.2s;
+	}
+
+	.tooltip-content {
+		--wiki-content-link-color: var( --wiki-content-text-color );
+		--wiki-content-link-color--visited: var( --wiki-content-link-color );
+		position: relative;
+		padding: var( --tb-tooltip-padding-block ) var( --tb-tooltip-padding-inline );
+	}
+
+	.tooltip-content.tooltip-content-active {
+		display: block;
+	}
+
+	.tooltip-content * {
+		margin: auto;
+		white-space: normal;
+		line-height: normal;
+		font-weight: bold;
+	}
+
+	.tooltip-content-loading::before {
+		content: "Loading…";
+		font-weight: bold;
+		font-style: italic;
+	}
+}

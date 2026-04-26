@@ -1,0 +1,12 @@
+:root {
+	--icon-icon-visible: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M0 3m0-1v4h4v-4zm6 1v2h2v-2zm4-1v4h4v-4zm6 1v2h4v-2zM0 9v2h6v-2zm8-1v4h4v-4zm6 1v2h2v-2zM0 15v2h3v-2zm5-1v4h4v-4zm6 1v2h7v-2z'%3E%3C/path%3E%3C/svg%3E" );
+	--icon-icon-hidden: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M0 3v2h11v-2zm13 0v2h7v-2zM0 9v2h9v-2zm11 0v2h5v-2zM0 15v2h6v-2zm8 0v2h10v-2z'%3E%3C/path%3E%3C/svg%3E" );
+}
+
+.tb-icon-visible #pt-inline-icon {
+	--icon: var( --icon-icon-visible );
+}
+
+.tb-icon-hidden #pt-inline-icon {
+	--icon: var( --icon-icon-hidden );
+}

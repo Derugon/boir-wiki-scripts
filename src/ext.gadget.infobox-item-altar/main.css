@@ -1,0 +1,9 @@
+.item-altar {
+	width: var( --tb-item-altar-width );
+	height: var( --tb-item-altar-height );
+	background: var( --tb-item-altar-file ) center / cover;
+}
+
+.portable-infobox .pi-data-value > .item-altar {
+	margin: calc( 0px - var( --tb-item-altar-outset-top ) ) auto 0;
+}

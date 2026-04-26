@@ -1,5 +1,0 @@
-/* override [[MediaWiki:Gadget-debug-hide.css]] */
-
-body.ns-0 .mw-parser-output .error {
-	display: initial;
-}

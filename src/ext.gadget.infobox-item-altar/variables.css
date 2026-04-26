@@ -1,0 +1,10 @@
+:root {
+	--tb-item-altar-file: url( filepath://Item_altar.png );
+	--tb-item-altar-file-width: 27;
+	--tb-item-altar-file-height: 23;
+	--tb-item-altar-scale: 4;
+
+	--tb-item-altar-width: calc( 1px * var( --tb-item-altar-file-width ) * var( --tb-item-altar-scale ) );
+	--tb-item-altar-height: calc( var( --tb-item-altar-width ) * var( --tb-item-altar-file-height ) / var( --tb-item-altar-file-width ) );
+	--tb-item-altar-outset-top: calc( 4px * var( --tb-item-altar-scale ) );
+}

@@ -1,0 +1,254 @@
+@media screen {
+@media not all and ( max-width: 720px ) {
+
+:root {
+	--wiki-content-navigation-background--hover: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
+
+	--wiki-content-navigation-font-family: var( --wiki-body-font-family );
+	--wiki-content-navigation-font-size: 0.8em;
+	--wiki-content-navigation-font-weight: bold;
+	--wiki-content-navigation-font-style: normal;
+	--wiki-content-navigation-text-transform: uppercase;
+	--wiki-content-navigation-line-height: 1.6em;
+	--wiki-content-navigation-icon-size: 2em;
+	--wiki-content-navigation-padding: 0.375em;
+	--wiki-content-navigation-text-spacing: 0.375em;
+	--wiki-content-navigation-border-radius: 2px;
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	:root {
+		--wiki-content-navigation-background--hover: transparent;
+	}
+}
+
+/******************
+/* Header buttons *
+/******************/
+
+#mw-head .vector-menu-tabs .mw-list-item,
+#mw-head .vector-menu-dropdown,
+#mw-head .vector-menu-portal {
+	position: relative;
+	margin: 0;
+	border: none;
+	padding: 0;
+}
+
+/* Medium-sized screen: Hide all labels ... */
+#mw-head .vector-menu-tabs .mw-list-item a,
+#mw-head .vector-menu-tabs #ca-watch.icon a,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a,
+#mw-head .vector-menu-dropdown .vector-menu-heading,
+#mw-head .vector-menu-portal .vector-menu-heading {
+	display: block;
+	box-sizing: content-box;
+	width: 2em;
+	height: var( --wiki-content-navigation-line-height );
+	padding: var( --wiki-content-navigation-padding );
+	border-radius: var( --wiki-content-navigation-border-radius );
+	margin: 0;
+	overflow: hidden;
+	background: none;
+	align-items: center;
+	justify-content: center;
+	font: var( --wiki-content-navigation-font-weight ) var( --wiki-content-navigation-font-style )
+	      var( --wiki-content-navigation-font-size ) / var( --wiki-content-navigation-line-height )
+	      var( --wiki-content-navigation-font-family );
+	text-indent: 0;
+	text-transform: var( --wiki-content-navigation-text-transform );
+	cursor: pointer;
+	-webkit-user-select: none; /* fallback */
+	   -moz-user-select: none; /* fallback */
+	        user-select: none;
+}
+
+#mw-head .vector-menu-tabs .mw-list-item a,
+#mw-head .vector-menu-tabs .mw-list-item a:hover,
+#mw-head .vector-menu-tabs #ca-watch.icon a,
+#mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+#mw-head .vector-menu-dropdown .vector-menu-heading,
+#mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+#mw-head .vector-menu-portal .vector-menu-heading,
+#mw-head .vector-menu-portal:hover .vector-menu-heading {
+	color: transparent;
+}
+
+#mw-head .vector-menu-tabs .mw-list-item a:hover,
+#mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+#mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+#mw-head .vector-menu-portal:hover .vector-menu-heading {
+	background: var( --wiki-content-navigation-background--hover );
+}
+
+#mw-head .vector-menu-tabs .mw-list-item a:hover,
+#mw-head .vector-menu-tabs .mw-list-item a:focus,
+#mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+#mw-head .vector-menu-tabs #ca-watch.icon a:focus,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a:focus,
+#mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+#mw-head .vector-menu-dropdown:focus .vector-menu-heading,
+#mw-head .vector-menu-portal:hover .vector-menu-heading,
+#mw-head .vector-menu-portal:focus .vector-menu-heading {
+	text-decoration: none;
+}
+
+/* ... but show the ones below */
+#mw-head #ca-view a,
+#mw-head #ca-ve-edit a,
+#mw-head #ca-edit a,
+#mw-head #ca-addsection a,
+#mw-head #ca-viewsource a {
+	display: flex;
+	width: auto;
+	padding-right: calc( var( --wiki-content-navigation-padding ) + var( --wiki-content-navigation-text-spacing ) );
+	gap: var( --wiki-content-navigation-text-spacing );
+	color: var( --wiki-content-link-color );
+}
+
+@media ( min-width: 1600px ) {
+	/* Large-sized screen: Show all labels ... */
+	.tb-width-full #mw-head .vector-menu-tabs .mw-list-item a,
+	.tb-width-full #mw-head .vector-menu-tabs #ca-watch.icon a,
+	.tb-width-full #mw-head .vector-menu-tabs #ca-unwatch.icon a,
+	.tb-width-full #mw-head .vector-menu-dropdown .vector-menu-heading,
+	.tb-width-full #mw-head .vector-menu-portal .vector-menu-heading {
+		display: flex;
+		width: auto;
+		padding-right: calc( var( --wiki-content-navigation-padding ) + var( --wiki-content-navigation-text-spacing ) );
+		gap: var( --wiki-content-navigation-text-spacing );
+	}
+
+	.tb-width-full #mw-head .vector-menu-tabs .mw-list-item a,
+	.tb-width-full #mw-head .vector-menu-tabs .mw-list-item a:hover {
+		color: var( --wiki-content-link-color );
+	}
+
+	.tb-width-full #mw-head .vector-menu-tabs #ca-watch.icon a,
+	.tb-width-full #mw-head .vector-menu-tabs #ca-watch.icon a:hover,
+	.tb-width-full #mw-head .vector-menu-tabs #ca-unwatch.icon a,
+	.tb-width-full #mw-head .vector-menu-tabs #ca-unwatch.icon a:hover,
+	.tb-width-full #mw-head .vector-menu-dropdown .vector-menu-heading,
+	.tb-width-full #mw-head .vector-menu-dropdown:hover .vector-menu-heading,
+	.tb-width-full #mw-head .vector-menu-portal .vector-menu-heading,
+	.tb-width-full #mw-head .vector-menu-portal:hover .vector-menu-heading {
+		color: var( --wiki-accent-color );
+	}
+
+	/* ... but hide the ones below */
+	.tb-width-full #mw-head #p-cactions .vector-menu-heading,
+	.tb-width-full #mw-head #p-cactions:hover .vector-menu-heading {
+		display: block;
+		width: var( --wiki-content-navigation-icon-size );
+		padding-right: var( --wiki-content-navigation-padding );
+		color: transparent;
+	}
+}
+
+#mw-head .vector-menu-tabs .mw-list-item a::before,
+#mw-head .vector-menu-tabs #ca-watch.icon a::before,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a::before,
+#mw-head .vector-menu-dropdown .vector-menu-heading::before,
+#mw-head .vector-menu-portal .vector-menu-heading::before {
+	content: "";
+	display: inline-block;
+	position: initial;
+	width: var( --wiki-content-navigation-icon-size );
+	height: var( --wiki-content-navigation-icon-size );
+	-webkit-mask: var( --icon ) center center / auto 100%; /* fallback */
+	        mask: var( --icon ) center center / auto 100%;
+}
+
+#mw-head .vector-menu-tabs .mw-list-item a::before {
+	background-color: var( --wiki-content-link-color );
+}
+
+#mw-head .vector-menu-tabs #ca-watch.icon a::before,
+#mw-head .vector-menu-tabs #ca-unwatch.icon a::before,
+#mw-head .vector-menu-dropdown .vector-menu-heading::before,
+#mw-head .vector-menu-portal .vector-menu-heading::before {
+	background-color: var( --wiki-accent-color );
+}
+
+#mw-head .vector-menu-dropdown .vector-menu-heading::after,
+#mw-head .vector-menu-portal .vector-menu-heading::after {
+	display: none;
+}
+
+/********************
+/* Header dropdowns *
+/********************/
+
+#mw-head .vector-menu-dropdown .vector-menu-content,
+#mw-head .vector-menu-portal .vector-menu-content {
+	left: initial;
+	right: -1px;
+	background-color: var( --wiki-content-background-color--secondary );
+	cursor: default;
+}
+
+#mw-head .vector-menu-dropdown .vector-menu-content ul,
+#mw-head .vector-menu-portal .vector-menu-content ul {
+	padding: .4em;
+}
+
+#mw-head .vector-menu-dropdown:hover .vector-menu-content,
+#mw-head .vector-menu-portal:hover .vector-menu-content {
+	opacity: 1;
+	visibility: visible;
+	height: auto;
+}
+
+#mw-head .vector-menu-dropdown .vector-menu-content-list,
+#mw-head .vector-menu-portal .vector-menu-content-list {
+	background-color: transparent;
+	border-width: 0;
+}
+
+#mw-head .vector-menu-dropdown .mw-list-item,
+#mw-head .vector-menu-portal .mw-list-item {
+	font-size: 1em;
+}
+
+#mw-head .vector-menu-dropdown .mw-list-item a,
+#mw-head .vector-menu-portal .mw-list-item a {
+	padding: var( --wiki-navigation-dropdown-item-padding );
+	color: var( --wiki-content-text-color );
+	font-size: 0.875em;
+	text-decoration: none;
+}
+
+#mw-head .vector-menu-dropdown .mw-list-item:hover,
+#mw-head .vector-menu-portal .mw-list-item:hover {
+	background: color-mix( in srgb, var( --wiki-accent-color ) 10%, transparent );
+}
+
+#mw-head .vector-menu-dropdown .mw-list-item a:hover,
+#mw-head .vector-menu-portal .mw-list-item a:hover {
+	color: var( --wiki-content-link-color );
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	#mw-head .vector-menu-dropdown .mw-list-item:hover,
+	#mw-head .vector-menu-portal .mw-list-item:hover {
+		background: var( --wiki-accent-color );
+	}
+}
+
+/**********
+/* Others *
+/**********/
+
+#siteNotice + .mw-indicators {
+	/* placeholder position until moved by the JS script */
+	top: calc( 10 / 9 * var( --wiki-content-firstheading-font-size ) * 8 / 7
+		+ 1px + var( --wiki-content-firstheading-border-bottom-width ) + 0.5em
+	);
+}
+
+}
+}

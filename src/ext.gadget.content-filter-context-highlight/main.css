@@ -1,0 +1,137 @@
+:root {
+	--cf-context-base-color: rgba( 255, 0, 0, 0 );
+	--cf-context-background-color: rgba( 255, 0, 0, 0.15 );
+	--cf-context-border-color: rgba( 255, 0, 0, 0.3 );
+
+	--cf-context-border-width: 1px;
+	--cf-context-border-style: solid;
+	--cf-context-block-outset: 5px;
+	--cf-context-inline-outset: 2px;
+}
+
+div.tright,
+div.floatright,
+table.floatright {
+	position: relative;
+	z-index : 1;
+}
+
+/* For block elements, we use ::before to set a slightly bigger highlight. */
+
+table.cf-context,
+th.cf-context,
+td.cf-context,
+dt.cf-context,
+dd.cf-context,
+li.cf-context,
+p.cf-context,
+div.cf-context {
+	position: relative;
+}
+
+table.cf-context,
+dt.cf-context,
+dd.cf-context,
+li.cf-context,
+p.cf-context {
+	max-width: max-content;
+}
+
+.nav-header dt.cf-context,
+.nav-header dd.cf-context,
+.nav-header li.cf-context {
+	max-width: none;
+}
+
+table.cf-context::before,
+th.cf-context::before,
+td.cf-context::before,
+dt.cf-context::before,
+dd.cf-context::before,
+li.cf-context::before,
+p.cf-context::before,
+div.cf-context::before {
+	content       : "";
+	position      : absolute;
+	box-sizing    : border-box;
+	pointer-events: none;
+}
+
+th.cf-context::before,
+td.cf-context::before {
+	left  : 0;
+	width : 100%;
+	top   : 0;
+	height: 100%;
+}
+
+table.cf-context::before,
+dt.cf-context::before,
+dd.cf-context::before,
+li.cf-context::before,
+p.cf-context::before,
+div.cf-context::before {
+	left : calc( 0px - var( --cf-context-block-outset ) );
+	width: calc( 100% + var( --cf-context-block-outset ) * 2 );
+}
+
+table.cf-context::before,
+dt.cf-context::before,
+dd.cf-context::before {
+	top   : calc( 0px - var( --cf-context-block-outset ) );
+	height: calc( 100% + var( --cf-context-block-outset ) * 2 );
+}
+
+li.cf-context::before,
+p.cf-context::before,
+div.cf-context::before {
+	top   : calc( 0px - var( --cf-context-inline-outset ) );
+	height: calc( 100% + var( --cf-context-inline-outset ) * 2 );
+}
+
+/* For inline elements, we use the element itself. */
+
+span.cf-context {
+	padding: var( --cf-context-inline-outset ) 0;
+}
+
+/* For both block and inline elements, we set the highlighting style. */
+
+table.cf-context::before,
+th.cf-context::before,
+td.cf-context::before,
+dd.cf-context::before,
+li.cf-context::before,
+p.cf-context::before,
+div.cf-context::before,
+span.cf-context {
+	background: var( --cf-context-base-color );
+	border: var( --cf-context-border-width ) var( --cf-context-border-style ) var( --cf-context-base-color );
+	transition: background-color 0.1s, border-color 0.1s;
+}
+
+table.cf-context::before,
+dd.cf-context::before,
+li.cf-context::before,
+p.cf-context::before,
+div.cf-context::before,
+span.cf-context {
+	border-radius: 5px;
+}
+
+table.cf-context-hover::before,
+th.cf-context-hover::before,
+td.cf-context-hover::before,
+dd.cf-context-hover::before,
+li.cf-context-hover::before,
+p.cf-context-hover::before,
+div.cf-context-hover::before,
+span.cf-context-hover {
+	border-color: var( --cf-context-border-color );
+	background  : var( --cf-context-background-color );
+}
+
+/* Do not highlight the current slide of a DLC slideshow */
+.dlc-slideshow > dl > dd::before {
+	display: none;
+}

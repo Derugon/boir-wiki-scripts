@@ -1,0 +1,99 @@
+@media screen {
+
+:root:root {
+	--wiki-content-infobox-background-color: transparent;
+	--wiki-content-infobox-padding-top: 30px;
+	--wiki-content-infobox-padding-x: 15px;
+	--wiki-content-infobox-padding-bottom: 20px;
+}
+
+.portable-infobox {
+	/* override normal link styles */
+	--wiki-content-link-color         : #740;
+	--wiki-content-link-color--visited: var( --wiki-content-link-color );
+	--wiki-content-link-color--hover  : var( --wiki-content-link-color );
+}
+
+.portable-infobox::before {
+	content     : "";
+	display     : block;
+	border      : 30px solid;
+	border-image: url( filepath://CSS_Border_Infobox.png ) 30 fill round;
+	bottom      : 0;
+	top         : 0;
+	left        : 0;
+	right       : 0;
+	z-index     : -1;
+	position    : absolute;
+}
+
+.mw-body .pi-title,
+.mw-body .pi-group,
+.mw-body .pi-data,
+.mw-body .pi-font,
+.mw-body .pi-secondary-font {
+	color: var( --tb-infobox-color );
+}
+
+.mw-body .pi-secondary-background,
+.mw-body .portable-infobox .pi-data,
+.mw-body .portable-infobox .pi-group,
+.mw-body .portable-infobox .pi-title,
+.mw-body .portable-infobox .pi-header {
+	background: transparent;
+}
+
+.portable-infobox > .pi-item > .pi-header,
+.portable-infobox > .pi-item > .pi-data-label,
+.portable-infobox .pi-smart-group h3.pi-smart-data-label,
+.pi-item[data-source="quote"] > .pi-data-value.pi-font,
+.pi-custom-font {
+	font   : 150% / 1.2 var( --tb-title-font );
+	padding: 0;
+}
+
+.portable-infobox .pi-smart-group {
+	border-top-style: none;
+}
+
+.pi-item[data-source="quote"] {
+	border-bottom-style: none;
+}
+
+.portable-infobox code {
+	background-color: rgba( 0,0,0, 0.2 );
+	border          : 1px solid rgba( 255,255,255, 0.2 );
+	color           : var( --tb-infobox-color );
+}
+
+/****************************
+/* [[Template:Context box]] *
+/****************************/
+
+.mw-body .context-box {
+	width        : 2.75em;
+	height       : calc( 2.75em * 36/44 );
+	border-radius: 0;
+	background   : url( filepath://TableDlc.png ) no-repeat center / contain;
+	display      : grid;
+	place-content: center;
+}
+
+/***************************************
+/* With [[MediaWiki:Gadgets/tooltips]] *
+/***************************************/
+
+#tooltip-wrapper {
+	border      : 24px solid #c7B29a;
+	border-image: url( filepath://CSS_Border_Tooltip.png ) 24 fill round stretch;
+	background  : padding-box #c7B29a;
+}
+
+.tooltip-content {
+	--wiki-content-text-color: #473a3c;
+	margin : -12px;
+	padding: 0;
+	color  : var( --wiki-content-text-color );
+}
+
+}

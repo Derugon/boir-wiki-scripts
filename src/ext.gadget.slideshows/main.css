@@ -1,0 +1,96 @@
+.boir-slideshow {
+	display: inline-block;
+}
+
+.boir-slideshow > dl,
+.boir-slideshow > dl > dt,
+.boir-slideshow > dl > dd {
+	margin: 0;
+}
+
+.boir-slideshow > dl > dt {
+	font: var( --tb-slideshow-title-font-weight ) var( --tb-slideshow-title-font-style )
+	      var( --tb-slideshow-title-font-size ) / var( --tb-slideshow-title-line-height )
+	      var( --tb-slideshow-title-font-family );
+	padding: var( --tb-slideshow-title-padding-y ) var( --tb-slideshow-title-padding-x );
+}
+
+.boir-slideshow-enabled > dl {
+	display: grid;
+	grid: auto-flow / 1fr repeat( var( --boir-slide-count ), auto ) 1fr;
+	position: relative;
+	width: -moz-fit-content; /* fallback */
+	width:      fit-content;
+	justify-content: center;
+	justify-items: center;
+	gap: var( --tb-slideshow-title-spacing-bottom ) var( --tb-slideshow-title-spacing-x );
+	outline: var( --tb-slideshow-border-width ) var( --tb-slideshow-border-style ) var( --tb-slideshow-border-color );
+	transition: outline-color 0.1s;
+}
+
+.portable-infobox .boir-slideshow-enabled > dl {
+	justify-items: center;
+}
+
+.boir-slideshow-enabled > dl:has( > dt:hover ) {
+	outline-color: var( --tb-slideshow-border-color--hover );
+}
+
+.boir-slideshow-enabled > dl::before,
+.boir-slideshow-enabled > dl::after {
+	content: "";
+}
+
+.boir-slideshow-hidden > dl > dt {
+	display: none;
+}
+
+.boir-slideshow-enabled > dl > dt:not( .boir-slide-active ),
+.boir-slideshow-enabled > dl > dt:not( .boir-slide-active ) * {
+	cursor: pointer;
+}
+
+.boir-slideshow-enabled > dl > dt {
+	background: var( --tb-slideshow-title-background-color );
+	border-bottom: var( --tb-slideshow-title-rule-width ) var( --tb-slideshow-title-rule-style ) var( --tb-slideshow-title-rule-color );
+}
+
+.boir-slideshow-enabled > dl > dt:hover {
+	background-color: var( --tb-slideshow-title-background-color--hover );
+	border-bottom-color: var( --tb-slideshow-title-rule-color--hover );
+}
+
+.boir-slideshow-enabled > dl > dt.boir-slide-active,
+.boir-slideshow-enabled > dl > dt.boir-slide-active:hover {
+	background-color: var( --tb-slideshow-title-background-color--active );
+	border-bottom-color: var( --tb-slideshow-title-rule-color--active );
+}
+
+.boir-slideshow-enabled > dl > dd {
+	grid-column: 1 / -1;
+	grid-row: 2;
+}
+
+.boir-slideshow-enabled > dl > dt:not( .boir-slide-active ) + dd,
+.dlc-slideshow:not( .boir-slideshow-enabled ):not( .boir-slideshow-disabled ) > dl > dd:not( :first-of-type ) {
+	visibility: hidden;
+}
+
+.boir-slideshow-enabled > dl > dd > * {
+	position: relative;
+}
+
+.dlc-slideshow:not( .boir-slideshow-enabled ) > dl > dt,
+.dlc-slideshow.boir-slideshow-auto > dl > dt:not( .boir-slide-active ) {
+	display: none;
+}
+
+.dlc-slideshow.boir-slideshow-auto > dl > dt.boir-slide-active {
+	background: none;
+	border-bottom: none;
+}
+
+.boir-slideshow-enabled > .boir-slideshow-titlebar:not( .cf-view-active ) ~ .boir-slide:not( .boir-slide-active ),
+.boir-slideshow-enabled > .boir-slideshow-titlebar:not( .cf-view-active ) ~ .boir-slide > .boir-slide-title-placeholder {
+	display: none;
+}

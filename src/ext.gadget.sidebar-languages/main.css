@@ -1,0 +1,23 @@
+/* override [[MediaWiki:Gadgets/sidebar-languages-hide/main.css]] */
+
+@media screen {
+
+:root #mw-head #p-lang {
+	display: block;
+}
+
+:root #mw-head #p-lang:has( .vector-menu-content-list:empty ) {
+	display: none;
+}
+
+@media ( max-width: 720px ) {
+	:root .has-vector-mobile-menu #mw-head .mobile-nav-toggle.nav--expanded ~ #p-lang {
+		display: block;
+	}
+	
+	:root .has-vector-mobile-menu #mw-head #p-lang {
+		display: none;
+	}
+}
+
+}

@@ -1,0 +1,35 @@
+:root {
+	--tb-slideshow-border-color: transparent;
+	--tb-slideshow-border-color--hover: color-mix( in srgb, var( --wiki-accent-color ) 15%, transparent );
+
+	--tb-slideshow-title-background-color: transparent;
+	--tb-slideshow-title-background-color--hover: color-mix( in srgb, var( --wiki-accent-color ) 15%, transparent );
+	--tb-slideshow-title-background-color--active: var( --tb-slideshow-title-background-color--hover );
+	--tb-slideshow-title-rule-color: transparent;
+	--tb-slideshow-title-rule-color--hover: color-mix( in srgb, var( --wiki-accent-color ) 40%, transparent );
+	--tb-slideshow-title-rule-color--active: var( --wiki-accent-color );
+
+	--tb-slideshow-border-width: 2px;
+	--tb-slideshow-border-style: solid;
+
+	--tb-slideshow-title-font-family: var( --wiki-body-font-family );
+	--tb-slideshow-title-font-size: var( --wiki-content-font-size );
+	--tb-slideshow-title-font-weight: bold;
+	--tb-slideshow-title-font-style: normal;
+	--tb-slideshow-title-line-height: 1.6;
+	--tb-slideshow-title-padding-x: 2px;
+	--tb-slideshow-title-padding-y: 0px;
+	--tb-slideshow-title-rule-width: 2px;
+	--tb-slideshow-title-rule-style: solid;
+	--tb-slideshow-title-spacing-x: 0px;
+	--tb-slideshow-title-spacing-bottom: 2px;
+}
+
+@supports not ( color: color-mix( in srgb, #000, transparent ) ) { /* fallback */
+	:root {
+		--tb-slideshow-border-color--hover: transparent;
+
+		--tb-slideshow-title-background-color--hover: transparent;
+		--tb-slideshow-title-rule-color--hover: var( --wiki-accent-color );
+	}
+}

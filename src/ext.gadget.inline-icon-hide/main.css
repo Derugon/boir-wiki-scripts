@@ -1,0 +1,3 @@
+:root:not( .tb-icon-visible ) .tb-link-icon {
+	display: none;
+}

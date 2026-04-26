@@ -1,0 +1,14 @@
+:root {
+	--wiki-gap-between-topbar-and-content: 0.5em;
+
+	--wiki-topbar-heading-color: var( --wiki-body-dynamic-color );
+	--wiki-topbar-heading-font-family: var( --wiki-sidebar-heading-font-family );
+	--wiki-topbar-heading-font-size: var( --wiki-sidebar-heading-font-size );
+	--wiki-topbar-heading-font-weight: bold;
+	--wiki-topbar-heading-font-style: normal;
+	--wiki-topbar-heading-text-transform: uppercase;
+	--wiki-topbar-heading-line-height: var( --wiki-sidebar-heading-line-height );
+	--wiki-topbar-heading-padding: 0.625em;
+	--wiki-topbar-heading-background: none;
+	--wiki-topbar-heading-text-shadow: none;
+}

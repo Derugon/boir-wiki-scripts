@@ -1,0 +1,9 @@
+:root {
+	--tb-tooltip-shift-left: 10px;
+	--tb-tooltip-shift-top: 20px;
+	--tb-tooltip-margin-inline: .5rem;
+	--tb-tooltip-padding-block: .2em;
+	--tb-tooltip-padding-inline: .5em;
+	--tb-tooltip-min-width: 20em;
+	--tb-tooltip-max-width: 50em;
+}
